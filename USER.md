@@ -3,6 +3,8 @@
 - **Name:** 公主
 - **What to call them:** 公主
 - **Timezone:** Asia/Shanghai (GMT+8)
+- **Location:** 上海
+- **Email:** 171878812@qq.com
 
 ## Context
 
