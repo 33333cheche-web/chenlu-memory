@@ -1,0 +1,18 @@
+#!/bin/bash
+# Smart Fetch - 智能网页获取工具
+# 多服务自动降级，返回干净 Markdown
+#
+# 用法: smart-fetch <URL> [选项]
+#
+# 选项:
+#   --json      输出 JSON 格式
+#   --raw       只输出内容，不显示进度
+#   --timeout N 设置超时时间（默认 15 秒）
+#
+# 示例:
+#   smart-fetch https://example.com
+#   smart-fetch https://example.com --json
+#   smart-fetch https://example.com --raw > output.md
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+python3 "$SCRIPT_DIR/smart_fetch.py" "$@"

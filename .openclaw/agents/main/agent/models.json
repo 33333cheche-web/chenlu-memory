@@ -1,0 +1,149 @@
+{
+  "providers": {
+    "custom-code-newcli-com": {
+      "baseUrl": "https://code.newcli.com/claude/droid",
+      "apiKey": "sk-ant-oat01-ggnfT3anKaBuQdXIB2xt34Q2TnlOULwc1lT3DiVwdkWS-1JxgfVbG2scdlszQnuhBGTY24whDdh_cWG2jGBl4Lk4ewljdAA",
+      "api": "anthropic-messages",
+      "models": [
+        {
+          "id": "claude-sonnet-4-6",
+          "name": "claude-sonnet-4-6",
+          "reasoning": false,
+          "input": [
+            "text",
+            "image"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 200000,
+          "maxTokens": 16000,
+          "api": "anthropic-messages"
+        }
+      ]
+    },
+    "kimi-coding": {
+      "baseUrl": "https://api.kimi.com/coding/v1",
+      "apiKey": "19cdac6d-d512-8014-8000-0000ec605bf5",
+      "api": "anthropic-messages",
+      "models": [
+        {
+          "id": "k2p5",
+          "name": "Kimi 2.5",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 200000,
+          "maxTokens": 16000,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "api": "anthropic-messages"
+        }
+      ]
+    },
+    "kimi-code": {
+      "baseUrl": "https://api.kimi.com/coding/v1",
+      "apiKey": "sk-kimi-KEJaqd0pybU3RYEHOIL903LrUIbrzH8chvSUiCAirQRcSKpYq8EVkwnRzJBJdmBz",
+      "api": "openai-completions",
+      "models": [
+        {
+          "id": "kimi-for-coding",
+          "name": "Kimi Code",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 200000,
+          "maxTokens": 8192,
+          "api": "openai-completions"
+        }
+      ]
+    },
+    "moonshot": {
+      "baseUrl": "https://api.moonshot.cn/v1",
+      "apiKey": "sk-zc1F9O4tvoCSQdNs91MCkHasmWRoqVbMxyMRKWdwR2wyOaWl",
+      "api": "openai-completions",
+      "models": [
+        {
+          "id": "kimi-k2.5",
+          "name": "Kimi K2.5",
+          "contextWindow": 256000,
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "maxTokens": 8192,
+          "api": "openai-completions"
+        }
+      ]
+    },
+    "moonshot-alt": {
+      "baseUrl": "https://n.lconai.com",
+      "apiKey": "sk-e5XO4QJg1ZzsKr9R2CQ8p3IGqqjjKHrxL010s1tL4Ep9itkP",
+      "api": "openai-completions",
+      "models": [
+        {
+          "id": "kimi-k2.5",
+          "name": "Kimi K2.5",
+          "contextWindow": 256000,
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "maxTokens": 8192,
+          "api": "openai-completions"
+        }
+      ]
+    },
+    "kimi-coding-2": {
+      "baseUrl": "https://api.kimi.com/coding/v1",
+      "apiKey": "sk-kimi-KEJaqd0pybU3RYEHOIL903LrUIbrzH8chvSUiCAirQRcSKpYq8EVkwnRzJBJdmBz",
+      "api": "anthropic-messages",
+      "models": [
+        {
+          "id": "k2p5",
+          "name": "Kimi 2.5",
+          "reasoning": true,
+          "input": [
+            "text"
+          ],
+          "contextWindow": 200000,
+          "maxTokens": 16000,
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "api": "anthropic-messages"
+        }
+      ]
+    }
+  }
+}

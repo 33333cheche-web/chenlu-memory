@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>轻笔记 · 精致版</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        /* ===== 莫兰迪色系主题（降低饱和度，更高级） ===== */
+        :root {
+            --primary: #B8A9C9; --primary-soft: #F5F0F7;
+            --primary-light: #FAF7FB; --primary-border: #E8E0EC;
+            --text: #5A5A5A; --text-light: #9A9A9A; --text-tertiary: #B8B8B8;
+            --bg: #FAF8FB; --white: #FFFFFF;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
+            --shadow-lg: 0 8px 32px rgba(0,0,0,0.08);
+            --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 24px;
+        }
+        
+        .theme-cream {
+            --primary: #D4B888; --primary-soft: #F8F4E8;
+            --primary-light: #FDFAF5; --primary-border: #EDE5D5; --bg: #FAF8F2;
+        }
+        .theme-sky {
+            --primary: #7BA8D3; --primary-soft: #E8F0F8;
+            --primary-light: #F2F7FC; --primary-border: #D0E0F0; --bg: #F5F9FC;
+        }
+        .theme-mint {
+            --primary: #7BC4A0; --primary-soft: #E8F5EE;
+            --primary-light: #F2FAF5; --primary-border: #D0E8D8; --bg: #F5FCF8;
+        }
+        .theme-lavender {
+            --primary: #B899D4; --primary-soft: #F2EBF8;
+            --primary-light: #F8F5FC; --primary-border: #E0D0F0; --bg: #FAF8FC;
+        }
+        .theme-sakura {
+            --primary: #E8A8C0; --primary-soft: #FCE8F0;
+            --primary-light: #FDF2F7; --primary-border: #F0D8E0; --bg: #FDF8FA;
+        }
+        .theme-peach {
+            --primary: #F0A888; --primary-soft: #FCE8E0;
+            --primary-light: #FDF2EE; --primary-border: #F0D8D0; --bg: #FDF8F5;
+        }
+                .theme-rainbow {
+            --primary: #B8A8E8;
+            --primary-soft: #1A1A24;
+            --primary-light: #242430;
+            --primary-border: #2A2A38;
+            --bg: #0F0F16;
+            --text: #F5F5FA;
+            --text-light: #A0A0B0;
+            --text-tertiary: #606070;
+            --white: #1E1E28;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: linear-gradient(135deg, #E8E4EB 0%, #F0ECE8 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* 手机容器 - 更精致的阴影和圆角 */
+        .phone-frame {
+            max-width: 375px;
+            margin: 0 auto;
+            background: var(--bg);
+            border-radius: 40px;
+            box-shadow: 
+                0 25px 50px -12px rgba(0,0,0,0.15),
+                0 0 0 1px rgba(255,255,255,0.5) inset;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            height: 812px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 40px;
+            box-shadow: 0 0 0 8px rgba(255,255,255,0.3) inset;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .content-scroll {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .content-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* 状态栏 - 毛玻璃效果 */
+        .status-bar {
+            height: 44px;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            transition: all 0.5s;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+        }
+
+        /* 头部 - 更柔和的渐变 */
+        .header {
+            background: linear-gradient(180deg, var(--primary-soft) 0%, var(--bg) 70%, var(--bg) 100%);
+            padding: 28px 24px 24px;
+            text-align: center;
+            transition: all 0.5s;
+            position: relative;
+        }
+        
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%; right: 20%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary-border), transparent);
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-weight: 700;
+            transition: all 0.5s;
+            letter-spacing: -0.5px;
+        }
+                .theme-rainbow .header {
+            background: linear-gradient(180deg, #1A1A24 0%, #0F0F16 70%, #0F0F16 100%);
+            border-bottom: none;
+            padding: 28px 24px 24px;
+        }
+        
+        .theme-rainbow .header::after {
+            display: block;
+            background: linear-gradient(90deg, transparent, rgba(216, 168, 248, 0.2), transparent);
+        }
+        
+        .theme-rainbow .quick-input {
+            margin-top: 0;
+            background: #1E1E28;
+            border: 1px solid rgba(216, 168, 248, 0.15);
+        }
+
+        .theme-rainbow .header h1 {
+            color: #F5F5FA;
+        }
+        
+        .theme-rainbow .header p {
+            color: #808090;
+        }
+
+        .header p {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        /* 主题切换 - 更精致的圆点 */
+        .theme-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+        .dot:hover { 
+            transform: scale(1.25); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .dot.active { 
+            border-color: var(--white);
+            box-shadow: 
+                0 0 0 2px var(--primary),
+                0 4px 12px rgba(0,0,0,0.1);
+            transform: scale(1.1);
+        }
+
+        .dot-cream { background: #E8D4A0; }
+        .dot-sky { background: #9BB8D3; }
+        .dot-mint { background: #9BCFB8; }
+        .dot-lavender { background: #B8A9C9; }
+        .dot-sakura { background: #D4A8B8; }
+        .dot-peach { background: #E8A880; }
+        .dot-sakura { background: #D4A8B8; }
+        .dot-peach { background: #E8B898; }
+        .dot-rainbow { 
+            background: conic-gradient(from 45deg, #E8C4C8 0%, #E8D8C4 25%, #C8E8D4 50%, #C8D8E8 75%, #D8C8E8 100%);
+        }
+        .dot-rainbow.active {
+            box-shadow: 
+                0 0 0 2px var(--primary),
+                0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* 快速输入 - 卡片式设计 */
+        .quick-input {
+            padding: 24px;
+            background: var(--white);
+            margin: 0 16px 16px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+        }
+        
+        .quick-input:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        /* 彩虹主题 - 卡片白色半透明，icon渐变 */
+        .theme-rainbow .quick-input,
+        .theme-rainbow .category-item,
+        .theme-rainbow .note-item {
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(10px);
+        }
+
+        .quick-input h2 {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .quick-input h2::before {
+            content: "";
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        .input-box {
+            background: var(--bg);
+            border: 1.5px solid transparent;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            min-height: 120px;
+            font-size: 15px;
+            color: var(--text);
+            resize: none;
+            width: 100%;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.3s ease;
+            line-height: 1.6;
+        }
+
+        .input-box:focus {
+            border-color: var(--primary);
+            background: var(--white);
+            box-shadow: 0 0 0 4px var(--primary-soft);
+        }
+        
+        .input-box::placeholder {
+            color: var(--text-tertiary);
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: var(--radius-xl);
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .btn:active::after {
+            width: 200px; height: 200px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+        .theme-rainbow .btn-primary {
+            background: linear-gradient(135deg, #D8A8F8 0%, #B8D8F8 100%);
+            color: #0A0A12;
+            font-weight: 600;
+            border: none;
+            box-shadow: 0 4px 20px rgba(216, 168, 248, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+            transition: all 0.2s ease;
+        }
+        
+        .theme-rainbow .btn-primary:hover {
+            box-shadow: 0 6px 24px rgba(216, 168, 248, 0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+            transform: translateY(-1px);
+        }
+        
+        .theme-rainbow .btn-primary:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 12px rgba(216, 168, 248, 0.2);
+        }
+        
+        .theme-rainbow .btn-secondary {
+            background: rgba(40, 40, 55, 0.6);
+            color: #B0B0C0;
+            border: 1px solid rgba(216, 168, 248, 0.15);
+            backdrop-filter: blur(10px);
+        }
+        
+        .theme-rainbow .btn-secondary:hover {
+            border-color: rgba(216, 168, 248, 0.3);
+            background: rgba(45, 45, 60, 0.7);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--primary);
+            border: 1.5px solid var(--primary-border);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--primary-soft);
+            border-color: var(--primary);
+        }
+
+        .btn:active { transform: scale(0.96); }
+
+        /* 分类 - 更精致的卡片 */
+        .categories {
+            padding: 24px;
+            background: transparent;
+        }
+
+        .categories h2 {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        .categories h2::before {
+            content: "";
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        .category-item {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 1px solid transparent;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .category-item:hover {
+            border-color: var(--primary-border);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .category-item:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .category-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .category-icon { 
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .category-icon svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .category-info h3 {
+            font-size: 16px;
+            color: var(--text);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .category-info p {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .category-count {
+            background: var(--primary-soft);
+            color: var(--primary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            min-width: 36px;
+            text-align: center;
+        }
+
+        .sub-categories {
+            margin-left: 56px;
+            margin-top: 8px;
+            margin-bottom: 16px;
+        }
+
+        .sub-category {
+            padding: 12px 16px;
+            font-size: 14px;
+            color: var(--text-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.5);
+            border-radius: var(--radius-md);
+            margin-bottom: 8px;
+            transition: all 0.3s;
+        }
+        
+        .sub-category:hover {
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* 最近编辑 - 更精致的笔记卡片 */
+        .recent-notes {
+            padding: 24px;
+            background: transparent;
+        }
+
+        .recent-notes h2 {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+                .recent-notes h2::before {
+            content: "";
+            margin-right: 8px;
+            font-size: 14px;
+        }
+
+        .note-item {
+            padding: 18px 20px;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: var(--shadow-sm);
+            border-left: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .note-item::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* 黑夜主题 - 紫色渐变 */
+        .theme-rainbow .category-icon svg,
+        .theme-rainbow .nav-item.active .nav-icon svg {
+            stroke: #D8A8F8;
+        }
+        
+        .theme-rainbow .fab {
+            background: linear-gradient(135deg, #D8A8F8 0%, #B8D8F8 100%);
+            box-shadow: 0 4px 20px rgba(216, 168, 248, 0.4);
+        }
+
+        .theme-rainbow .fab svg {
+            stroke: #0F0F16;
+        }
+
+        .theme-rainbow .bottom-nav {
+            background: #1A1A24;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .theme-rainbow .nav-item {
+            color: #606070;
+        }
+
+        .theme-rainbow .nav-item.active {
+            color: #D8A8F8;
+        }
+
+        .theme-rainbow .category-count {
+            background: rgba(216, 168, 248, 0.15);
+            color: #D8A8F8;
+        }
+
+        .theme-rainbow .note-item::before {
+            background: linear-gradient(180deg, #D8A8F8, #B8D8F8);
+        }
+
+        .theme-rainbow .sub-category {
+            background: rgba(30, 30, 40, 0.8);
+            border: 1px solid rgba(216, 168, 248, 0.1);
+        }
+
+        .theme-rainbow .input-box {
+            background: rgba(25, 25, 35, 0.8);
+            color: #E0E0E8;
+            border: 1px solid rgba(216, 168, 248, 0.12);
+        }
+        
+        .theme-rainbow .input-box:focus {
+            border-color: rgba(216, 168, 248, 0.4);
+            box-shadow: 0 0 0 3px rgba(216, 168, 248, 0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+            background: #252530;
+        }
+
+        .theme-rainbow .input-box::placeholder {
+            color: #505060;
+        }
+
+        .theme-rainbow .quick-input,
+        .theme-rainbow .category-item,
+        .theme-rainbow .note-item {
+            background: #1E1E28;
+            border: 1px solid rgba(216, 168, 248, 0.15);
+            box-shadow: 0 0 20px rgba(216, 168, 248, 0.05), inset 0 1px 0 rgba(255,255,255,0.03);
+            transition: all 0.3s ease;
+        }
+        
+        .theme-rainbow .quick-input:hover,
+        .theme-rainbow .category-item:hover,
+        .theme-rainbow .note-item:hover {
+            border-color: rgba(216, 168, 248, 0.25);
+            box-shadow: 0 0 30px rgba(216, 168, 248, 0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+            transform: translateY(-1px);
+        }
+
+        .theme-rainbow .btn-primary {
+            background: linear-gradient(135deg, #D8A8F8 0%, #B8D8F8 100%);
+            color: #0F0F16;
+            font-weight: 600;
+        }
+        
+        .theme-rainbow .btn-secondary {
+            background: #2A2A38;
+            color: #A0A0B0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .theme-rainbow .header h1 {
+            background: linear-gradient(135deg, #E8C8F8 0%, #C8E8F8 50%, #E8B8F8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .note-item:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateX(4px);
+        }
+        
+        .note-item:active {
+            transform: translateX(4px) scale(0.98);
+        }
+
+        .note-title {
+            font-size: 15px;
+            color: var(--text);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .note-time {
+            font-size: 12px;
+            color: var(--text-tertiary);
+        }
+
+        /* 底部导航 - 毛玻璃效果 + 渐变 + 固定定位 */
+        .bottom-nav {
+            display: flex;
+            background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.95) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            padding: 8px 0 24px;
+            flex-shrink: 0;
+        }
+
+        .nav-item {
+            flex: 1;
+            text-align: center;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            color: var(--text-light);
+            position: relative;
+        }
+
+        .nav-item.active { 
+            color: var(--primary); 
+        }
+        
+        .nav-item.active .nav-icon svg {
+            stroke: var(--primary);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            margin: 0 auto 4px;
+            transition: all 0.3s;
+        }
+        
+        .nav-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: all 0.3s;
+        }
+        
+        .nav-item:hover .nav-icon {
+            transform: translateY(-2px);
+        }
+
+        .nav-label { 
+            font-size: 11px; 
+            font-weight: 500;
+        }
+        
+        /* 悬浮添加按钮 - 新样式 */
+        .fab {
+            position: fixed;
+            bottom: 100px;
+            right: calc(50% - 150px);
+            width: 52px;
+            height: 52px;
+            background: var(--primary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 100;
+        }
+        
+        .fab svg {
+            width: 24px;
+            height: 24px;
+            stroke: white;
+            stroke-width: 2;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        
+        .fab:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            border-radius: 20px;
+        }
+        
+        .fab:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body class="theme-lavender">
+    <!-- SVG渐变定义 -->
+    <svg width="0" height="0" style="position:absolute;">
+        <defs>
+            <linearGradient id="rainbow-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" style="stop-color:#E8A8C0"/>
+                <stop offset="50%" style="stop-color:#A8D8E8"/>
+                <stop offset="100%" style="stop-color:#D8A8E8"/>
+            </linearGradient>
+        </defs>
+    </svg>
+    <div class="phone-frame">
+        <!-- 状态栏 -->
+        <div class="status-bar">
+            <span>9:41</span>
+            <span>⚡ 📶</span>
+        </div>
+        
+        <!-- 头部 -->
+        <div class="header">
+            <h1>轻笔记</h1>
+            <p>记录生活，温柔时光</p>
+            
+            <!-- 主题切换小圆点 -->
+            <div class="theme-dots">
+                <div class="dot dot-cream" data-theme="cream" title="奶油黄"></div>
+                <div class="dot dot-sky" data-theme="sky" title="天空蓝"></div>
+                <div class="dot dot-mint" data-theme="mint" title="薄荷绿"></div>
+                <div class="dot dot-lavender active" data-theme="lavender" title="薰衣草紫"></div>
+                <div class="dot dot-sakura" data-theme="sakura" title="樱花粉"></div>
+                <div class="dot dot-peach" data-theme="peach" title="蜜桃橙"></div>
+                <div class="dot dot-rainbow" data-theme="rainbow" title="彩虹"></div>
+            </div>
+        </div>
+        
+        <div class="content-scroll">
+        
+        <!-- 快速输入 -->
+        <div class="quick-input">
+            <h2>快速记录</h2>
+            <textarea class="input-box" placeholder="今天想记录点什么..."></textarea>
+            <div class="input-actions">
+                <button class="btn btn-primary">保存笔记</button>
+                <button class="btn btn-secondary">选择分类</button>
+            </div>
+        </div>
+        
+        <!-- 分类 -->
+        <div class="categories">
+            <h2>我的分类</h2>
+            
+            <div class="category-item">
+                <div class="category-left">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28" stroke="var(--primary)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                    </div>
+                    <div class="category-info">
+                        <h3>工作笔记</h3>
+                        <p>项目记录 • 待办事项</p>
+                    </div>
+                </div>
+                <div class="category-count">12</div>
+            </div>
+            <div class="sub-categories">
+                <div class="sub-category">
+                    <span>项目 A</span>
+                    <span style="color: var(--primary); font-weight: 500;">5</span>
+                </div>
+                <div class="sub-category">
+                    <span>项目 B</span>
+                    <span style="color: var(--primary); font-weight: 500;">7</span>
+                </div>
+            </div>
+            
+            <div class="category-item">
+                <div class="category-left">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28" stroke="var(--primary)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    </div>
+                    <div class="category-info">
+                        <h3>生活随笔</h3>
+                        <p>日常备忘 • 时光手账</p>
+                    </div>
+                </div>
+                <div class="category-count">8</div>
+            </div>
+            
+            <div class="category-item">
+                <div class="category-left">
+                    <div class="category-icon">
+                        <svg viewBox="0 0 24 24" width="28" height="28" stroke="var(--primary)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                    <div class="category-info">
+                        <h3>灵感收集</h3>
+                        <p>随想随记 • 思维闪光</p>
+                    </div>
+                </div>
+                <div class="category-count">23</div>
+            </div>
+        </div>
+        
+        <!-- 最近编辑 -->
+        <div class="recent-notes">
+            <h2>最近编辑</h2>
+            <div class="note-item">
+                <div class="note-title">产品需求文档整理</div>
+                <div class="note-time">2小时前 · 工作笔记</div>
+            </div>
+            <div class="note-item">
+                <div class="note-title">本周待办清单</div>
+                <div class="note-time">5小时前 · 工作笔记</div>
+            </div>
+            <div class="note-item">
+                <div class="note-title">周末出游计划</div>
+                <div class="note-time">昨天 · 生活随笔</div>
+            </div>
+        </div>
+        
+        </div><!-- content-scroll end -->
+        
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item active">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                </div>
+                <div class="nav-label">首页</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
+                </div>
+                <div class="nav-label">分类</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+                </div>
+                <div class="nav-label">搜索</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+                <div class="nav-label">我的</div>
+            </div>
+        </div>
+        
+        <!-- 悬浮添加按钮 -->
+        <div class="fab">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </div>
+    </div>
+
+    <script>
+        // 主题切换
+        document.querySelectorAll('.dot').forEach(dot => {
+            dot.addEventListener('click', function() {
+                document.querySelectorAll('.dot').forEach(d => d.classList.remove('active'));
+                this.classList.add('active');
+                document.body.className = `theme-${this.dataset.theme}`;
+            });
+        });
+    </script>
+</body>
+</html>

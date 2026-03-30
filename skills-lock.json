@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "skills": {
+    "agent-browser": {
+      "source": "vercel-labs/agent-browser",
+      "sourceType": "github",
+      "computedHash": "35478d4b0a33b3f98e22b7b4f3fe2d2919ebe72a6ca24b3a7175a9b17cc2788d"
+    },
+    "bb-browser": {
+      "source": "epiral/bb-browser",
+      "sourceType": "github",
+      "computedHash": "33d1e66a51a18ad40b520bf10297ce6edb0423d003da4a0ca1a622426a661270"
+    },
+    "characteristic-voice": {
+      "source": "NoizAI/skills",
+      "sourceType": "github",
+      "computedHash": "519d6d8a92069eb9e05385a2902762457459981940f78d2ac679959c87749d0e"
+    },
+    "cron": {
+      "source": "chaterm/terminal-skills",
+      "sourceType": "github",
+      "computedHash": "374e08aab7c38effc16afd36c726a0c8ca410e34cfa59e431b1ec30c4a5e71ac"
+    },
+    "openclaw-backup": {
+      "source": "theagentservice/skills",
+      "sourceType": "github",
+      "computedHash": "635f624ccf60692ff097408fd7486362e621457da6f5eedd0d0c51a6b2dfd603"
+    },
+    "tts": {
+      "source": "NoizAI/skills",
+      "sourceType": "github",
+      "computedHash": "ccfb890d9f797a1316ca9d6528f9c240bc0a287a2c0cb09758b41d8a8a0e18df"
+    }
+  }
+}
