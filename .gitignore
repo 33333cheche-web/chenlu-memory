@@ -37,3 +37,4 @@ agents/*/sessions/
 # Cache
 .cache/
 *.cache
+.gstack/

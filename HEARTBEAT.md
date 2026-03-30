@@ -33,4 +33,9 @@
 
 ---
 
+## 🧠 Self-Improving 维护
+如果修改了 `~/self-improving/` 下的文件，请遵循 `skills/self-improving/heartbeat-rules.md` 进行整理。
+
+---
+
 *晨露宝宝的进化引擎 🌟*
