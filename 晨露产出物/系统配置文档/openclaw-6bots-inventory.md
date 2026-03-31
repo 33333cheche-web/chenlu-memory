@@ -1,8 +1,7 @@
 # OpenClaw 6 Bots 配置总览（含模型 Key）
 
 - 生成时间：2026-03-27 10:12 (Asia/Shanghai)
-- **更新时间：2026-03-30 14:38 (Asia/Shanghai)** - Baby 添加 openai provider (GPT-5.4)
-- 历史更新：2026-03-29 20:20 - Baby/Melody/Mumu 添加 moonshot 备用模型
+- **更新时间：2026-03-31 20:46 (Asia/Shanghai)** - Baby 配置修复：主模型 codex-newcli-com/gpt-5.3-codex，备用 kimi-coding
 - 注意：本文件包含敏感密钥（API Key / Gateway Token / Feishu 配置），请勿外传。
 
 ## 1) 总体映射
@@ -278,32 +277,22 @@
 - `id`: `baby`
 - `name`: `Baby`
 - `workspace`: `/home/cheche/.openclaw/workspace-baby`
-- 显式模型：`fox-gemini/gemini-3.1-pro`
+- 显式模型：`codex-newcli-com/gpt-5.3-codex`
 - 默认模型策略：
-  - `primary`: `fox-gemini/gemini-3.1-pro`
+  - `primary`: `codex-newcli-com/gpt-5.3-codex`
   - `fallbacks`: `kimi-coding/kimi-for-coding`
 
 ### 模型提供方与 Key
-- `fox-gemini`
-  - `baseUrl`: `https://code.newcli.com/gemini/v1beta`
-  - `api`: `google-generative-ai`
-  - `models`: `gemini-3.1-pro`
-  - `apiKey`: `sk-ant-oat01-HETLc_eek8lSB4dcqlEyK9PRQcUifVxlpl-t2X5KiVOYRPjaQXmE7tkAmPCvJRS5kw3YAXEYgoTVYUGiekJshYHZVAQ13AA`
-- `kimi-coding`
+- `codex-newcli-com` (GPT-5.3-codex，主模型)
+  - `baseUrl`: `https://code.newcli.com/codex/v1`
+  - `api`: `openai-completions`
+  - `models`: `gpt-5.3-codex`
+  - `apiKey`: `sk-ant-oat01-vM4edLgSnqS2MpNlI-rseo2NyzRELZRsF8FAX3GoXN84BpZK8gQMt2O9uNx85Pv6G5IBypCCEqkUYWVWUB7oL5scadQtDAA`
+- `kimi-coding` (备用)
   - `baseUrl`: `https://api.kimi.com/coding/v1`
   - `api`: `anthropic-messages`
   - `models`: `kimi-for-coding`
   - `apiKey`: `sk-kimi-JqzEUH7jkjyECGcnRkcuOkMXOjBwcN02dK2oycXV99aEVSDKUjVmVgElBxytYkwY`
-- `moonshot` (备用)
-  - `baseUrl`: `https://api.moonshot.cn/v1`
-  - `api`: `openai-completions`
-  - `models`: `kimi-k2.5`
-  - `apiKey`: `sk-vArOg0KjhxvLNnhZYN14ibd0i8WdhT2u3zM95tqH6EI69BzR`
-- `openai` (可选，GPT-5.4)
-  - `baseUrl`: `https://code.newcli.com/codex/v1`
-  - `api`: `openai-completions`
-  - `models`: `gpt-5.4`
-  - `apiKey`: `sk-ant-oat01-vM4edLgSnqS2MpNlI-rseo2NyzRELZRsF8FAX3GoXN84BpZK8gQMt2O9uNx85Pv6G5IBypCCEqkUYWVWUB7oL5scadQtDAA`
 
 ### Feishu
 - `appId`: `cli_a94f590dfefa1bb4`
@@ -322,13 +311,11 @@
 
 ## 8) 备注
 
-- **2026-03-30 更新：**
-  - **BABY 添加 `openai` provider**：可通过 `/model openai/gpt-5.4` 切换使用 GPT-5.4 模型
 - 模型策略总览：
   - CHENLU：Kimi 主，Gemini 备
   - SUNNY：Gemini 主，Kimi 备
   - RAINBOW：Gemini 主，Kimi 备
-  - **MUMU：Kimi 主，Moonshot 备** (2026-03-29 添加备用)
-  - **MELODY：Kimi 主，Moonshot 备** (2026-03-29 添加备用)
-  - **BABY：Gemini 主，Kimi 备，OpenAI(GPT-5.4) 可选** (2026-03-30 添加)
+  - MUMU：Kimi 主，Moonshot 备
+  - MELODY：Kimi 主，Moonshot 备
+  - **BABY：codex-newcli-com/gpt-5.3-codex 主，Kimi 备**（2026-03-31 配置确定）
 - SUNNY 已做 `allowFrom` 固化，减少反复 `access not configured`。

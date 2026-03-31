@@ -1,6 +1,6 @@
 # OpenClaw 6-Bot Runbook（稳定运维版）
 
-- 更新时间：2026-03-29（Baby/Melody/Mumu 添加 moonshot 备用模型）
+- 更新时间：2026-03-31（Baby 配置确定：codex-newcli-com/gpt-5.3-codex 主，Kimi 备）
 - 目标：让后续 AI 在不破坏现有架构的前提下排障和改配置。
 - 先读文件：`/home/cheche/openclaw-6bots-inventory.md`
 - 安全提示：配置包含 API Key / token，禁止外传、禁止贴公网。
@@ -117,14 +117,22 @@
 禁止：不要改其它实例，不要改 workspace/端口/appId。
 ```
 
-## 6. 当前模型策略基线（2026-03-29 更新）
+## 6. 当前模型策略基线（2026-03-31 更新）
 
 - CHENLU：Kimi 主，Gemini 备
 - SUNNY：Gemini 主，Kimi 备
 - RAINBOW：Gemini 主，Kimi 备
-- **MUMU：Kimi 主，Moonshot 备**（2026-03-29 添加）
-- **MELODY：Kimi 主，Moonshot 备**（2026-03-29 添加）
-- **BABY：Gemini 主，Kimi 备**（2026-03-29 从 Moonshot 切换）
+- MUMU：Kimi 主，Moonshot 备
+- MELODY：Kimi 主，Moonshot 备
+- **BABY：codex-newcli-com/gpt-5.3-codex 主，Kimi 备**
+
+**Baby 配置要点：**
+- Provider: `codex-newcli-com`
+- API: `openai-completions`
+- Model: `gpt-5.3-codex`
+- 生效配置：`/home/cheche/.openclaw-baby/.openclaw/openclaw.json`
+- AgentDir 覆盖：`/home/cheche/.openclaw-baby/.openclaw/agents/baby/models.json`
+- Auth 文件：`/home/cheche/.openclaw-baby/.openclaw/agents/baby/auth-profiles.json`
 
 如需调整基线，必须同步更新：
 - `/home/cheche/openclaw-6bots-inventory.md`
