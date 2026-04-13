@@ -204,3 +204,62 @@ find "/home/cheche/.openclaw/workspace-chenlu/晨露产出物" -name "*20260328*
 3. **定稿版本必须标记** `vX定稿`
 4. **必须创建版本记录.md**
 5. **公主问"最后一个版本"时**，自动提供最新的 `vX定稿` 版本
+
+---
+
+## 🔐 GitHub 备份配置
+
+### 核心记忆自动备份
+- **备份时间**: 每周一 23:10
+- **备份脚本**: `/home/cheche/.openclaw/workspace-chenlu/scripts/memory-backup.sh`
+- **仓库地址**: `https://github.com/cheche33333_web/chenlu-workspace.git`
+- **GitHub Token**: `ghp_REDACTED`
+- **配置方式**: Token 已嵌入 git remote URL
+
+### 手动推送命令
+```bash
+cd /home/cheche/.openclaw/workspace-chenlu
+git add SOUL.md MEMORY.md USER.md IDENTITY.md AGENTS.md HEARTBEAT.md TOOLS.md memory/
+git commit -m "备份说明"
+git push origin master
+```
+
+### 检查远程仓库
+```bash
+git remote -v
+```
+
+---
+
+## 🎨 DESIGN.md 设计系统库
+
+知名网站的设计系统文档，用于快速构建一致风格的 UI。
+
+### 存放位置
+```
+~/晨露产出物/DESIGN_Markdown_设计系统/
+```
+
+### 已下载的设计系统
+
+| 文件 | 风格 | 适用场景 |
+|------|------|----------|
+| `Linear_DESIGN.md` | 暗黑科技感、紫罗兰强调色 | 开发者工具、SaaS、仪表盘 |
+| `Figma_DESIGN.md` | 现代简洁、黑白为主 | 设计工具、创意产品 |
+| `Notion_DESIGN.md` | 温和友好、米白背景 | 笔记应用、知识管理 |
+| `Vercel_DESIGN.md` | 极简黑白、科技感 | 开发者平台、落地页 |
+| `Apple_DESIGN.md` | 高端质感、圆角卡片 | 产品展示、品牌官网 |
+| `Spotify_DESIGN.md` | 渐变色彩、音乐氛围 | 娱乐应用、社交平台 |
+
+### 使用方法
+```bash
+# 1. 复制到项目
+cp ~/晨露产出物/DESIGN_Markdown_设计系统/Linear_DESIGN.md ~/你的项目/DESIGN.md
+
+# 2. 告诉 AI 使用
+# "参考 DESIGN.md 的设计风格，帮我做一个登录页面"
+```
+
+### 来源
+- **GitHub**: [VoltAgent/awesome-design-md](https://github.com/VoltAgent/awesome-design-md)
+- **说明**: Google Stitch 推出的设计系统格式，AI 可直接读取并生成一致 UI
