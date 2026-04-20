@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HeartFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-webfont@1.7.0/style.css"></noscript>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root { --font-ui: 'JetBrains Mono', 'SF Pro Display', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif; --font-write: 'LXGW WenKai Screen', 'LXGW WenKai', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: var(--font-ui); font-weight: 300; overflow: hidden; background: #0a0a12; }
+        #canvas-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        .vignette-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; background: none; }
+        .ui-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4vh 4vw; pointer-events: none; }
+        .ui-layer > * { pointer-events: auto; }
+        .main-grid { width: 100%; max-width: 908px; height: 444px; display: grid; grid-template-columns: 211px 1fr 211px; gap: 19px; align-items: stretch; }
+        .glass-panel { background: rgba(255, 255, 255, 0.032); backdrop-filter: blur(7px) saturate(115%); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 14px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03), 0 8px 24px rgba(0, 0, 0, 0.06); display: flex; flex-direction: column; overflow: hidden; }
+        .panel-header { padding: 14px 16px 10px; font-size: 10px; color: rgba(255,255,255,0.75); letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; gap: 6px; background: transparent; text-shadow: 0 0 8px rgba(255,255,255,0.08); }
+        .panel-body { flex: 1; padding: 14px; display: flex; flex-direction: column; overflow: hidden; background: transparent; position: relative; }
+        .task-list { display: flex; flex-direction: column; gap: 6px; overflow-y: overlay; flex: 1; margin-bottom: 10px; -ms-overflow-style: none; scrollbar-width: none; background: transparent; }
+        .task-list::-webkit-scrollbar { display: none; }
+        .task-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; background: transparent; border: none; box-sizing: border-box; width: 100%; transition: all 0.15s ease; }
+        .task-item:hover { background: rgba(255,255,255,0.04); }
+        .task-checkbox { width: 15px; height: 15px; border-radius: 4px; border: 1.5px solid rgba(255,255,255,0.2); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s ease; flex-shrink: 0; }
+        .task-checkbox:hover { border-color: rgba(255,255,255,0.4); }
+        .task-checkbox.checked { background: rgba(255,255,255,0.9); border-color: rgba(255,255,255,0.9); box-shadow: 0 0 6px rgba(255,255,255,0.2); }
+        .task-checkbox.checked::after { content: '✓'; color: #000; font-size: 9px; font-weight: bold; }
+        .task-text { flex: 1; font-size: 13px; color: rgba(255,255,255,0.9); background: none; border: none; outline: none; font-family: var(--font-ui); font-weight: 300; }
+        .task-item.completed .task-text { text-decoration: line-through; color: rgba(255,255,255,0.35); }
+        .task-delete { width: 14px; height: 14px; color: rgba(255,255,255,0.55); cursor: pointer; opacity: 1; transition: all 0.15s ease; flex-shrink: 0; }
+        .task-delete:hover { color: rgba(255,100,100,0.95); }
+        .task-input-wrap { display: flex; gap: 6px; align-items: center; width: 100%; }
+        .task-input { flex: 1; min-width: 90px; height: 34px; padding: 0 10px; border-radius: 10px; border: none; background: transparent; color: rgba(255,255,255,0.9); font-size: 10px; font-family: var(--font-ui); font-weight: 300; outline: none; transition: all 0.2s; }
+        .task-input::placeholder { color: rgba(255,255,255,0.45); }
+        .task-input:focus { background: rgba(255,255,255,0.03); }
+        .add-task-btn { width: 34px; height: 34px; border-radius: 8px; border: none; background: transparent; color: rgba(255,255,255,0.65); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s ease; font-size: 16px; margin-left: auto; }
+        .add-task-btn:hover { background: rgba(255,255,255,0.08); color: white; }
+        .write-wrap { position: relative; flex: 1; display: flex; flex-direction: column; padding: 18px; z-index: 1; border-radius: 16px; }
+        .write-wrap::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.12); backdrop-filter: blur(32px) saturate(170%); border-radius: 12px; z-index: -1; pointer-events: none; box-shadow: inset 0 0 20px rgba(255,255,255,0.05); border: 0.5px solid rgba(255,255,255,0.09); }
+        .write-wrap .ghost-btn { border-color: rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.7); }
+        .write-wrap .ghost-btn:hover { border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.95); box-shadow: 0 0 12px rgba(255,255,255,0.06); }
+        .write-wrap .write-stats { color: rgba(255,255,255,0.4); }
+        .write-area { flex: 1; width: 100%; background: transparent; border: none; padding: 0; color: rgba(255,255,255,0.9); font-size: 18px; line-height: 1.75; font-family: var(--font-write); font-weight: 400; resize: none; outline: none; position: relative; z-index: 1; }
+        .write-area::placeholder { color: rgba(255,255,255,0.28); }
+        .release-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; opacity: 0; }
+        .release-char { position: relative; display: inline-block; font-family: var(--font-write); color: rgba(255,255,255,0.78); transition: all 1.4s cubic-bezier(0.22, 0.61, 0.36, 1); vertical-align: top; }
+        .release-char.fly { opacity: 0; transform: translateX(140px) translateY(var(--dy, 0px)) scale(0.35) rotate(var(--rot)); filter: blur(3px); }
+        .release-char::after { content: ''; position: absolute; left: 50%; top: 55%; width: 4px; height: 4px; background: rgba(255,255,255,0.95); border-radius: 50%; opacity: 0; transform: translate(-50%, -50%) scale(0); transition: all 1.4s cubic-bezier(0.22, 0.61, 0.36, 1); transition-delay: inherit; pointer-events: none; filter: blur(0.8px); box-shadow: 3px -2px 0 rgba(255,255,255,0.7), -2px 3px 0 rgba(255,255,255,0.6), 5px 4px 0 rgba(255,255,255,0.5), -4px -3px 0 rgba(255,255,255,0.55), 0 5px 0 rgba(255,255,255,0.45); }
+        .release-char.fly::after { opacity: 1; transform: translate(calc(-50% + 60px), calc(-50% + var(--dy2, 0px))) scale(1.6); }
+        .write-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+        .ghost-btn { padding: 8px 18px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.65); font-size: 11px; font-family: var(--font-ui); font-weight: 400; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.2s; backdrop-filter: blur(6px); }
+        .ghost-btn:hover { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.95); box-shadow: 0 0 12px rgba(255,255,255,0.06); }
+        .write-stats { margin-top: 7px; font-size: 10px; color: rgba(255,255,255,0.35); text-align: right; font-family: var(--font-ui); letter-spacing: 0.5px; }
+        .timer-ring-wrap { position: relative; width: 116px; height: 116px; margin: 10px auto 13px; }
+        .timer-ring-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+        .timer-ring-track { fill: none; stroke: rgba(255, 255, 255, 0.07); stroke-width: 2; }
+        .timer-ring-fill { fill: none; stroke: rgba(255,255,255,0.92); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 565; stroke-dashoffset: 565; transition: stroke-dashoffset 1s linear; filter: drop-shadow(0 0 3px rgba(255,255,255,0.35)); }
+        .timer-display-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+        .timer-text { font-size: 24px; font-weight: 300; color: rgba(255,255,255,0.95); font-family: var(--font-ui); letter-spacing: -0.5px; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+        .timer-label { font-size: 8px; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 1px; margin-top: 1px; }
+        .scene-selector { display: flex; justify-content: center; gap: 5px; margin-bottom: 10px; }
+        .scene-btn { padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.1); color: rgba(255,255,255,0.5); font-size: 9px; font-family: var(--font-ui); font-weight: 300; cursor: pointer; transition: all 0.2s; }
+        .scene-btn:hover { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.85); }
+        .scene-btn.active { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.3); color: white; box-shadow: 0 0 10px rgba(255,255,255,0.06); }
+        .duration-selector { display: flex; justify-content: center; gap: 4px; margin-bottom: 10px; }
+        .duration-btn { padding: 4px 9px; border-radius: 7px; border: 1px solid rgba(255,255,255,0.05); background: transparent; color: rgba(255,255,255,0.4); font-size: 8px; font-family: var(--font-ui); font-weight: 300; cursor: pointer; transition: all 0.15s; }
+        .duration-btn.active { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.9); }
+        .action-btn { width: 100%; padding: 8px 13px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.9); font-size: 10px; font-family: var(--font-ui); font-weight: 400; letter-spacing: 1px; cursor: pointer; transition: all 0.25s; margin-bottom: 10px; backdrop-filter: blur(6px); }
+        .action-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); box-shadow: 0 0 14px rgba(255,255,255,0.05); }
+        .weather-toggle-mini { display: flex; gap: 2px; background: rgba(255,255,255,0.05); padding: 2px; border-radius: 8px; margin-bottom: 10px; }
+        .weather-btn-mini { flex: 1; padding: 4px 6px; border-radius: 6px; border: none; background: transparent; color: rgba(255,255,255,0.4); font-size: 8px; font-family: var(--font-ui); font-weight: 400; cursor: pointer; transition: all 0.2s; }
+        .weather-btn-mini.active { background: rgba(255,255,255,0.12); color: white; }
+        .mini-toggle { display: flex; gap: 1px; background: rgba(255,255,255,0.08); padding: 1px; border-radius: 5px; }
+        .mini-toggle-btn { padding: 3px 6px; border-radius: 4px; border: none; background: transparent; color: rgba(255,255,255,0.4); font-size: 8px; font-family: var(--font-ui); font-weight: 400; cursor: pointer; transition: all 0.15s; }
+        .mini-toggle-btn.active { background: rgba(255,255,255,0.15); color: white; }
+        .top-menu-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.04); color: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; margin: 0 auto 10px; backdrop-filter: blur(8px); }
+        .top-menu-btn:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.08); color: white; }
+        .bottom-bar { display: flex; justify-content: center; margin-top: 3.5vh; width: 100%; }
+        .bottom-glass { display: flex; align-items: center; gap: 29px; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(28px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.14); border-radius: 20px; padding: 18px 38px; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), 0 10px 36px rgba(0, 0, 0, 0.38); }
+        .control-block { display: flex; flex-direction: column; gap: 6px; min-width: 170px; }
+        .control-row { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: rgba(255,255,255,0.6); letter-spacing: 0.5px; }
+        .control-icon-label { display: flex; align-items: center; gap: 6px; }
+        .slider-wrap { position: relative; height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; cursor: pointer; }
+        .slider-fill { position: absolute; left: 0; top: 0; bottom: 0; background: rgba(255,255,255,0.65); border-radius: 2px; box-shadow: 0 0 5px rgba(255,255,255,0.2); }
+        .slider-thumb { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 12px; height: 12px; background: white; border-radius: 50%; box-shadow: 0 0 8px rgba(255,255,255,0.35); cursor: grab; }
+        .divider { width: 1px; height: 30px; background: rgba(255,255,255,0.1); }
+        .controls-toggle-btn { width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); backdrop-filter: blur(20px); color: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; }
+        .controls-toggle-btn:hover { border-color: rgba(255,255,255,0.25); background: rgba(255,255,255,0.1); color: white; box-shadow: 0 0 14px rgba(255,255,255,0.05); }
+        .controls-close-btn { position: absolute; top: 8px; right: 10px; width: 22px; height: 22px; border: none; background: transparent; color: rgba(255,255,255,0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; border-radius: 4px; }
+        .controls-close-btn:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.08); }
+        .toast-mini { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.92); opacity: 0; z-index: 100; pointer-events: none; transition: all 0.5s cubic-bezier(0.22, 0.61, 0.36, 1); }
+        .toast-mini.show { transform: translate(-50%, -50%) scale(1); opacity: 1; pointer-events: auto; }
+        .toast-inner { padding: 10px 28px; border-radius: 20px; background: rgba(255,255,255,0.08); backdrop-filter: blur(28px) saturate(180%); border: 1px solid rgba(255,255,255,0.18); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06), 0 14px 40px rgba(0,0,0,0.35); font-family: var(--font-ui); font-size: 11px; letter-spacing: 2px; color: rgba(255,255,255,0.92); text-transform: uppercase; white-space: nowrap; }
+        .loading { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); color: rgba(255,255,255,0.7); font-size: 12px; z-index: 100; opacity: 0; transition: opacity 0.3s; pointer-events: none; letter-spacing: 2px; }
+        .loading.show { opacity: 1; }
+        .stats-bubble { position: fixed; top: 14px; right: 14px; z-index: 20; background: rgba(255,255,255,0.06); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.12); border-radius: 12px; padding: 14px 18px; color: rgba(255,255,255,0.85); font-size: 12px; font-family: var(--font-ui); min-width: 160px; }
+        .stats-bubble .stat-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+        .stats-bubble .stat-row:last-child { margin-bottom: 0; }
+        .stats-bubble .stat-label { color: rgba(255,255,255,0.5); font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; }
+        .stats-bubble .stat-value { font-weight: 400; color: rgba(255,255,255,0.95); }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.07); border-radius: 2px; }
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; grid-template-rows: auto auto auto; height: auto; max-width: 92vw; }
+            .glass-panel { min-height: 260px; }
+            .write-wrap { min-height: 260px; }
+            .stats-bubble { position: relative; top: auto; right: auto; margin-bottom: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    <div class="vignette-overlay"></div>
+    <div class="loading" id="loading">Loading...</div>
+
+    <div class="toast-mini" id="break-toast" onclick="hideBreakToast()">
+        <div class="toast-inner">Have a break</div>
+    </div>
+
+    <div class="stats-bubble" id="stats-bubble" style="display:none">
+        <div class="stat-row"><span class="stat-label">Today</span><span class="stat-value" id="stat-today">0 focus · 0m</span></div>
+        <div class="stat-row"><span class="stat-label">Streak</span><span class="stat-value" id="stat-streak">0 days</span></div>
+        <div class="stat-row"><span class="stat-label">Total</span><span class="stat-value" id="stat-total">0 focus · 0m</span></div>
+    </div>
+
+    <div class="ui-layer">
+        <div class="main-grid">
+            <div class="glass-panel">
+                <div class="panel-header" style="justify-content:space-between">
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                        Tasks
+                    </div>
+                    <button class="ghost-btn" id="clear-all-btn" style="padding:4px 10px;font-size:9px;letter-spacing:0.5px">Clear All</button>
+                </div>
+                <div class="panel-body">
+                    <div class="task-list" id="task-list"></div>
+                    <div class="task-input-wrap">
+                        <input type="text" class="task-input" id="task-input" placeholder="Add ...">
+                        <button class="add-task-btn" id="add-task-btn">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <div class="write-wrap">
+                    <textarea class="write-area" id="write-area" placeholder="思绪流动，记录灵感…"></textarea>
+                    <div class="release-overlay" id="release-overlay"></div>
+                    <div class="write-actions">
+                        <button class="ghost-btn" onclick="saveWrite()">Save</button>
+                        <button class="ghost-btn" onclick="releaseWrite()">Release</button>
+                    </div>
+                    <div class="write-stats" id="write-stats">0 chars | 0 lines</div>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <div class="panel-body">
+                    <div class="timer-ring-wrap">
+                        <svg class="timer-ring-svg" viewBox="0 0 200 200">
+                            <circle class="timer-ring-track" cx="100" cy="100" r="90"/>
+                            <circle class="timer-ring-fill" id="progress-ring" cx="100" cy="100" r="90"/>
+                        </svg>
+                        <div class="timer-display-center">
+                            <div class="timer-text" id="timer">25:00</div>
+                            <div class="timer-label" id="timer-status">Ready</div>
+                        </div>
+                    </div>
+
+                    <div class="weather-toggle-mini">
+                        <button class="weather-btn-mini active" id="w-rain" onclick="setWeather('rain')">RAIN</button>
+                        <button class="weather-btn-mini" id="w-snow" onclick="setWeather('snow')">SNOW</button>
+                    </div>
+
+                    <div class="scene-selector">
+                        <button class="scene-btn" data-scene="forest" onclick="setScene('forest')">Forest</button>
+                        <button class="scene-btn active" data-scene="city" onclick="setScene('city')">City</button>
+                        <button class="scene-btn" data-scene="ocean" onclick="setScene('ocean')">Ocean</button>
+                    </div>
+
+                    <div class="duration-selector">
+                        <button class="duration-btn active" onclick="setDuration(25)">25m</button>
+                        <button class="duration-btn" onclick="setDuration(45)">45m</button>
+                        <button class="duration-btn" onclick="setDuration(60)">60m</button>
+                    </div>
+
+                    <button class="action-btn" id="start-btn" onclick="toggleTimer()">Start Focus</button>
+
+                    <div style="margin-top:6px; display:flex; align-items:center; justify-content:center; gap:12px; font-size:10px; color:rgba(255,255,255,0.45);">
+                        <div style="display:flex; align-items:center; gap:4px;">
+                            <span style="font-size:9px; color:rgba(255,255,255,0.5); letter-spacing:0.5px;">MUSIC</span>
+                            <div class="mini-toggle">
+                                <button class="mini-toggle-btn" id="music-on" onclick="setMusic(true)">ON</button>
+                                <button class="mini-toggle-btn active" id="music-off" onclick="setMusic(false)">OFF</button>
+                            </div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:4px;">
+                            <span style="font-size:9px; color:rgba(255,255,255,0.5); letter-spacing:0.5px;">AMBIENT</span>
+                            <div class="mini-toggle">
+                                <button class="mini-toggle-btn active" id="ambient-on" onclick="setAmbient(true)">ON</button>
+                                <button class="mini-toggle-btn" id="ambient-off" onclick="setAmbient(false)">OFF</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-bar">
+            <button class="controls-toggle-btn" id="controls-toggle" onclick="toggleControls(true)" title="Controls">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <line x1="4" y1="21" x2="4" y2="14"/>
+                    <line x1="4" y1="10" x2="4" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12" y2="3"/>
+                    <line x1="20" y1="21" x2="20" y2="16"/>
+                    <line x1="20" y1="12" x2="20" y2="3"/>
+                    <line x1="1" y1="14" x2="7" y2="14"/>
+                    <line x1="9" y1="8" x2="15" y2="8"/>
+                    <line x1="17" y1="16" x2="23" y2="16"/>
+                </svg>
+            </button>
+            <div class="bottom-glass" id="controls-panel" style="display:none; position:relative;">
+                <button class="controls-close-btn" onclick="toggleControls(false)" title="Close">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+                <div class="control-block">
+                    <div class="control-row">
+                        <div class="control-icon-label">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/></svg>
+                            INTENSITY
+                        </div>
+                        <span id="rain-val">80%</span>
+                    </div>
+                    <div class="slider-wrap" id="rain-slider" onclick="sliderClick(event, 'rain')">
+                        <div class="slider-fill" id="rain-fill" style="width:80%"></div>
+                        <div class="slider-thumb" id="rain-thumb" style="left:80%"></div>
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="control-block">
+                    <div class="control-row">
+                        <div class="control-icon-label">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                            VOLUME
+                        </div>
+                        <span id="vol-val">40%</span>
+                    </div>
+                    <div class="slider-wrap" id="vol-slider" onclick="sliderClick(event, 'vol')">
+                        <div class="slider-fill" id="vol-fill" style="width:40%"></div>
+                        <div class="slider-thumb" id="vol-thumb" style="left:40%"></div>
+                    </div>
+                </div>
+                <div class="divider"></div>
+                <div class="control-block">
+                    <div class="control-row">
+                        <div class="control-icon-label">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/></svg>
+                            AMBIENT
+                        </div>
+                        <span id="ambient-val">50%</span>
+                    </div>
+                    <div class="slider-wrap" id="ambient-slider" onclick="sliderClick(event, 'ambient')">
+                        <div class="slider-fill" id="ambient-fill" style="width:50%"></div>
+                        <div class="slider-thumb" id="ambient-thumb" style="left:50%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+// ============================================
+// 1. Offline Scene Textures (Canvas-generated)
+// ============================================
+function createSceneTexture(sceneName) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1024; canvas.height = 1024;
+    const ctx = canvas.getContext('2d');
+    const w = 1024, h = 1024;
+
+    // Base gradients per scene
+    if (sceneName === 'forest') {
+        const g = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, w);
+        g.addColorStop(0, '#1a2e1a');
+        g.addColorStop(0.6, '#0f1f15');
+        g.addColorStop(1, '#050a08');
+        ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+        for (let i=0;i<40;i++) {
+            const x=Math.random()*w, y=Math.random()*h, r=Math.random()*300+100;
+            const rg=ctx.createRadialGradient(x,y,0,x,y,r);
+            rg.addColorStop(0, 'rgba(40,70,30,0.12)');
+            rg.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+        }
+    } else if (sceneName === 'city') {
+        const g = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, w);
+        g.addColorStop(0, '#1a1a2e');
+        g.addColorStop(0.5, '#0d0d18');
+        g.addColorStop(1, '#020205');
+        ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+        for (let i=0;i<25;i++) {
+            const x=Math.random()*w, y=Math.random()*h, r=Math.random()*250+80;
+            const hue = Math.random()>0.5 ? 220 : 280;
+            const rg=ctx.createRadialGradient(x,y,0,x,y,r);
+            rg.addColorStop(0, `hsla(${hue},60%,55%,0.08)`);
+            rg.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+        }
+    } else {
+        // ocean
+        const g = ctx.createRadialGradient(w/2, h/2, 0, w/2, h/2, w);
+        g.addColorStop(0, '#0a2336');
+        g.addColorStop(0.6, '#051525');
+        g.addColorStop(1, '#020810');
+        ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+        for (let i=0;i<35;i++) {
+            const x=Math.random()*w, y=Math.random()*h, r=Math.random()*350+120;
+            const rg=ctx.createRadialGradient(x,y,0,x,y,r);
+            rg.addColorStop(0, 'rgba(20,60,90,0.14)');
+            rg.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle=rg; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+        }
+    }
+
+    // Shared fine noise grain
+    const imageData = ctx.getImageData(0,0,w,h);
+    const data = imageData.data;
+    for (let i=0;i<data.length;i+=4) {
+        const noise = (Math.random()-0.5)*12;
+        data[i] = Math.max(0, Math.min(255, data[i]+noise));
+        data[i+1] = Math.max(0, Math.min(255, data[i+1]+noise));
+        data[i+2] = Math.max(0, Math.min(255, data[i+2]+noise));
+    }
+    ctx.putImageData(imageData,0,0);
+
+    return new THREE.CanvasTexture(canvas);
+}
+
+// ============================================
+// 2. Web Audio API — Ambient Sound Engine
+// ============================================
+const MUSIC_PLAYLIST = [
+    'assets/bg_music.mp3?v=3',
+    'assets/music1.mp3?v=3',
+    'assets/music2.mp3?v=3',
+    'assets/music3.mp3?v=3',
+    'assets/music4.mp3?v=3',
+    'assets/music5.mp3?v=3',
+    'assets/music6.mp3?v=3',
+    'assets/music7.mp3?v=3'
+];
+const RAIN_PLAYLIST = [
+    'assets/rainA.mp3?v=3',
+    'assets/rainB.mp3?v=3',
+    'assets/rainC.mp3?v=3',
+    'assets/rainD.mp3?v=3'
+];
+
+const AudioEngine = {
+    ctx: null,
+    masterGain: null,
+    // Rain: native audio for maximum compatibility
+    rainElement: new Audio(RAIN_PLAYLIST[0]),
+    // Snow: Web Audio noise
+    noiseNode: null,
+    filter: null,
+    noiseGain: null,
+    // Music: Web Audio for fade
+    musicElement: new Audio(MUSIC_PLAYLIST[0]),
+    musicSource: null,
+    musicGain: null,
+    vol: 0.75,
+    ambientVol: 0.65,
+    mode: 'rain',
+    musicEnabled: false,
+    ambientEnabled: true,
+
+    init() {
+        try {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContext) return;
+            this.ctx = new AudioContext();
+            this.masterGain = this.ctx.createGain();
+            this.masterGain.gain.value = this.vol;
+            this.masterGain.connect(this.ctx.destination);
+
+            // Rain native setup
+            this.rainElement.loop = false;
+            this.rainElement.crossOrigin = 'anonymous';
+            this.rainElement.preload = 'auto';
+            this._pickRandomRainTrack();
+            this.rainElement.load();
+            this.rainElement.volume = Math.max(0.02, this.vol * this.ambientVol);
+            this.rainElement.addEventListener('ended', () => this._playNextRainTrack());
+            this.rainElement.onerror = (e) => console.error('Rain load error', e);
+
+            // Snow noise
+            this.noiseGain = this.ctx.createGain();
+            this.noiseGain.gain.value = 0.0001;
+            this.noiseGain.connect(this.masterGain);
+            this._createNoiseBuffer();
+            this._setSnowFilter();
+
+            // Music
+            this.musicElement.loop = false;
+            this.musicElement.crossOrigin = 'anonymous';
+            this.musicElement.preload = 'auto';
+            this._pickRandomTrack();
+            this.musicElement.load();
+            try {
+                this.musicGain = this.ctx.createGain();
+                this.musicGain.gain.value = 0.0001;
+                this.musicSource = this.ctx.createMediaElementSource(this.musicElement);
+                this.musicSource.connect(this.musicGain);
+                this.musicGain.connect(this.masterGain);
+            } catch(e) {
+                this.musicGain = null; this.musicSource = null;
+            }
+            this.musicElement.addEventListener('ended', () => this._playNextTrack());
+        } catch(e) {}
+    },
+
+    _pickRandomTrack() {
+        let idx;
+        do { idx = Math.floor(Math.random() * MUSIC_PLAYLIST.length); }
+        while (MUSIC_PLAYLIST.length > 1 && MUSIC_PLAYLIST[idx] === this.musicElement.getAttribute('src'));
+        this.musicElement.src = MUSIC_PLAYLIST[idx];
+    },
+    _pickRandomRainTrack() {
+        let idx;
+        do { idx = Math.floor(Math.random() * RAIN_PLAYLIST.length); }
+        while (RAIN_PLAYLIST.length > 1 && RAIN_PLAYLIST[idx] === this.rainElement.getAttribute('src'));
+        this.rainElement.src = RAIN_PLAYLIST[idx];
+    },
+    _playNextRainTrack() {
+        this._pickRandomRainTrack();
+        this.rainElement.load();
+        this.rainElement.play().catch(()=>{});
+    },
+
+    _createNoiseBuffer() {
+        if (!this.ctx) return;
+        const rate = this.ctx.sampleRate;
+        const length = rate * 2;
+        const buffer = this.ctx.createBuffer(1, length, rate);
+        const data = buffer.getChannelData(0);
+        let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+        for (let i=0;i<length;i++) {
+            const white = Math.random()*2-1;
+            b0 = 0.99886*b0 + white*0.0555179;
+            b1 = 0.99332*b1 + white*0.0750759;
+            b2 = 0.96900*b2 + white*0.1538520;
+            b3 = 0.86650*b3 + white*0.3104856;
+            b4 = 0.55000*b4 + white*0.5329522;
+            b5 = -0.7616*b5 - white*0.0168980;
+            data[i] = (b0+b1+b2+b3+b4+b5+b6+white*0.5362)*0.11;
+            b6 = white*0.115926;
+        }
+        this.noiseBuffer = buffer;
+    },
+
+    _setSnowFilter() {
+        if (!this.ctx) return;
+        try { this.filter.disconnect(); } catch(e){}
+        this.filter = this.ctx.createBiquadFilter();
+        this.filter.type = 'lowpass';
+        this.filter.frequency.value = 320;
+    },
+
+    _playNextTrack() {
+        if (!this.musicEnabled) return;
+        this._pickRandomTrack();
+        this.musicElement.load();
+        this.musicElement.play().catch(()=>{});
+    },
+
+    resume() {
+        try { if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume(); } catch(e){}
+    },
+
+    startAmbient() {
+        this.rainElement.volume = Math.max(0.05, this.vol * this.ambientVol);
+        if (this.mode === 'rain') {
+            this.rainElement.currentTime = 0;
+            const playPromise = this.rainElement.play();
+            if (playPromise) playPromise.catch((e) => console.error('Rain play error', e));
+            if (this.noiseNode) {
+                try {
+                    const now = this.ctx.currentTime;
+                    this.noiseGain.gain.cancelScheduledValues(now);
+                    this.noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
+                } catch(e){}
+                const old = this.noiseNode;
+                setTimeout(() => { try { old.stop(); } catch(e){} if (this.noiseNode === old) this.noiseNode = null; }, 600);
+            }
+        } else {
+            this._setSnowFilter();
+            if (this.noiseNode) { try { this.noiseNode.stop(); } catch(e){} }
+            const src = this.ctx.createBufferSource();
+            src.buffer = this.noiseBuffer; src.loop = true;
+            src.connect(this.filter);
+            this.filter.connect(this.noiseGain);
+            src.start(0);
+            this.noiseNode = src;
+            const now = this.ctx.currentTime;
+            this.noiseGain.gain.cancelScheduledValues(now);
+            this.noiseGain.gain.setValueAtTime(0.0001, now);
+            this.noiseGain.gain.exponentialRampToValueAtTime(Math.max(0.02, this.vol * this.ambientVol * 0.82), now + 1.5);
+            this.rainElement.pause();
+            this.rainElement.currentTime = 0;
+        }
+    },
+
+    stopAmbient() {
+        this.rainElement.pause(); this.rainElement.currentTime = 0;
+        if (this.noiseGain && this.ctx) {
+            try {
+                const now = this.ctx.currentTime;
+                this.noiseGain.gain.cancelScheduledValues(now);
+                this.noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+            } catch(e){}
+        }
+        setTimeout(() => {
+            this.rainElement.pause(); this.rainElement.currentTime = 0;
+            if (this.noiseNode) { try { this.noiseNode.stop(); } catch(e){} this.noiseNode = null; }
+        }, 900);
+    },
+
+    setVolume(pct) {
+        this.vol = Math.max(0, Math.min(1, pct));
+        this.rainElement.volume = Math.max(0.02, this.vol * this.ambientVol);
+        if (this.masterGain && this.ctx) {
+            try { this.masterGain.gain.setTargetAtTime(this.vol, this.ctx.currentTime, 0.1); } catch(e){}
+        }
+    },
+    setAmbientVolume(pct) {
+        this.ambientVol = Math.max(0, Math.min(1, pct));
+        this.rainElement.volume = Math.max(0.02, this.vol * this.ambientVol);
+        if (this.noiseGain && this.ctx) {
+            try { this.noiseGain.gain.setTargetAtTime(Math.max(0.02, this.vol * this.ambientVol * 0.82), this.ctx.currentTime, 0.1); } catch(e){}
+        }
+    },
+
+    toggleMusic() {
+        if (!this.ctx) this.init();
+        this.resume();
+        this.musicEnabled = !this.musicEnabled;
+        if (this.musicEnabled) {
+            if (!this.musicElement.getAttribute('src')) this._pickRandomTrack();
+            this.musicElement.play().catch(()=>{});
+            if (this.musicGain && this.ctx) {
+                const now = this.ctx.currentTime;
+                this.musicGain.gain.cancelScheduledValues(now);
+                this.musicGain.gain.setValueAtTime(0.0001, now);
+                this.musicGain.gain.exponentialRampToValueAtTime(Math.max(0.02, this.vol*0.9), now+1.5);
+            }
+        } else {
+            this.musicElement.pause();
+            if (this.musicGain && this.ctx) {
+                const now = this.ctx.currentTime;
+                this.musicGain.gain.cancelScheduledValues(now);
+                this.musicGain.gain.exponentialRampToValueAtTime(0.0001, now+0.5);
+            }
+        }
+        return this.musicEnabled;
+    }
+};
+
+// ============================================
+// 3. Three.js Background (Rain & Snow)
+// ============================================
+const vertexShader = `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
+
+const rainFragmentShader = `
+uniform float uTime; uniform vec2 uResolution; uniform float uIntensity; uniform sampler2D uTexture; varying vec2 vUv;
+#define S(a,b,t) smoothstep(a,b,t)
+vec3 N13(float p) { vec3 p3 = fract(vec3(p) * vec3(.1031,.11369,.13787)); p3 += dot(p3, p3.yzx + 19.19); return fract(vec3((p3.x + p3.y)*p3.z, (p3.x+p3.z)*p3.y, (p3.y+p3.z)*p3.x)); }
+float N(float t) { return fract(sin(t*12345.564)*7658.76); }
+float Saw(float b, float t) { return S(0.,b,t)*S(1.,b,t); }
+float StaticDrops(vec2 uv, float t) { uv *= 40.; vec2 id = floor(uv); uv = fract(uv)-.5; vec3 n = N13(id.x*107.45+id.y*3543.654); vec2 p = (n.xy-.5)*.7; float d = length(uv-p); float fade = Saw(.025, fract(t+n.z)); return S(.3,0.,d)*fract(n.z*10.)*fade; }
+vec2 DropLayer(vec2 uv, float t) {
+    vec2 UV = uv; uv.y += t*0.75; vec2 a = vec2(6.,1.); vec2 grid = a*2.; vec2 id = floor(uv*grid);
+    float colShift = N(id.x); uv.y += colShift; id = floor(uv*grid);
+    vec3 n = N13(id.x*35.2+id.y*2376.1); vec2 st = fract(uv*grid)-vec2(.5,0);
+    float x = n.x-.5; float y = UV.y*20.; float wiggle = sin(y+sin(y)); x += wiggle*(.5-abs(x))*(n.z-.5); x *= .7;
+    float ti = fract(t+n.z); y = (Saw(.85,ti)-.5)*.9+.5; vec2 p = vec2(x,y);
+    float d = length((st-p)*a.yx); float mainDrop = S(.4,.0,d);
+    float r = sqrt(S(1.,y,st.y)); float cd = abs(st.x-x); float trail = S(.23*r,.15*r*r,cd); float trailFront = S(-.02,.02,st.y-y); trail *= trailFront*r*r;
+    y = UV.y; float trail2 = S(.2*r,.0,cd); float droplets = max(0.,(sin(y*(1.-y)*120.)-st.y))*trail2*trailFront*n.z;
+    y = fract(y*10.)+(st.y-.5); float dd = length(st-vec2(x,y)); droplets = S(.3,0.,dd); float m = mainDrop+droplets*r*trailFront;
+    return vec2(m,trail);
+}
+vec2 Drops(vec2 uv, float t, float l0, float l1, float l2) {
+    float s = StaticDrops(uv,t)*l0; vec2 m1 = DropLayer(uv,t)*l1; vec2 m2 = DropLayer(uv*1.85,t)*l2;
+    float c = s+m1.x+m2.x; c = S(.3,1.,c); return vec2(c,max(m1.y*l0,m2.y*l1));
+}
+void main() {
+    vec2 uv = vUv; vec2 centeredUv = (uv-0.5)*2.0;
+    float aspect = uResolution.y>0.0?uResolution.x/uResolution.y:1.0; centeredUv.x *= aspect;
+    float t = uTime*0.2; vec2 rainUv = uv*vec2(aspect,1.0);
+    float staticDrops = S(-.5,1.,uIntensity)*2.; float layer1 = S(.25,.75,uIntensity); float layer2 = S(.0,.5,uIntensity);
+    vec2 c = Drops(rainUv,t,staticDrops,layer1,layer2);
+    vec2 e = vec2(.001,0.); float cx = Drops(rainUv+e,t,staticDrops,layer1,layer2).x; float cy = Drops(rainUv+e.yx,t,staticDrops,layer1,layer2).x; vec2 n = vec2(cx-c.x,cy-c.x);
+    vec3 col = texture2D(uTexture,uv+n).rgb;
+    vec3 tint = vec3(0.58,0.62,0.68); col = mix(col,col*tint,0.75); col = mix(vec3(dot(col,vec3(0.299,0.587,0.114))),col,0.6); col *= 0.68;
+    vec3 lightDir = normalize(vec3(-1.0,1.0,0.5)); float spec = max(0.0,dot(normalize(vec3(n,0.05)),lightDir)); col += pow(spec,30.0)*0.4*S(0.1,0.5,c.x);
+    float grain = fract(sin(dot(uv+t*0.01,vec2(12.9898,78.233)))*43758.5453); col += (grain-0.5)*0.03;
+    float vignette = 1.0-length(centeredUv*0.35); col *= S(-0.2,0.5,vignette);
+    gl_FragColor = vec4(col,1.0);
+}`;
+
+const snowFragmentShader = `
+uniform float uTime; uniform vec2 uResolution; uniform vec2 uMouse; uniform sampler2D uTexture; uniform float uIntensity; varying vec2 vUv;
+#define S(a,b,t) smoothstep(a,b,t)
+#define LAYERS 50
+#define DEPTH .5
+#define WIDTH .3
+#define SPEED .6
+void main() {
+    const mat3 p = mat3(13.323122,23.5112,21.71123,21.1212,28.7312,11.9312,21.8112,14.7212,61.3934);
+    vec2 uv = vUv; vec2 centeredUv = (uv-0.5)*2.0; float aspect = uResolution.y>0.0?uResolution.x/uResolution.y:1.0; centeredUv.x *= aspect;
+    vec2 snowUv = uMouse.xy/uResolution.xy + vec2(1., uResolution.y/uResolution.x) * vUv;
+    vec3 acc = vec3(0.0); float dof = 5.*sin(uTime*.1);
+    for (int i=0;i<LAYERS;i++) {
+        if (float(i) > float(LAYERS) * uIntensity) break;
+        float fi = float(i); vec2 q = snowUv*(1.+fi*DEPTH);
+        q += vec2(q.y*(WIDTH*mod(fi*7.238917,1.)-WIDTH*.5),SPEED*uTime/(1.+fi*DEPTH*.03));
+        vec3 n = vec3(floor(q),31.189+fi); vec3 m = floor(n)*.00001 + fract(n); vec3 mp = (31415.9+m)/fract(p*m); vec3 r = fract(mp);
+        vec2 s = abs(mod(q,1.)-.5+.9*r.xy-.45); s += .01*abs(2.*fract(10.*q.yx)-1.);
+        float d = .6*max(s.x-s.y,s.x+s.y)+max(s.x,s.y)-.01;
+        float edge = .005+.05*min(.5*abs(fi-5.-dof),1.);
+        acc += vec3(smoothstep(edge,-edge,d)*(r.x/(1.+.02*fi*DEPTH)));
+    }
+    vec3 col = texture2D(uTexture, uv).rgb;
+    vec3 winterTint = vec3(0.68, 0.72, 0.78); col = mix(col, col * winterTint, 0.5);
+    col = mix(vec3(dot(col, vec3(0.299, 0.587, 0.114))), col, 0.65); col *= 0.68;
+    col += acc * 0.65;
+    float vignette = 1.0 - length(centeredUv * 0.35); col *= S(-0.2, 0.5, vignette);
+    gl_FragColor = vec4(col, 1.0);
+}`;
+
+let scene3, camera3, renderer3, mesh3;
+let currentMaterial = null;
+let weatherMode = 'rain';
+let currentScene = 'forest';
+
+const uniforms = {
+    uTime: { value: 0 },
+    uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+    uIntensity: { value: 0.8 },
+    uTexture: { value: null },
+    uMouse: { value: new THREE.Vector2(0, 0) }
+};
+
+let textureLoader3;
+const sceneMap = {
+    city: 'assets/city.jpg',
+    forest: 'assets/forest.jpg',
+    ocean: 'assets/ocean.jpg'
+};
+
+function initThree() {
+    const container = document.getElementById('canvas-container');
+    scene3 = new THREE.Scene();
+    camera3 = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    renderer3 = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer3.setSize(window.innerWidth, window.innerHeight);
+    renderer3.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer3.domElement);
+
+    textureLoader3 = new THREE.TextureLoader();
+    loadTexture(sceneMap.city);
+    window.addEventListener('resize', onWindowResize, false);
+    document.addEventListener('mousemove', onMouseMove, false);
+}
+
+function loadTexture(url) {
+    document.getElementById('loading').classList.add('show');
+    textureLoader3.load(url,
+        (texture) => {
+            texture.minFilter = THREE.LinearFilter;
+            texture.magFilter = THREE.LinearFilter;
+            uniforms.uTexture.value = texture;
+            if (!mesh3) {
+                const geometry = new THREE.PlaneGeometry(2, 2);
+                currentMaterial = new THREE.ShaderMaterial({
+                    uniforms: uniforms,
+                    vertexShader: vertexShader,
+                    fragmentShader: weatherMode === 'rain' ? rainFragmentShader : snowFragmentShader
+                });
+                mesh3 = new THREE.Mesh(geometry, currentMaterial);
+                scene3.add(mesh3);
+            } else {
+                currentMaterial.fragmentShader = weatherMode === 'rain' ? rainFragmentShader : snowFragmentShader;
+                currentMaterial.needsUpdate = true;
+            }
+            document.getElementById('loading').classList.remove('show');
+        },
+        undefined,
+        () => {
+            // Fallback to generated canvas texture if local image fails
+            const fbName = Object.keys(sceneMap).find(k => sceneMap[k] === url) || 'forest';
+            const texture = createSceneTexture(fbName);
+            texture.minFilter = THREE.LinearFilter;
+            texture.magFilter = THREE.LinearFilter;
+            uniforms.uTexture.value = texture;
+            if (!mesh3) {
+                const geometry = new THREE.PlaneGeometry(2, 2);
+                currentMaterial = new THREE.ShaderMaterial({
+                    uniforms: uniforms,
+                    vertexShader: vertexShader,
+                    fragmentShader: weatherMode === 'rain' ? rainFragmentShader : snowFragmentShader
+                });
+                mesh3 = new THREE.Mesh(geometry, currentMaterial);
+                scene3.add(mesh3);
+            } else {
+                currentMaterial.fragmentShader = weatherMode === 'rain' ? rainFragmentShader : snowFragmentShader;
+                currentMaterial.needsUpdate = true;
+            }
+            document.getElementById('loading').classList.remove('show');
+        }
+    );
+}
+
+function onWindowResize() {
+    renderer3.setSize(window.innerWidth, window.innerHeight);
+    uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+}
+function onMouseMove(e) {
+    uniforms.uMouse.value.set(e.clientX, window.innerHeight - e.clientY);
+}
+function animateThree() {
+    requestAnimationFrame(animateThree);
+    uniforms.uTime.value += 0.016;
+    renderer3.render(scene3, camera3);
+}
+initThree(); animateThree();
+
+// ============================================
+// 4. Tasks
+// ============================================
+let tasks = JSON.parse(localStorage.getItem('flowspace_tasks') || '[]');
+function renderTasks() {
+    const list = document.getElementById('task-list');
+    list.innerHTML = '';
+    tasks.forEach((task, index) => {
+        const el = document.createElement('div');
+        el.className = `task-item ${task.completed ? 'completed' : ''}`;
+        el.innerHTML = `
+            <div class="task-checkbox ${task.completed ? 'checked' : ''}" data-index="${index}"></div>
+            <input type="text" class="task-text" value="${task.text.replace(/"/g,'&quot;')}" data-index="${index}" ${task.completed ? 'readonly' : ''}>
+            <svg class="task-delete" data-index="${index}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>`;
+        list.appendChild(el);
+    });
+    document.querySelectorAll('.task-checkbox').forEach(cb => {
+        cb.addEventListener('click', () => { const idx = parseInt(cb.dataset.index); tasks[idx].completed = !tasks[idx].completed; saveTasks(); renderTasks(); });
+    });
+    document.querySelectorAll('.task-text').forEach(input => {
+        input.addEventListener('blur', () => { const idx = parseInt(input.dataset.index); tasks[idx].text = input.value; saveTasks(); });
+        input.addEventListener('keypress', (e) => { if (e.key === 'Enter') input.blur(); });
+    });
+    document.querySelectorAll('.task-delete').forEach(btn => {
+        btn.addEventListener('click', () => { const idx = parseInt(btn.dataset.index); tasks.splice(idx, 1); saveTasks(); renderTasks(); });
+    });
+}
+function saveTasks() { localStorage.setItem('flowspace_tasks', JSON.stringify(tasks)); }
+function addTask() {
+    const input = document.getElementById('task-input');
+    const text = input.value.trim();
+    if (text) { tasks.push({ text, completed: false }); input.value = ''; saveTasks(); renderTasks(); input.focus(); }
+}
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('add-task-btn').addEventListener('click', addTask);
+    document.getElementById('task-input').addEventListener('keypress', (e) => { if (e.key === 'Enter') addTask(); });
+    document.getElementById('clear-all-btn').addEventListener('click', () => { if (tasks.length > 0) releaseClearAll(); });
+    renderTasks();
+
+    const wa = document.getElementById('write-area');
+    const writeStats = document.getElementById('write-stats');
+    wa.addEventListener('input', () => {
+        const text = wa.value;
+        writeStats.textContent = `${text.length} chars | ${text.split('\n').length} lines`;
+        localStorage.setItem('flowspace_draft', text);
+    });
+    const savedDraft = localStorage.getItem('flowspace_draft');
+    if (savedDraft) { wa.value = savedDraft; wa.dispatchEvent(new Event('input')); }
+});
+
+function saveWrite() {
+    const wa = document.getElementById('write-area');
+    const text = wa.value; if (!text.trim()) return;
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `flowspace-${new Date().toISOString().slice(0,10)}.txt`; a.click(); URL.revokeObjectURL(url);
+}
+function releaseWrite() {
+    const wa = document.getElementById('write-area');
+    const text = wa.value; if (!text.trim()) return;
+    const overlay = document.getElementById('release-overlay');
+    const style = getComputedStyle(wa);
+    const lines = text.split('\n');
+
+    // 精确定位 overlay 到 textarea 内容盒（避免 inline-block baseline 差异导致的整体偏移）
+    const wrapRect = wa.parentElement.getBoundingClientRect();
+    const waRect = wa.getBoundingClientRect();
+    overlay.style.top = (waRect.top - wrapRect.top) + 'px';
+    overlay.style.left = (waRect.left - wrapRect.left) + 'px';
+    overlay.style.width = waRect.width + 'px';
+    overlay.style.height = waRect.height + 'px';
+    overlay.style.padding = '0';
+
+    overlay.innerHTML = '';
+    overlay.style.opacity = '1';
+    overlay.style.whiteSpace = 'pre-wrap';
+    overlay.style.wordBreak = 'break-word';
+    overlay.style.lineHeight = style.lineHeight;
+    overlay.style.fontSize = style.fontSize;
+    overlay.style.fontFamily = style.fontFamily;
+    overlay.style.fontWeight = style.fontWeight;
+    overlay.style.letterSpacing = style.letterSpacing;
+    overlay.style.color = style.color;
+
+    let html = '';
+    lines.forEach((line, lineIdx) => {
+        if (lineIdx > 0) html += '\n';
+        for (let i = 0; i < line.length; i++) {
+            const ch = line[i] === ' ' ? '\u00A0' : (line[i] === '<' ? '&lt;' : (line[i] === '>' ? '&gt;' : line[i]));
+            const rot = ((Math.random() - 0.5) * 42 - 10).toFixed(1); // slight left-tilt bias like wind pushing
+            const dy = ((Math.random() - 0.5) * 36).toFixed(1);
+            const dy2 = ((Math.random() - 0.5) * 50 + (Math.random() * 15)).toFixed(1);
+            const delay = (lineIdx * 0.04 + i * 0.028 + Math.random() * 0.15).toFixed(3);
+            html += `<span class="release-char" style="--rot:${rot}deg;--dy:${dy}px;--dy2:${dy2}px;transition-delay:${delay}s">${ch}</span>`;
+        }
+        if (line.length === 0) html += '<span class="release-char"></span>';
+    });
+    overlay.innerHTML = html;
+
+    wa.style.opacity = '0';
+    requestAnimationFrame(() => { overlay.querySelectorAll('.release-char').forEach(span => span.classList.add('fly')); });
+    setTimeout(() => {
+        wa.value = '';
+        wa.style.opacity = '1';
+        overlay.innerHTML = '';
+        overlay.style.opacity = '';
+        overlay.style.whiteSpace = '';
+        overlay.style.wordBreak = '';
+        overlay.style.top = ''; overlay.style.left = '';
+        overlay.style.width = ''; overlay.style.height = ''; overlay.style.padding = '';
+        overlay.style.lineHeight = ''; overlay.style.fontSize = '';
+        overlay.style.fontFamily = ''; overlay.style.fontWeight = '';
+        overlay.style.letterSpacing = ''; overlay.style.color = '';
+        wa.dispatchEvent(new Event('input'));
+        localStorage.setItem('flowspace_draft', '');
+    }, 2400);
+}
+
+function releaseClearAll() {
+    const list = document.getElementById('task-list');
+    if (!list || list.children.length === 0) return;
+    const panelBody = list.parentElement;
+    const panelRect = panelBody.getBoundingClientRect();
+    const inputs = Array.from(list.querySelectorAll('.task-text'));
+    const overlays = [];
+
+    inputs.forEach((input, lineIdx) => {
+        const rect = input.getBoundingClientRect();
+        const style = getComputedStyle(input);
+        const overlay = document.createElement('div');
+        overlay.style.cssText = `
+            position: absolute;
+            top: ${rect.top - panelRect.top}px;
+            left: ${rect.left - panelRect.left}px;
+            width: ${rect.width}px;
+            height: ${rect.height}px;
+            z-index: 50;
+            pointer-events: none;
+            opacity: 0;
+            white-space: pre;
+            overflow: visible;
+            font-family: ${style.fontFamily};
+            font-size: ${style.fontSize};
+            line-height: ${style.lineHeight};
+            font-weight: ${style.fontWeight};
+            color: ${style.color};
+            letter-spacing: ${style.letterSpacing};
+            padding: 0;
+            margin: 0;
+            border: none;
+            background: transparent;
+        `;
+
+        const text = input.value;
+        let html = '';
+        for (let i = 0; i < text.length; i++) {
+            const ch = text[i] === ' ' ? '\u00A0' : (text[i] === '<' ? '&lt;' : (text[i] === '>' ? '&gt;' : text[i]));
+            const rot = ((Math.random() - 0.5) * 42 - 10).toFixed(1);
+            const dy = ((Math.random() - 0.5) * 36).toFixed(1);
+            const dy2 = ((Math.random() - 0.5) * 50 + (Math.random() * 15)).toFixed(1);
+            const delay = (lineIdx * 0.04 + i * 0.028 + Math.random() * 0.15).toFixed(3);
+            html += `<span class="release-char" style="--rot:${rot}deg;--dy:${dy}px;--dy2:${dy2}px;transition-delay:${delay}s">${ch}</span>`;
+        }
+        overlay.innerHTML = html;
+        panelBody.appendChild(overlay);
+        overlays.push(overlay);
+    });
+
+    list.style.opacity = '0';
+    overlays.forEach(o => o.style.opacity = '1');
+    requestAnimationFrame(() => {
+        overlays.forEach(o => o.querySelectorAll('.release-char').forEach(span => span.classList.add('fly')));
+    });
+
+    setTimeout(() => {
+        tasks = [];
+        saveTasks();
+        renderTasks();
+        list.style.opacity = '1';
+        overlays.forEach(o => o.remove());
+    }, 1800);
+}
+
+function playBell() {
+    try {
+        const ctx = AudioEngine.ctx || new (window.AudioContext || window.webkitAudioContext)();
+        const now = ctx.currentTime;
+        // 主铃声音色：sine + 高地高频倍音
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc.type = 'sine';
+        osc2.type = 'triangle';
+        osc.frequency.setValueAtTime(523.25, now); // C5
+        osc.frequency.exponentialRampToValueAtTime(523.25, now + 0.8);
+        osc2.frequency.setValueAtTime(1046.5, now); // C6
+        osc2.frequency.exponentialRampToValueAtTime(1046.5, now + 0.6);
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.35, now + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+        gain2.gain.setValueAtTime(0, now);
+        gain2.gain.linearRampToValueAtTime(0.08, now + 0.02);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+        // 轻柔混响：通过 delay 模拟
+        const delay = ctx.createDelay();
+        delay.delayTime.value = 0.08;
+        const delayGain = ctx.createGain();
+        delayGain.gain.value = 0.15;
+        // 连接
+        osc.connect(gain);
+        osc2.connect(gain2);
+        gain.connect(ctx.destination);
+        gain2.connect(ctx.destination);
+        gain.connect(delay);
+        delay.connect(delayGain);
+        delayGain.connect(ctx.destination);
+        osc.start(now);
+        osc2.start(now);
+        osc.stop(now + 1.5);
+        osc2.stop(now + 1.2);
+    } catch (e) { console.log('bell error', e); }
+}
+
+function showBreakToast() {
+    const toast = document.getElementById('break-toast');
+    toast.classList.add('show');
+    setTimeout(() => hideBreakToast(), 3500);
+}
+function hideBreakToast() {
+    document.getElementById('break-toast').classList.remove('show');
+}
+
+// ============================================
+// 6. Timer
+// ============================================
+const CIRCUMFERENCE = 2 * Math.PI * 90;
+const progressRing = document.getElementById('progress-ring');
+progressRing.style.strokeDasharray = CIRCUMFERENCE;
+progressRing.style.strokeDashoffset = CIRCUMFERENCE;
+let timerInterval = null;
+let remainingSeconds = 25 * 60;
+let totalSeconds = 25 * 60;
+let isRunning = false;
+
+function updateTimerDisplay() {
+    const mins = Math.floor(remainingSeconds / 60);
+    const secs = remainingSeconds % 60;
+    document.getElementById('timer').textContent = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+    const progress = (totalSeconds - remainingSeconds) / totalSeconds;
+    progressRing.style.strokeDashoffset = CIRCUMFERENCE - progress * CIRCUMFERENCE;
+}
+function toggleTimer() {
+    const btn = document.getElementById('start-btn');
+    const status = document.getElementById('timer-status');
+    if (!isRunning) {
+        // Init audio on first user gesture
+        if (!AudioEngine.ctx) AudioEngine.init();
+        if (AudioEngine.ambientEnabled) AudioEngine.startAmbient();
+        isRunning = true;
+        btn.textContent = 'Pause';
+        status.textContent = 'Focusing';
+        timerInterval = setInterval(() => {
+            remainingSeconds--;
+            updateTimerDisplay();
+            if (remainingSeconds <= 0) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                btn.textContent = 'Start Focus';
+                status.textContent = 'Done';
+                showBreakToast();
+                playBell();
+                remainingSeconds = totalSeconds;
+                updateTimerDisplay();
+            }
+        }, 1000);
+    } else {
+        clearInterval(timerInterval);
+        isRunning = false;
+        btn.textContent = 'Resume';
+        status.textContent = 'Paused';
+        AudioEngine.stopAmbient();
+    }
+}
+function setDuration(minutes) {
+    if (isRunning) return;
+    totalSeconds = minutes * 60;
+    remainingSeconds = totalSeconds;
+    updateTimerDisplay();
+    document.querySelectorAll('.duration-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+// ============================================
+// 8. Scene / Weather / Controls
+// ============================================
+function setScene(sceneName) {
+    currentScene = sceneName;
+    document.querySelectorAll('.scene-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`[data-scene="${sceneName}"]`).classList.add('active');
+    loadTexture(sceneMap[sceneName]);
+}
+function setWeather(type) {
+    document.querySelectorAll('.weather-btn-mini').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(type==='rain'?'w-rain':'w-snow').classList.add('active');
+    weatherMode = type;
+    AudioEngine.mode = type === 'rain' ? 'rain' : 'snow';
+    if (isRunning) {
+        AudioEngine.stopAmbient();
+        setTimeout(() => AudioEngine.startAmbient(), 300);
+    }
+    if (mesh3) {
+        currentMaterial.fragmentShader = type === 'rain' ? rainFragmentShader : snowFragmentShader;
+        currentMaterial.needsUpdate = true;
+    }
+}
+function sliderClick(e, type) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(100, Math.round(((e.clientX - rect.left) / rect.width) * 100)));
+    setSlider(type, pct);
+}
+function setSlider(type, pct) {
+    document.getElementById(`${type}-fill`).style.width = pct + '%';
+    document.getElementById(`${type}-thumb`).style.left = pct + '%';
+    document.getElementById(`${type}-val`).textContent = pct + '%';
+    if (type === 'rain') { uniforms.uIntensity.value = pct / 100; }
+    if (type === 'vol') { AudioEngine.setVolume(pct/100); }
+    if (type === 'ambient') { AudioEngine.setAmbientVolume(pct/100); }
+}
+function toggleControls(show) {
+    document.getElementById('controls-toggle').style.display = show ? 'none' : 'flex';
+    document.getElementById('controls-panel').style.display = show ? 'flex' : 'none';
+}
+function setMusic(on) {
+    if (on === AudioEngine.musicEnabled) return;
+    AudioEngine.toggleMusic();
+    document.getElementById('music-on').classList.toggle('active', AudioEngine.musicEnabled);
+    document.getElementById('music-off').classList.toggle('active', !AudioEngine.musicEnabled);
+}
+function setAmbient(on) {
+    AudioEngine.ambientEnabled = !!on;
+    document.getElementById('ambient-on').classList.toggle('active', AudioEngine.ambientEnabled);
+    document.getElementById('ambient-off').classList.toggle('active', !AudioEngine.ambientEnabled);
+    if (isRunning) {
+        if (AudioEngine.ambientEnabled) { AudioEngine.startAmbient(); }
+        else { AudioEngine.stopAmbient(); }
+    }
+}
+// Init audio on first interaction to satisfy browser autoplay policies
+document.body.addEventListener('click', () => { AudioEngine.resume(); }, { once:true });
+</script>
+</body>
+</html>

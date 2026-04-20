@@ -233,9 +233,9 @@ find "/home/cheche/.openclaw/workspace-chenlu/晨露产出物" -name "*20260328*
 ### 核心记忆自动备份
 - **备份时间**: 每周一 23:10
 - **备份脚本**: `/home/cheche/.openclaw/workspace-chenlu/scripts/memory-backup.sh`
-- **仓库地址**: `https://github.com/cheche33333_web/chenlu-workspace.git`
-- **GitHub Token**: `ghp_REDACTED`
-- **配置方式**: Token 已嵌入 git remote URL
+- **仓库地址**: `https://github.com/33333cheche-web/chenlu-memory.git`
+- **GitHub Token**: 已从文件中移除（请从环境变量 `GITHUB_TOKEN` 读取）
+- **配置方式**: Token 已嵌入 git remote URL（通过环境变量配置）
 
 ### 手动推送命令
 ```bash
