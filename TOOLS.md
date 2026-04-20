@@ -97,6 +97,27 @@ python3 skills/scripts/speech_recognition.py <音频文件>
 
 ---
 
+## 🔍 搜索工具状态总览（2026-04-15 更新）
+
+| 搜索工具 | 状态 | 适用场景 | 调用方式 |
+|---------|------|---------|---------|
+| **Brave** | ❌ 未配置 | OpenClaw原生`web_search` | 需要申请API Key |
+| **Tavily** | ✅ 可用 | 英文内容、学术研究 | `node skills/tavily-search/scripts/search.mjs "关键词"` |
+| **秘塔搜索** | ✅ 可用 | 中文内容、国内资讯 | `~/.openclaw/shared-memory/scripts/metaso-search.sh "关键词"` |
+| **百度搜索** | ✅ 已配置（Baby部署） | 中文内容、百度生态 | `python3 ~/.npm-global/lib/node_modules/openclaw/skills/baidu-search/scripts/search.py "关键词"` |
+
+### 使用建议
+- **中文搜索** → 优先用秘塔或百度
+- **英文/学术搜索** → 用Tavily
+- **OpenClaw原生web_search** → 暂不可用（需Brave Key）
+
+### API Keys位置
+- Tavily: `~/.openclaw/shared-memory/entities/apis.md`
+- 秘塔: `~/.openclaw/shared-memory/entities/apis.md`
+- 百度: Baby负责管理
+
+---
+
 ## 📦 轻笔记项目 - 精准调取索引
 
 ### V1 定稿版本（最新）
