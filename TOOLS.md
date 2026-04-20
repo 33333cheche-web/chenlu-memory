@@ -242,13 +242,17 @@ find "/home/cheche/.openclaw/workspace-chenlu/晨露产出物" -name "*20260328*
 cd /home/cheche/.openclaw/workspace-chenlu
 git add SOUL.md MEMORY.md USER.md IDENTITY.md AGENTS.md HEARTBEAT.md TOOLS.md memory/
 git commit -m "备份说明"
-git push origin master
+git push --ipv4 origin master  # 添加 --ipv4 解决 IPv6 连接问题
 ```
 
 ### 检查远程仓库
 ```bash
 git remote -v
 ```
+
+### 踩坑记录
+- 2026-04-21: TOOLS.md 中 Token 被 GitHub Secret Scanning 拦截 → 已删除，改为环境变量读取
+- 2026-04-21: git clone 超时但 ping 正常 → 添加 `--ipv4` 参数解决 IPv6 被防火墙拦截问题
 
 ---
 
