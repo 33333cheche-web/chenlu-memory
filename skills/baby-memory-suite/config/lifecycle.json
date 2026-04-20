@@ -1,0 +1,41 @@
+{
+  "version": "2.4.0",
+  "lifecycle": {
+    "P0": {
+      "name": "核心信息",
+      "retention": "forever",
+      "files": [
+        "SOUL.md",
+        "MEMORY.md",
+        "USER.md"
+      ]
+    },
+    "P1": {
+      "name": "活跃项目",
+      "retention_days": 90,
+      "files": [
+        "memory/active-tasks.md",
+        "memory/learnings.md",
+        "memory/entities/*.md"
+      ],
+      "auto_archive": true
+    },
+    "P2": {
+      "name": "临时信息",
+      "retention_days": 30,
+      "files": [
+        "memory/daily/*.md"
+      ],
+      "auto_cleanup": true
+    }
+  },
+  "cleanup": {
+    "schedule": "0 23 * * 0",
+    "archive_dir": "memory/archive",
+    "backup_before_cleanup": true
+  },
+  "capture": {
+    "format": "[{executor}/{role}] 帮 {beneficiary}: {action}, {result}",
+    "cross_agent_log": "../../shared-memory/cross-agent-log.md"
+  }
+}

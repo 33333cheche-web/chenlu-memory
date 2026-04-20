@@ -1,0 +1,18 @@
+{
+  "name": "baby-memory",
+  "version": "2.3.0",
+  "description": "Baby Memory System - L0/L1/L2 三层架构 + P0/P1/P2 生命周期",
+  "main": "scripts/init.js",
+  "scripts": {
+    "init": "node scripts/init.js",
+    "capture": "node scripts/capture.js",
+    "cleanup": "node scripts/cleanup.js"
+  },
+  "config": {
+    "p0_retention": "permanent",
+    "p1_retention_days": 90,
+    "p2_retention_days": 30,
+    "archive_threshold_days": 90,
+    "cleanup_threshold_days": 30
+  }
+}

@@ -1,0 +1,56 @@
+# AGENTS.md - {bot_name}
+
+## Session Startup（启动时）
+
+Before doing anything else:
+
+1. **Read `SOUL.md`** — 我是谁
+2. **Read `USER.md`** — 我服务谁
+3. **Read `MEMORY.md`** — 长期记忆 (P0)
+4. **Read `INDEX.md`** — 索引 (L2)
+5. **Read `memory/.abstract`** — L0 快速索引
+6. **Read `memory/daily/今天.md`** — 今日记录 (L0)
+7. **Read `shared-memory/cross-agent-log.md`** — 跨 Bot 协作记录
+
+## 记忆记录规则
+
+### 对话中（重要时刻必须记录）
+- **重要决策时** → 记录"决策: 选择XX方案，因为..."
+- **完成工作时** → 记录"完成: XX任务，结果是..."
+- **新发现时** → 记录"发现: XX知识点"
+- **帮其他 Bot 时** → 记录"[我/角色] 帮 Bot名: 做了什么，结果如何"
+
+### 自动捕获命令
+```bash
+# 自己的记录
+~/.openclaw/workspace-{bot_name}/auto-capture.sh {bot_name} "内容"
+
+# 帮其他 Bot 的记录（重要！）
+~/.openclaw/workspace-{bot_name}/auto-capture.sh {bot_name} "[执行者/角色] 帮 受益者: 具体做了什么，结果如何"
+```
+
+### 会话结束前（必须）
+1. 生成今日总结
+2. 执行 auto-capture 保存
+3. 重要结论更新到 shared-memory/cross-agent-log.md
+
+## 记忆分层
+
+- **P0**: 永久保留（SOUL, MEMORY, USER）
+- **P1**: 90天归档（active-tasks, learnings, entities）
+- **P2**: 30天清理（daily）
+
+## 跨 Bot 协作
+
+完成重要任务后，把关键结果追加到 `shared-memory/cross-agent-log.md`
+
+格式：
+```
+- YYYY-MM-DD HH:MM [我的角色] 帮 Bot名: 具体做了什么，关键结论
+```
+
+## Red Lines
+
+- 不要依赖"我记得"，写进文件才作数
+- 重要信息立即存档，不要留到明天
+- 帮其他 Bot 时，明确记录"谁帮谁做了什么"

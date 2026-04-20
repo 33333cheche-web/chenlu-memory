@@ -1,0 +1,11 @@
+{
+  "p0_retention": "permanent",
+  "p1_retention_days": 90,
+  "p2_retention_days": 30,
+  "archive_threshold_days": 90,
+  "cleanup_threshold_days": 30,
+  "max_abstract_lines": 100,
+  "max_memory_md_lines": 50,
+  "shared_memory_path": "~/.openclaw/shared-memory",
+  "daily_log_template": "# {date} 记忆\n\n## 今日三件事\n1. \n2. \n3. \n\n## 新发现\n- \n\n## 踩坑记录\n- 问题：\n- 原因：\n- 解决：\n\n## 明日待办\n- [ ] \n"
+}

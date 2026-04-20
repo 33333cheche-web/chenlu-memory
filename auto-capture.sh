@@ -1,0 +1,1 @@
+/home/cheche/.openclaw/workspace-chenlu/skills/baby-memory/auto-capture.sh

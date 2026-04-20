@@ -1,0 +1,40 @@
+# Sensitive files
+*.key
+*.pem
+*.env
+.env.local
+.env.*.local
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+logs/
+
+# Node modules
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup files
+*.bak
+*.backup
+
+# Large binary files
+*.mp3
+*.mp4
+*.wav
+*.ogg
+*.pdf
+*.zip
+*.tar.gz
+
+# Session files (may contain sensitive data)
+agents/*/sessions/
+
+# Cache
+.cache/
+*.cache
+.gstack/

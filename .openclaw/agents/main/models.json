@@ -1,0 +1,17 @@
+{
+  "providers": {
+    "kimi-coding": {
+      "baseUrl": "https://api.kimi.com/coding/v1",
+      "apiKey": "sk-kimi-KVapccfYADudkGVqbLJDz5RbYjmgPjH3xiROeqdo2O3Ol9v0B0BmXpiqcgD3ihJs",
+      "api": "anthropic-messages",
+      "models": [
+        {
+          "id": "kimi-for-coding",
+          "name": "Kimi for Coding",
+          "contextWindow": 200000,
+          "maxTokens": 16000
+        }
+      ]
+    }
+  }
+}

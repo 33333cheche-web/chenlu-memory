@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlowSpace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@400;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --font-ui: 'JetBrains Mono', monospace;
+            --font-write: 'Klee One', cursive;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-ui);
+            font-weight: 300;
+            overflow: hidden;
+            background: #0a0a12;
+        }
+        #canvas-container {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+        .vignette-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            background: radial-gradient(circle at 50% 50%, rgba(0,0,0,0) 18%, rgba(0,0,0,0.6) 80%);
+        }
+        .ui-layer {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4vh 4vw;
+            pointer-events: none;
+        }
+        .ui-layer > * { pointer-events: auto; }
+        .main-grid {
+            width: 100%;
+            max-width: 1135px;
+            height: 555px;
+            display: grid;
+            grid-template-columns: 264px 1fr 264px;
+            gap: 24px;
+            align-items: stretch;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.055);
+            backdrop-filter: blur(28px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 18px;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05), 0 10px 38px rgba(0, 0, 0, 0.38);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .panel-header {
+            padding: 17px 20px 12px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.55);
+            letter-spacing: 1.8px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .panel-body {
+            flex: 1;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            overflow-y: auto;
+            flex: 1;
+            margin-bottom: 10px;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.04);
+            transition: all 0.15s ease;
+        }
+        .task-item:hover { background: rgba(255,255,255,0.06); }
+        .task-checkbox {
+            width: 15px; height: 15px;
+            border-radius: 4px;
+            border: 1.5px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s ease;
+            flex-shrink: 0;
+        }
+        .task-checkbox:hover { border-color: rgba(255,255,255,0.4); }
+        .task-checkbox.checked {
+            background: rgba(255,255,255,0.9);
+            border-color: rgba(255,255,255,0.9);
+            box-shadow: 0 0 6px rgba(255,255,255,0.2);
+        }
+        .task-checkbox.checked::after {
+            content: '✓'; color: #000; font-size: 9px; font-weight: bold;
+        }
+        .task-text {
+            flex: 1;
+            font-size: 13px;
+            color: rgba(255,255,255,0.88);
+            background: none; border: none; outline: none;
+            font-family: var(--font-ui);
+            font-weight: 300;
+        }
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            color: rgba(255,255,255,0.3);
+        }
+        .task-delete {
+            width: 12px; height: 12px;
+            color: rgba(255,255,255,0.35);
+            cursor: pointer;
+            opacity: 1;
+            transition: all 0.15s ease;
+        }
+        .task-delete:hover { color: rgba(255,100,100,0.9); }
+        .task-input-wrap { display: flex; gap: 6px; }
+        .task-input {
+            flex: 1;
+            height: 34px;
+            padding: 0 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.07);
+            background: rgba(255,255,255,0.03);
+            color: rgba(255,255,255,0.9);
+            font-size: 12px;
+            font-family: var(--font-ui);
+            font-weight: 300;
+            outline: none;
+        }
+        .task-input::placeholder { color: rgba(255,255,255,0.25); }
+        .task-input:focus { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); }
+        .add-task-btn {
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.07);
+            background: rgba(255,255,255,0.03);
+            color: rgba(255,255,255,0.65);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.15s ease;
+            font-size: 15px;
+        }
+        .add-task-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.25);
+            color: white;
+        }
+        .write-wrap {
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 18px;
+        }
+        .write-area {
+            flex: 1;
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 0;
+            color: rgba(255,255,255,0.78);
+            font-size: 22px;
+            line-height: 1.75;
+            font-family: var(--font-write);
+            font-weight: 400;
+            resize: none;
+            outline: none;
+        }
+        .write-area::placeholder { color: rgba(255,255,255,0.22); }
+        .release-overlay {
+            position: fixed;
+            pointer-events: none;
+            z-index: 50;
+        }
+        .release-char {
+            display: inline-block;
+            font-family: var(--font-write);
+            font-size: 22px;
+            line-height: 1.75;
+            color: rgba(255,255,255,0.78);
+            transition: all 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .release-char.fly {
+            opacity: 0;
+            transform: translateY(-110px) scale(0.72) rotate(var(--rot));
+            filter: blur(8px);
+        }
+        .write-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .ghost-btn {
+            padding: 8px 18px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.65);
+            font-size: 11px;
+            font-family: var(--font-ui);
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            backdrop-filter: blur(6px);
+        }
+        .ghost-btn:hover {
+            border-color: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.95);
+            box-shadow: 0 0 12px rgba(255,255,255,0.06);
+        }
+        .write-stats {
+            margin-top: 7px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.35);
+            text-align: right;
+            font-family: var(--font-ui);
+            letter-spacing: 0.5px;
+        }
+        .timer-ring-wrap {
+            position: relative;
+            width: 145px; height: 145px;
+            margin: 12px auto 16px;
+        }
+        .timer-ring-svg {
+            transform: rotate(-90deg);
+            width: 100%; height: 100%;
+        }
+        .timer-ring-track {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.07);
+            stroke-width: 2;
+        }
+        .timer-ring-fill {
+            fill: none;
+            stroke: rgba(255,255,255,0.92);
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-dasharray: 565;
+            stroke-dashoffset: 565;
+            transition: stroke-dashoffset 1s linear;
+            filter: drop-shadow(0 0 3px rgba(255,255,255,0.35));
+        }
+        .timer-display-center {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        .timer-text {
+            font-size: 30px;
+            font-weight: 300;
+            color: rgba(255,255,255,0.95);
+            font-family: var(--font-ui);
+            letter-spacing: -0.5px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+        .timer-label {
+            font-size: 9px;
+            color: rgba(255,255,255,0.45);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 1px;
+        }
+        .scene-selector {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .scene-btn {
+            padding: 6px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.08);
+            background: rgba(0,0,0,0.1);
+            color: rgba(255,255,255,0.5);
+            font-size: 10px;
+            font-family: var(--font-ui);
+            font-weight: 300;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .scene-btn:hover {
+            background: rgba(255,255,255,0.06);
+            color: rgba(255,255,255,0.85);
+        }
+        .scene-btn.active {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.3);
+            color: white;
+            box-shadow: 0 0 10px rgba(255,255,255,0.06);
+        }
+        .duration-selector {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 12px;
+        }
+        .duration-btn {
+            padding: 5px 11px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+            background: transparent;
+            color: rgba(255,255,255,0.4);
+            font-size: 9px;
+            font-family: var(--font-ui);
+            font-weight: 300;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .duration-btn.active {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.9);
+        }
+        .action-btn {
+            width: 100%;
+            padding: 10px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+            color: rgba(255,255,255,0.9);
+            font-size: 11px;
+            font-family: var(--font-ui);
+            font-weight: 400;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.25s;
+            margin-bottom: 12px;
+            backdrop-filter: blur(6px);
+        }
+        .action-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.25);
+            box-shadow: 0 0 14px rgba(255,255,255,0.05);
+        }
+        .weather-toggle-mini {
+            display: flex;
+            gap: 2px;
+            background: rgba(255,255,255,0.05);
+            padding: 2px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+        .weather-btn-mini {
+            flex: 1;
+            padding: 5px 8px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.4);
+            font-size: 9px;
+            font-family: var(--font-ui);
+            font-weight: 400;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .weather-btn-mini.active {
+            background: rgba(255,255,255,0.12);
+            color: white;
+        }
+        .top-menu-btn {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.04);
+            color: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin: 0 auto 10px;
+            backdrop-filter: blur(8px);
+        }
+        .top-menu-btn:hover {
+            border-color: rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.08);
+            color: white;
+        }
+        .bottom-bar {
+            display: flex;
+            justify-content: center;
+            margin-top: 3.5vh;
+            width: 100%;
+        }
+        .bottom-glass {
+            display: flex;
+            align-items: center;
+            gap: 29px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(28px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 20px;
+            padding: 18px 38px;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.04), 0 10px 36px rgba(0, 0, 0, 0.38);
+        }
+        .control-block {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 170px;
+        }
+        .control-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 0.5px;
+        }
+        .control-icon-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .slider-wrap {
+            position: relative;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            cursor: pointer;
+        }
+        .slider-fill {
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            background: rgba(255,255,255,0.65);
+            border-radius: 2px;
+            box-shadow: 0 0 5px rgba(255,255,255,0.2);
+        }
+        .slider-thumb {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 12px; height: 12px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(255,255,255,0.35);
+            cursor: grab;
+        }
+        .divider {
+            width: 1px;
+            height: 30px;
+            background: rgba(255,255,255,0.1);
+        }
+        .loading {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255,255,255,0.7); font-size: 12px;
+            z-index: 100; opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            letter-spacing: 2px;
+        }
+        .loading.show { opacity: 1; }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.07); border-radius: 2px; }
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; grid-template-rows: auto auto auto; height: auto; max-width: 92vw; }
+            .glass-panel { min-height: 260px; }
+            .write-wrap { min-height: 260px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+    <div class="vignette-overlay"></div>
+    <div class="loading" id="loading">Loading...</div>
+
+    <div class="ui-layer">
+        <div class="main-grid">
+            <div class="glass-panel">
+                <div class="panel-header" style="justify-content:space-between">
+                    <div style="display:flex;align-items:center;gap:6px">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <path d="M9 11l3 3L22 4"/>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                        </svg>
+                        Tasks
+                    </div>
+                    <button class="ghost-btn" id="clear-all-btn" style="padding:4px 10px;font-size:9px;letter-spacing:0.5px">Clear All</button>
+                </div>
+                <div class="panel-body">
+                    <div class="task-list" id="task-list"></div>
+                    <div class="task-input-wrap">
+                        <input type="text" class="task-input" id="task-input" placeholder="Add...">
+                        <button class="add-task-btn" id="add-task-btn">+</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <div class="write-wrap">
+                    <textarea class="write-area" id="write-area" placeholder="雨滴落在玻璃上，思绪开始流淌...&#10;&#10;在这里写下你此刻的想法、待办备忘、或是任何想说的话。"></textarea>
+                    <div class="release-overlay" id="release-overlay"></div>
+                    <div class="write-actions">
+                        <button class="ghost-btn" onclick="saveWrite()">Save</button>
+                        <button class="ghost-btn" onclick="releaseWrite()">Release</button>
+                    </div>
+                    <div class="write-stats" id="write-stats">0 chars | 0 lines</div>
+                </div>
+            </div>
+
+            <div class="glass-panel">
+                <div class="panel-body">
+                    <button class="top-menu-btn">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="4" y1="6" x2="20" y2="6"/>
+                            <line x1="4" y1="12" x2="20" y2="12"/>
+                            <line x1="4" y1="18" x2="20" y2="18"/>
+                        </svg>
+                    </button>
+
+                    <div class="timer-ring-wrap">
+                        <svg class="timer-ring-svg" viewBox="0 0 200 200">
+                            <circle class="timer-ring-track" cx="100" cy="100" r="90"/>
+                            <circle class="timer-ring-fill" id="progress-ring" cx="100" cy="100" r="90"/>
+                        </svg>
+                        <div class="timer-display-center">
+                            <div class="timer-text" id="timer">25:00</div>
+                            <div class="timer-label" id="timer-status">Ready</div>
+                        </div>
+                    </div>
+
+                    <div class="weather-toggle-mini">
+                        <button class="weather-btn-mini active" onclick="setWeather('rain')">RAIN</button>
+                        <button class="weather-btn-mini" onclick="setWeather('snow')">SNOW</button>
+                    </div>
+
+                    <div class="scene-selector">
+                        <button class="scene-btn active" data-scene="forest" onclick="setScene('forest')">Forest</button>
+                        <button class="scene-btn" data-scene="city" onclick="setScene('city')">City</button>
+                        <button class="scene-btn" data-scene="ocean" onclick="setScene('ocean')">Ocean</button>
+                    </div>
+
+                    <div class="duration-selector">
+                        <button class="duration-btn active" onclick="setDuration(25)">25m</button>
+                        <button class="duration-btn" onclick="setDuration(45)">45m</button>
+                        <button class="duration-btn" onclick="setDuration(60)">60m</button>
+                    </div>
+
+                    <button class="action-btn" id="start-btn" onclick="toggleTimer()">Start Focus</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-bar">
+            <div class="bottom-glass">
+                <div class="control-block">
+                    <div class="control-row">
+                        <div class="control-icon-label">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M19 16.9A5 5 0 0 0 18 7h-1.26a8 8 0 1 0-11.62 9"/>
+                            </svg>
+                            INTENSITY
+                        </div>
+                        <span id="rain-val">80%</span>
+                    </div>
+                    <div class="slider-wrap" id="rain-slider" onclick="sliderClick(event, 'rain')">
+                        <div class="slider-fill" id="rain-fill" style="width:80%"></div>
+                        <div class="slider-thumb" id="rain-thumb" style="left:80%"></div>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="control-block">
+                    <div class="control-row">
+                        <div class="control-icon-label">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                            </svg>
+                            VOLUME
+                        </div>
+                        <span id="vol-val">40%</span>
+                    </div>
+                    <div class="slider-wrap" id="vol-slider" onclick="sliderClick(event, 'vol')">
+                        <div class="slider-fill" id="vol-fill" style="width:40%"></div>
+                        <div class="slider-thumb" id="vol-thumb" style="left:40%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scenes = {
+            city: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1920&q=80',
+            forest: 'https://images.unsplash.com/photo-1448375240586-882707db888b?w=1920&q=80',
+            ocean: 'https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=1920&q=80'
+        };
+
+        const vertexShader = `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`;
+
+        const rainFragmentShader = `
+            uniform float uTime; uniform vec2 uResolution; uniform float uIntensity; uniform sampler2D uTexture; varying vec2 vUv;
+            #define S(a,b,t) smoothstep(a,b,t)
+            vec3 N13(float p) { vec3 p3 = fract(vec3(p) * vec3(.1031,.11369,.13787)); p3 += dot(p3, p3.yzx + 19.19); return fract(vec3((p3.x + p3.y)*p3.z, (p3.x+p3.z)*p3.y, (p3.y+p3.z)*p3.x)); }
+            float N(float t) { return fract(sin(t*12345.564)*7658.76); }
+            float Saw(float b, float t) { return S(0.,b,t)*S(1.,b,t); }
+            float StaticDrops(vec2 uv, float t) { uv *= 40.; vec2 id = floor(uv); uv = fract(uv)-.5; vec3 n = N13(id.x*107.45+id.y*3543.654); vec2 p = (n.xy-.5)*.7; float d = length(uv-p); float fade = Saw(.025, fract(t+n.z)); return S(.3,0.,d)*fract(n.z*10.)*fade; }
+            vec2 DropLayer(vec2 uv, float t) {
+                vec2 UV = uv; uv.y += t*0.75; vec2 a = vec2(6.,1.); vec2 grid = a*2.; vec2 id = floor(uv*grid);
+                float colShift = N(id.x); uv.y += colShift; id = floor(uv*grid);
+                vec3 n = N13(id.x*35.2+id.y*2376.1); vec2 st = fract(uv*grid)-vec2(.5,0);
+                float x = n.x-.5; float y = UV.y*20.; float wiggle = sin(y+sin(y)); x += wiggle*(.5-abs(x))*(n.z-.5); x *= .7;
+                float ti = fract(t+n.z); y = (Saw(.85,ti)-.5)*.9+.5; vec2 p = vec2(x,y);
+                float d = length((st-p)*a.yx); float mainDrop = S(.4,.0,d);
+                float r = sqrt(S(1.,y,st.y)); float cd = abs(st.x-x); float trail = S(.23*r,.15*r*r,cd); float trailFront = S(-.02,.02,st.y-y); trail *= trailFront*r*r;
+                y = UV.y; float trail2 = S(.2*r,.0,cd); float droplets = max(0.,(sin(y*(1.-y)*120.)-st.y))*trail2*trailFront*n.z;
+                y = fract(y*10.)+(st.y-.5); float dd = length(st-vec2(x,y)); droplets = S(.3,0.,dd); float m = mainDrop+droplets*r*trailFront;
+                return vec2(m,trail);
+            }
+            vec2 Drops(vec2 uv, float t, float l0, float l1, float l2) {
+                float s = StaticDrops(uv,t)*l0; vec2 m1 = DropLayer(uv,t)*l1; vec2 m2 = DropLayer(uv*1.85,t)*l2;
+                float c = s+m1.x+m2.x; c = S(.3,1.,c); return vec2(c,max(m1.y*l0,m2.y*l1));
+            }
+            void main() {
+                vec2 uv = vUv; vec2 centeredUv = (uv-0.5)*2.0;
+                float aspect = uResolution.y>0.0?uResolution.x/uResolution.y:1.0; centeredUv.x *= aspect;
+                float t = uTime*0.2; vec2 rainUv = uv*vec2(aspect,1.0);
+                float staticDrops = S(-.5,1.,uIntensity)*2.; float layer1 = S(.25,.75,uIntensity); float layer2 = S(.0,.5,uIntensity);
+                vec2 c = Drops(rainUv,t,staticDrops,layer1,layer2);
+                vec2 e = vec2(.001,0.); float cx = Drops(rainUv+e,t,staticDrops,layer1,layer2).x; float cy = Drops(rainUv+e.yx,t,staticDrops,layer1,layer2).x; vec2 n = vec2(cx-c.x,cy-c.x);
+                vec3 col = texture2D(uTexture,uv+n).rgb;
+                vec3 tint = vec3(0.58,0.62,0.68); col = mix(col,col*tint,0.75); col = mix(vec3(dot(col,vec3(0.299,0.587,0.114))),col,0.6); col *= 0.68;
+                vec3 lightDir = normalize(vec3(-1.0,1.0,0.5)); float spec = max(0.0,dot(normalize(vec3(n,0.05)),lightDir)); col += pow(spec,30.0)*0.4*S(0.1,0.5,c.x);
+                float grain = fract(sin(dot(uv+t*0.01,vec2(12.9898,78.233)))*43758.5453); col += (grain-0.5)*0.03;
+                float vignette = 1.0-length(centeredUv*0.8); col *= S(-0.2,0.5,vignette);
+                gl_FragColor = vec4(col,1.0);
+            }
+        `;
+
+        const snowFragmentShader = `
+            uniform float uTime; uniform vec2 uResolution; uniform vec2 uMouse; uniform sampler2D uTexture; uniform float uIntensity; varying vec2 vUv;
+            #define S(a,b,t) smoothstep(a,b,t)
+            #define LAYERS 50
+            #define DEPTH .5
+            #define WIDTH .3
+            #define SPEED .6
+            void main() {
+                const mat3 p = mat3(13.323122,23.5112,21.71123,21.1212,28.7312,11.9312,21.8112,14.7212,61.3934);
+                vec2 uv = vUv; vec2 centeredUv = (uv-0.5)*2.0; float aspect = uResolution.y>0.0?uResolution.x/uResolution.y:1.0; centeredUv.x *= aspect;
+                vec2 snowUv = uMouse.xy/uResolution.xy + vec2(1., uResolution.y/uResolution.x) * vUv;
+                vec3 acc = vec3(0.0); float dof = 5.*sin(uTime*.1);
+                for (int i=0;i<LAYERS;i++) {
+                    if (float(i) > float(LAYERS) * uIntensity) break;
+                    float fi = float(i); vec2 q = snowUv*(1.+fi*DEPTH);
+                    q += vec2(q.y*(WIDTH*mod(fi*7.238917,1.)-WIDTH*.5),SPEED*uTime/(1.+fi*DEPTH*.03));
+                    vec3 n = vec3(floor(q),31.189+fi); vec3 m = floor(n)*.00001 + fract(n); vec3 mp = (31415.9+m)/fract(p*m); vec3 r = fract(mp);
+                    vec2 s = abs(mod(q,1.)-.5+.9*r.xy-.45); s += .01*abs(2.*fract(10.*q.yx)-1.);
+                    float d = .6*max(s.x-s.y,s.x+s.y)+max(s.x,s.y)-.01;
+                    float edge = .005+.05*min(.5*abs(fi-5.-dof),1.);
+                    acc += vec3(smoothstep(edge,-edge,d)*(r.x/(1.+.02*fi*DEPTH)));
+                }
+                vec3 col = texture2D(uTexture, uv).rgb;
+                vec3 winterTint = vec3(0.68, 0.72, 0.78); col = mix(col, col * winterTint, 0.5);
+                col = mix(vec3(dot(col, vec3(0.299, 0.587, 0.114))), col, 0.65); col *= 0.68;
+                col += acc * 0.65;
+                float vignette = 1.0 - length(centeredUv * 0.8); col *= S(-0.2, 0.5, vignette);
+                gl_FragColor = vec4(col, 1.0);
+            }
+        `;
+
+        let scene3, camera3, renderer3, mesh3, textureLoader3;
+        let currentMaterial = null;
+        let weatherMode = 'rain';
+
+        const uniforms = {
+            uTime: { value: 0 },
+            uResolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+            uIntensity: { value: 0.8 },
+            uTexture: { value: null },
+            uMouse: { value: new THREE.Vector2(0, 0) }
+        };
+
+        function init() {
+            const container = document.getElementById('canvas-container');
+            scene3 = new THREE.Scene();
+            camera3 = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+            renderer3 = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+            renderer3.setSize(window.innerWidth, window.innerHeight);
+            renderer3.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer3.domElement);
+            textureLoader3 = new THREE.TextureLoader();
+            loadTexture(scenes.forest);
+            window.addEventListener('resize', onWindowResize, false);
+            document.addEventListener('mousemove', onMouseMove, false);
+        }
+
+        function loadTexture(url) {
+            document.getElementById('loading').classList.add('show');
+            textureLoader3.load(url, (texture) => {
+                texture.minFilter = THREE.LinearFilter;
+                texture.magFilter = THREE.LinearFilter;
+                uniforms.uTexture.value = texture;
+                if (!mesh3) {
+                    const geometry = new THREE.PlaneGeometry(2, 2);
+                    currentMaterial = new THREE.ShaderMaterial({
+                        uniforms: uniforms,
+                        vertexShader: vertexShader,
+                        fragmentShader: weatherMode === 'rain' ? rainFragmentShader : snowFragmentShader
+                    });
+                    mesh3 = new THREE.Mesh(geometry, currentMaterial);
+                    scene3.add(mesh3);
+                } else {
+                    currentMaterial.fragmentShader = weatherMode === 'rain' ? rainFragmentShader : snowFragmentShader;
+                    currentMaterial.needsUpdate = true;
+                }
+                document.getElementById('loading').classList.remove('show');
+            });
+        }
+
+        function onWindowResize() {
+            renderer3.setSize(window.innerWidth, window.innerHeight);
+            uniforms.uResolution.value.set(window.innerWidth, window.innerHeight);
+        }
+
+        function onMouseMove(e) {
+            uniforms.uMouse.value.set(e.clientX, window.innerHeight - e.clientY);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            uniforms.uTime.value += 0.016;
+            renderer3.render(scene3, camera3);
+        }
+
+        init();
+        animate();
+
+        let tasks = JSON.parse(localStorage.getItem('flowspace_tasks') || '[]');
+        function renderTasks() {
+            const list = document.getElementById('task-list');
+            list.innerHTML = '';
+            tasks.forEach((task, index) => {
+                const el = document.createElement('div');
+                el.className = `task-item ${task.completed ? 'completed' : ''}`;
+                el.innerHTML = `
+                    <div class="task-checkbox ${task.completed ? 'checked' : ''}" data-index="${index}"></div>
+                    <input type="text" class="task-text" value="${task.text}" data-index="${index}" ${task.completed ? 'readonly' : ''}>
+                    <svg class="task-delete" data-index="${index}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>`;
+                list.appendChild(el);
+            });
+            document.querySelectorAll('.task-checkbox').forEach(cb => {
+                cb.addEventListener('click', () => {
+                    const idx = parseInt(cb.dataset.index);
+                    tasks[idx].completed = !tasks[idx].completed;
+                    saveTasks(); renderTasks();
+                });
+            });
+            document.querySelectorAll('.task-text').forEach(input => {
+                input.addEventListener('blur', () => {
+                    const idx = parseInt(input.dataset.index);
+                    tasks[idx].text = input.value;
+                    saveTasks();
+                });
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') input.blur();
+                });
+            });
+            document.querySelectorAll('.task-delete').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = parseInt(btn.dataset.index);
+                    tasks.splice(idx, 1);
+                    saveTasks(); renderTasks();
+                });
+            });
+        }
+        function saveTasks() {
+            localStorage.setItem('flowspace_tasks', JSON.stringify(tasks));
+        }
+        function addTask() {
+            const input = document.getElementById('task-input');
+            const text = input.value.trim();
+            if (text) {
+                tasks.push({ text, completed: false });
+                input.value = '';
+                saveTasks(); renderTasks();
+                input.focus();
+            }
+        }
+        document.getElementById('add-task-btn').addEventListener('click', addTask);
+        document.getElementById('task-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTask();
+        });
+        renderTasks();
+
+        document.getElementById('clear-all-btn').addEventListener('click', () => {
+            if (tasks.length > 0 && confirm('Clear all tasks?')) {
+                tasks = [];
+                saveTasks();
+                renderTasks();
+            }
+        });
+
+        const writeArea = document.getElementById('write-area');
+        const writeStats = document.getElementById('write-stats');
+        writeArea.addEventListener('input', () => {
+            const text = writeArea.value;
+            const chars = text.length;
+            const lines = text.split('\n').length;
+            writeStats.textContent = `${chars} chars | ${lines} lines`;
+            localStorage.setItem('flowspace_draft', text);
+        });
+        const savedDraft = localStorage.getItem('flowspace_draft');
+        if (savedDraft) {
+            writeArea.value = savedDraft;
+            writeArea.dispatchEvent(new Event('input'));
+        }
+
+        function saveWrite() {
+            const text = writeArea.value;
+            if (!text.trim()) return;
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `flowspace-${new Date().toISOString().slice(0,10)}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function releaseWrite() {
+            const text = writeArea.value;
+            if (!text.trim()) return;
+            const overlay = document.getElementById('release-overlay');
+            const rect = writeArea.getBoundingClientRect();
+            const style = getComputedStyle(writeArea);
+            const lineHeight = parseFloat(style.lineHeight);
+            const padTop = parseFloat(style.paddingTop);
+            const padLeft = parseFloat(style.paddingLeft);
+            const padRight = parseFloat(style.paddingRight);
+            const padBottom = parseFloat(style.paddingBottom);
+            const lines = text.split('\n');
+            const contentHeight = lines.length * lineHeight + 20;
+            const scrollTop = writeArea.scrollTop;
+
+            overlay.innerHTML = '';
+            overlay.style.position = 'fixed';
+            overlay.style.top = (rect.top + padTop - scrollTop) + 'px';
+            overlay.style.left = (rect.left + padLeft) + 'px';
+            overlay.style.width = (rect.width - padLeft - padRight) + 'px';
+            overlay.style.height = Math.max(rect.height - padTop - padBottom, contentHeight) + 'px';
+            overlay.style.overflow = 'visible';
+            overlay.style.zIndex = '50';
+
+            let html = '';
+            lines.forEach((line, lineIdx) => {
+                if (lineIdx > 0) html += '<br>';
+                for (let i = 0; i < line.length; i++) {
+                    const ch = line[i] === ' ' ? '&nbsp;' : line[i];
+                    const rot = ((Math.random() - 0.5) * 28).toFixed(1);
+                    const delay = (lineIdx * 0.05 + i * 0.015 + Math.random() * 0.2).toFixed(3);
+                    html += `<span class="release-char" style="--rot:${rot}deg;transition-delay:${delay}s">${ch}</span>`;
+                }
+                if (line.length === 0) html += '<span class="release-char"></span>';
+            });
+            overlay.innerHTML = html;
+            overlay.style.lineHeight = style.lineHeight;
+            overlay.style.fontSize = style.fontSize;
+            overlay.style.fontFamily = style.fontFamily;
+            overlay.style.color = style.color;
+
+            writeArea.style.opacity = '0';
+            requestAnimationFrame(() => {
+                overlay.querySelectorAll('.release-char').forEach(span => span.classList.add('fly'));
+            });
+            setTimeout(() => {
+                writeArea.value = '';
+                writeArea.style.opacity = '1';
+                overlay.innerHTML = '';
+                overlay.style.position = '';
+                overlay.style.top = '';
+                overlay.style.left = '';
+                overlay.style.width = '';
+                overlay.style.height = '';
+                overlay.style.overflow = '';
+                overlay.style.zIndex = '';
+                writeArea.dispatchEvent(new Event('input'));
+                localStorage.setItem('flowspace_draft', '');
+            }, 1800);
+        }
+
+        const CIRCUMFERENCE = 2 * Math.PI * 90;
+        const progressRing = document.getElementById('progress-ring');
+        progressRing.style.strokeDasharray = CIRCUMFERENCE;
+        progressRing.style.strokeDashoffset = CIRCUMFERENCE;
+        let timerInterval = null;
+        let remainingSeconds = 25 * 60;
+        let totalSeconds = 25 * 60;
+        let isRunning = false;
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(remainingSeconds / 60);
+            const secs = remainingSeconds % 60;
+            document.getElementById('timer').textContent = `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+            const progress = (totalSeconds - remainingSeconds) / totalSeconds;
+            progressRing.style.strokeDashoffset = CIRCUMFERENCE - progress * CIRCUMFERENCE;
+        }
+
+        function toggleTimer() {
+            const btn = document.getElementById('start-btn');
+            const status = document.getElementById('timer-status');
+            if (!isRunning) {
+                isRunning = true;
+                btn.textContent = 'Pause';
+                status.textContent = 'Focusing';
+                timerInterval = setInterval(() => {
+                    remainingSeconds--;
+                    updateTimerDisplay();
+                    if (remainingSeconds <= 0) {
+                        clearInterval(timerInterval);
+                        isRunning = false;
+                        btn.textContent = 'Start Focus';
+                        status.textContent = 'Done';
+                        remainingSeconds = totalSeconds;
+                        updateTimerDisplay();
+                    }
+                }, 1000);
+            } else {
+                isRunning = false;
+                clearInterval(timerInterval);
+                btn.textContent = 'Resume';
+                status.textContent = 'Paused';
+            }
+        }
+
+        function setDuration(minutes) {
+            if (isRunning) return;
+            totalSeconds = minutes * 60;
+            remainingSeconds = totalSeconds;
+            updateTimerDisplay();
+            document.querySelectorAll('.duration-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function setScene(sceneName) {
+            document.querySelectorAll('.scene-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-scene="${sceneName}"]`).classList.add('active');
+            loadTexture(scenes[sceneName]);
+        }
+
+        function setWeather(type) {
+            document.querySelectorAll('.weather-btn-mini').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            weatherMode = type;
+            if (mesh3) {
+                currentMaterial.fragmentShader = type === 'rain' ? rainFragmentShader : snowFragmentShader;
+                currentMaterial.needsUpdate = true;
+            }
+        }
+
+        function sliderClick(e, type) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const pct = Math.max(0, Math.min(100, Math.round(((e.clientX - rect.left) / rect.width) * 100)));
+            setSlider(type, pct);
+        }
+        function setSlider(type, pct) {
+            document.getElementById(`${type}-fill`).style.width = pct + '%';
+            document.getElementById(`${type}-thumb`).style.left = pct + '%';
+            document.getElementById(`${type}-val`).textContent = pct + '%';
+            if (type === 'rain') uniforms.uIntensity.value = pct / 100;
+        }
+    </script>
+</body>
+</html>
