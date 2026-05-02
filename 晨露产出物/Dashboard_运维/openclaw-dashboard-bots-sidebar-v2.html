@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OPENCLAW · Bots 工作台（侧栏版）</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary:#fa520f; --primary-deep:#cc3a05;
+      --ink:#1f1f1f; --steel:#6a6a6a;
+      --cream:#fff8e0; --cream-soft:#fffaeb;
+      --line:#e5e5e5; --line-soft:#ededed;
+      --canvas:#fff; --dark:#1c1c1e;
+      --r-md:8px; --r-lg:12px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter,system-ui,-apple-system,sans-serif;color:var(--ink);background:#fffef9}
+    .layout{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+
+    .sidebar{
+      background:var(--dark); color:#fff; padding:20px 14px; border-right:1px solid #2a2a2d;
+      position:sticky; top:0; height:100vh;
+    }
+    .logo{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:20px}
+    .dot{width:12px;height:12px;border-radius:4px;background:linear-gradient(135deg,#ffa110,#fa520f)}
+    .logo b{font-size:14px;letter-spacing:.4px}
+
+    .nav{display:flex;flex-direction:column;gap:8px}
+    .nav-btn{
+      border:1px solid #303033;background:transparent;color:#cfcfd5;
+      text-align:left;padding:12px 12px;border-radius:8px;font-size:14px;cursor:pointer
+    }
+    .nav-btn.active{background:#2c2c30;color:#fff;border-color:#47474d}
+    .summary-box{
+      margin-top:18px;background:#252528;border:1px solid #38383d;border-radius:10px;padding:12px
+    }
+    .summary-box p{font-size:12px;color:#aaaaaf;line-height:1.5}
+
+    .main{padding:24px}
+    .hero{background:var(--cream);border:1px solid #e6d5a8;border-radius:12px;padding:22px}
+    .hero h1{font-family:Georgia,'Times New Roman',serif;font-size:42px;font-weight:400;line-height:1.1}
+    .hero p{margin-top:10px;color:#3d3d3d}
+
+    .panel{display:none;margin-top:18px}
+    .panel.active{display:block}
+
+    .kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+    .card{background:#fff;border:1px solid var(--line-soft);border-radius:12px;padding:18px}
+    .kpi-title{font-size:13px;color:var(--steel)}
+    .kpi-value{font-size:36px;margin-top:6px;font-family:Georgia,'Times New Roman',serif}
+
+    .grid-6{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+    .bot{background:#fff;border:1px solid var(--line-soft);border-radius:12px;padding:16px}
+    .bot h3{font-size:16px}
+    .bot p{font-size:13px;color:var(--steel);margin-top:4px}
+
+    table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line-soft);border-radius:12px;overflow:hidden}
+    th,td{font-size:14px;padding:12px;border-bottom:1px solid var(--line-soft);text-align:left}
+    th{background:var(--cream-soft);font-weight:600}
+
+    .sunset{margin-top:20px;height:56px;border-radius:10px;background:linear-gradient(90deg,#fa520f 0%,#ffa110 36%,#ffb83e 62%,#ffd900 78%,#fff8e0 100%)}
+
+    @media (max-width: 1024px){
+      .layout{grid-template-columns:1fr}
+      .sidebar{position:static;height:auto}
+      .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .grid-6{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media (max-width: 640px){
+      .kpis,.grid-6{grid-template-columns:1fr}
+      .hero h1{font-size:32px}
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="logo"><span class="dot"></span><b>OPENCLAW · BOTS</b></div>
+      <nav class="nav">
+        <button class="nav-btn active" data-panel="overview">总览</button>
+        <button class="nav-btn" data-panel="outputs">产出物</button>
+        <button class="nav-btn" data-panel="tasks">任务进度</button>
+        <button class="nav-btn" data-panel="alerts">告警阻塞</button>
+      </nav>
+      <div class="summary-box">
+        <p>左侧是菜单，右侧是对应面板。<br>当前这版先把信息架构跑通，后面再接真实数据。</p>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="hero">
+        <h1>6 Bots 内部工作展示台</h1>
+        <p>核心目标：清晰展示整体状态、产出情况、任务进度与阻塞项。</p>
+      </section>
+
+      <section id="overview" class="panel active">
+        <div class="kpis">
+          <div class="card"><div class="kpi-title">在线 Bots</div><div class="kpi-value">6</div></div>
+          <div class="card"><div class="kpi-title">今日活跃任务</div><div class="kpi-value">9</div></div>
+          <div class="card"><div class="kpi-title">待处理事项</div><div class="kpi-value">3</div></div>
+          <div class="card"><div class="kpi-title">今日新增产出</div><div class="kpi-value">14</div></div>
+        </div>
+        <div class="grid-6" style="margin-top:14px">
+          <article class="bot"><h3>CHARLES</h3><p>行政与协调 · 在线</p></article>
+          <article class="bot"><h3>ASIN</h3><p>品牌策略 · 在线</p></article>
+          <article class="bot"><h3>CHENLU</h3><p>产品研发 · 在线</p></article>
+          <article class="bot"><h3>MUMU</h3><p>解决方案 · 在线</p></article>
+          <article class="bot"><h3>MELODY</h3><p>设计创意 · 在线</p></article>
+          <article class="bot"><h3>SEAN</h3><p>情感支持 · 在线</p></article>
+        </div>
+      </section>
+
+      <section id="outputs" class="panel">
+        <table>
+          <thead><tr><th>Bot</th><th>产出物</th><th>类型</th><th>时间</th></tr></thead>
+          <tbody>
+            <tr><td>CHENLU</td><td>轻笔记小程序_v1定稿.zip</td><td>代码包</td><td>今天 10:20</td></tr>
+            <tr><td>ASIN</td><td>品牌策略周报_第18周.md</td><td>报告</td><td>今天 09:40</td></tr>
+            <tr><td>MELODY</td><td>Dashboard视觉稿_v3.fig</td><td>设计</td><td>今天 08:55</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="tasks" class="panel">
+        <table>
+          <thead><tr><th>Bot</th><th>任务</th><th>状态</th><th>预计完成</th></tr></thead>
+          <tbody>
+            <tr><td>CHARLES</td><td>周会纪要整理</td><td>进行中</td><td>18:30</td></tr>
+            <tr><td>MUMU</td><td>合作提案初稿</td><td>待确认</td><td>20:00</td></tr>
+            <tr><td>SEAN</td><td>用户情绪日报</td><td>已完成</td><td>17:00</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="alerts" class="panel">
+        <table>
+          <thead><tr><th>级别</th><th>对象</th><th>描述</th><th>更新时间</th></tr></thead>
+          <tbody>
+            <tr><td>中</td><td>MELODY</td><td>原型任务等待需求确认</td><td>今天 16:10</td></tr>
+            <tr><td>低</td><td>ASIN</td><td>日报同步延迟 20 分钟</td><td>今天 15:45</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <div class="sunset"></div>
+    </main>
+  </div>
+
+  <script>
+    const btns = document.querySelectorAll('.nav-btn');
+    const panels = document.querySelectorAll('.panel');
+    btns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        btns.forEach(b => b.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.panel).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
