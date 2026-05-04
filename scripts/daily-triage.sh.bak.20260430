@@ -5,10 +5,6 @@
 # cron: 每天 23:59 或每小时检查一次
 # ============================================================
 
-# 获取日期（默认昨天）
-TARGET_DATE="${1:-$(date -d 'yesterday' '+%Y-%m-%d')}"
-TODAY_DATE="$(date '+%Y-%m-%d')"
-
 MEMORY_DIR="/home/cheche/.openclaw/workspace-chenlu/memory"
 # 原生读取模式：daily 文件存放在根目录
 DAILY_FILE="$MEMORY_DIR/${TARGET_DATE}.md"
@@ -18,9 +14,20 @@ P0_DIR="$MEMORY_DIR/P0"
 P1_DIR="$MEMORY_DIR/P1"
 P2_DIR="$MEMORY_DIR/P2"
 
+# 颜色日志
+log() { echo "[$(date '+%Y-%m-%d %H:%M')] $1"; }
+
+# 确保目录存在
+mkdir -p "$P0_DIR" "$P1_DIR" "$P2_DIR"
+
+# 获取日期（默认昨天）
+TARGET_DATE="${1:-$(date -d 'yesterday' '+%Y-%m-%d')}"
+TODAY_DATE="$(date '+%Y-%m-%d')"
+
 log "开始分拣: $TARGET_DATE"
 
-# 检查目标文件（优先根目录，兼容旧路径）
+# 检查目标文件
+
 if [[ -f "$DAILY_FILE" ]]; then
     SOURCE_FILE="$DAILY_FILE"
     log "使用根目录文件: $DAILY_FILE"
@@ -28,7 +35,18 @@ elif [[ -f "$OLD_DAILY_FILE" ]]; then
     SOURCE_FILE="$OLD_DAILY_FILE"
     log "使用旧路径文件: $OLD_DAILY_FILE"
 else
-    log "文件不存在: $DAILY_FILE 或 $OLD_DAILY_FILE，跳过"
+    log "文件不存在，跳过"
+    exit 0
+fi
+    SOURCE_FILE="$OLD_DAILY_FILE"
+    log "使用旧路径文件: $OLD_DAILY_FILE"
+else
+    log "文件不存在，跳过"
+    exit 0
+fi
+
+if [[ ! -f "$SOURCE_FILE" ]]; then
+    log "文件不存在: $DAILY_FILE，跳过"
     exit 0
 fi
 

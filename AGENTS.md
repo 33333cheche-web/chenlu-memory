@@ -12,8 +12,15 @@ Before doing anything else:
 
 1. Read `SOUL.md` — this is who you are
 2. Read `USER.md` — this is who you're helping
-3. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
-4. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
+3. **Read `memory/active-task-state.md`** — 断点续传，恢复昨晚做到哪一步
+4. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
+5. Read `memory/summary/YYYY-MM-DD.md` (yesterday first, then today if exists) for compact startup context
+6. **Read weekly 视图**：
+   - `/home/cheche/.openclaw/workspace-chenlu/memory/review/latest.md`
+   - `/home/cheche/.openclaw/workspace-chenlu/memory/learnings/latest.md`
+   - `/home/cheche/.openclaw/workspace-chenlu/memory/deliveries/latest.md`
+7. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
+8. **检查明日待办** — 查看昨天 memory 文件中的待办事项
 
 Don't ask permission. Just do it.
 
@@ -158,7 +165,7 @@ echo "- $TAG 完成: XXX"
 3. 有什么值得记的？（代码片段/技术方案/最佳实践）
 
 ### 记忆动作（技术专用）
-- **更新工作日志** → `memory/daily/YYYY-MM-DD.md`（记录今日开发内容）
+- **更新工作日志** → `memory/YYYY-MM-DD.md`（记录今日开发内容）
 - **更新技能库** → `skills/`, `TOOLS.md`（记录技术方案）
 - **更新错误记录** → 踩坑原因和解决方案
 
@@ -178,7 +185,7 @@ echo "- $TAG 完成: XXX"
 每天 22:05 日报时间，必须产出**两份**内容：
 
 1. **Sunny 版**
-   - 路径：`memory/daily/YYYY-MM-DD.md`
+   - 路径：`memory/YYYY-MM-DD.md`
    - 格式：纯 `#P0` / `#P1` / `#P2`，每条一行
    - 禁止：时间戳、标题、emoji、碎碎念、大段说明
 
@@ -188,12 +195,28 @@ echo "- $TAG 完成: XXX"
 
 两条缺一不可。
 
+## 每周记忆视图读取（统一）
+会话启动时，除 daily/summary 外，额外读取：
+1. `/home/cheche/.openclaw/workspace-chenlu/memory/review/latest.md`
+2. `/home/cheche/.openclaw/workspace-chenlu/memory/learnings/latest.md`
+3. `/home/cheche/.openclaw/workspace-chenlu/memory/deliveries/latest.md`
+
+用途：把“归档结果”真正用于日常对话和决策，避免只存不读。
+
+## 任务断点读取（强制）
+每次会话启动时，优先读取：
+1. `/home/cheche/.openclaw/workspace-chenlu/memory/active-task-state.md`
+2. 再读 daily / summary / weekly 视图
+
+任务执行中若进入 DOING 或 BLOCKED，必须实时更新 active-task-state.md；
+会话结束前至少更新一次“已完成到/下一步第一动作”。
+
 ## 🛠️ Baby Memory 执行铁律（2026-04-10 新增）
 
 ### 以下情况必须立即写入 Baby Memory：
 
 1. **完成任何非 trivial 任务后**（部署、修复、写文档、改配置）
-   - 必须更新 `memory/daily/YYYY-MM-DD.md`
+   - 必须更新 `memory/YYYY-MM-DD.md`
    - 如果该任务是 active-tasks 中的一项，更新状态并移入 learnings.md（如有经验教训）
 
 2. **踩坑或发现 better practice 后**
