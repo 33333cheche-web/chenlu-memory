@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notion 风格 Dashboard 预览</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary:#9D59E3;--primary-pressed:#7B3DB8;--brand-navy:#0F1729;
+      --canvas:#fff;--surface:#F7F7F7;--hairline:#E5E5E5;--ink:#1A1A1A;--slate:#666;
+      --t-peach:#FFF0E8;--t-rose:#FFEBEF;--t-mint:#E8FFF3;--t-lav:#F0E8FF;--t-sky:#E8F4FF;--t-yellow:#FFE066;
+      --r-md:8px;--r-lg:12px;
+      --shadow-mockup:rgba(15,15,15,.20) 0 24px 48px -8px;
+    }
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,-apple-system,system-ui,sans-serif;color:var(--ink);background:var(--canvas)}
+    .container{max-width:1280px;margin:0 auto;padding:0 32px}
+    .btn{padding:10px 18px;border-radius:var(--r-md);font-size:14px;font-weight:500;border:1px solid transparent;cursor:pointer}
+    .btn-primary{background:var(--primary);color:#fff}.btn-secondary-dark{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
+    .hero{background:var(--brand-navy);color:#fff;padding:110px 0 80px;position:relative;overflow:hidden}
+    .dot{position:absolute;border-radius:999px;opacity:.9}.d1{width:14px;height:14px;background:#ff6b9d;left:8%;top:16%}.d2{width:18px;height:18px;background:#00b894;right:10%;top:28%}
+    .d3{width:12px;height:12px;background:#ff9f43;left:14%;bottom:22%}.d4{width:16px;height:16px;background:#d4b3f0;right:22%;bottom:25%}
+    h1{font-size:clamp(44px,7vw,80px);line-height:1.05;letter-spacing:-2px;margin:0 0 16px;text-align:center;font-weight:600}
+    .sub{max-width:760px;margin:0 auto;text-align:center;color:rgba(255,255,255,.78);font-size:18px;line-height:1.5}
+    .hero-actions{display:flex;gap:12px;justify-content:center;margin-top:28px}
+    .mockup{background:#fff;border:1px solid var(--hairline);border-radius:var(--r-lg);margin:44px auto 0;max-width:980px;box-shadow:var(--shadow-mockup)}
+    .mockup-head{height:44px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;padding:0 14px;gap:8px}
+    .c{width:9px;height:9px;border-radius:999px}.c1{background:#ff5f56}.c2{background:#ffbd2e}.c3{background:#27c93f}
+    .board{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:14px}
+    .col{background:#fafafa;border-radius:10px;padding:10px}.col h4{margin:0 0 8px;font-size:13px}
+    .card{background:#fff;border:1px solid var(--hairline);border-radius:8px;padding:10px;margin-bottom:8px;font-size:13px}
+    .section{padding:88px 0}.section h2{text-align:center;font-size:36px;line-height:1.2;letter-spacing:-.5px;margin:0 0 12px}
+    .section p.center{max-width:760px;margin:0 auto 28px;color:var(--slate);text-align:center}
+    .panel{background:var(--surface);border:1px solid var(--hairline);border-radius:16px;padding:26px}
+    .status{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.status .item{background:#fff;border:1px solid var(--hairline);border-radius:8px;padding:12px;font-size:13px}
+    .banner{background:var(--t-yellow);border-radius:var(--r-lg);padding:34px;margin-bottom:18px}
+    .cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.tile{border-radius:var(--r-lg);padding:24px}
+    .peach{background:var(--t-peach)} .rose{background:var(--t-rose)} .mint{background:var(--t-mint)} .sky{background:var(--t-sky)} .lav{background:var(--t-lav)}
+    .pricing{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .p{border:1px solid var(--hairline);border-radius:var(--r-lg);padding:22px;background:#fff}
+    .p.featured{border:2px solid var(--primary);background:#f7f7f7}
+    table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--hairline);border-radius:8px;overflow:hidden;margin-top:16px}
+    th,td{font-size:14px;padding:12px 14px;border-bottom:1px solid #f0f0f0;text-align:left}
+    th{background:#fafafa}
+    @media (max-width:1024px){.pricing{grid-template-columns:repeat(2,1fr)}.status{grid-template-columns:repeat(2,1fr)}.cards3,.board{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span><span class="dot d4"></span>
+    <div class="container">
+      <h1>Meet the night shift.</h1>
+      <p class="sub">以 Notion 视觉语言重构的 Dashboard 预览：深海军蓝 Hero、紫色主 CTA、插画点缀与高层级工作看板。</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary">Get Notion free</button>
+        <button class="btn btn-secondary-dark">Request a demo</button>
+      </div>
+      <div class="mockup">
+        <div class="mockup-head"><span class="c c1"></span><span class="c c2"></span><span class="c c3"></span></div>
+        <div class="board">
+          <div class="col"><h4>To do</h4><div class="card">更新产品路线图</div><div class="card">整理客户反馈</div></div>
+          <div class="col"><h4>In progress</h4><div class="card">多语言 Dashboard 改版</div><div class="card">权限系统联调</div></div>
+          <div class="col"><h4>Done</h4><div class="card">Q2 数据归档</div><div class="card">告警规则优化</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Keep work moving 24/7</h2>
+      <p class="center">高密度状态面板，采用红/蓝/绿/紫/青图标语义，支持运营、产品、工程同屏协作。</p>
+      <div class="panel"><div class="status">
+        <div class="item">🔴 紧急事项</div><div class="item">🔵 进行中</div><div class="item">🟢 已完成</div><div class="item">🟣 待审核</div><div class="item">🟦 已归档</div>
+      </div></div>
+    </div>
+  </section>
+
+  <section class="section" style="background:#fafafa">
+    <div class="container">
+      <div class="banner"><h2 style="text-align:left;margin:0 0 8px">Ask your on-demand assistants</h2><p style="margin:0;color:#333">粗体黄色强调区块，配合桃/玫瑰/薄荷辅助卡，突出 AI 助手入口。</p></div>
+      <div class="cards3">
+        <div class="tile peach"><h3>写作助手</h3><p>会议纪要、PRD、周报自动生成。</p></div>
+        <div class="tile rose"><h3>分析助手</h3><p>自动汇总关键指标和异常项。</p></div>
+        <div class="tile mint"><h3>运营助手</h3><p>活动排期、素材协同一站式推进。</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2>Bring all your work together</h2>
+      <div class="cards3">
+        <div class="tile sky"><h3>教程卡片</h3><p>新成员 5 分钟上手流程。</p></div>
+        <div class="tile lav"><h3>轻量日历</h3><p>任务按时间视图统一编排。</p></div>
+        <div class="tile" style="background:#8D6E63;color:#fff"><h3>客户证言</h3><p>“跨团队效率提升 40%。”</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="background:#fafafa">
+    <div class="container">
+      <h2>Pricing</h2>
+      <div class="pricing">
+        <div class="p"><h3>Free</h3><p>¥0 / 月</p></div>
+        <div class="p featured"><h3>Plus</h3><p>¥68 / 月</p></div>
+        <div class="p"><h3>Business</h3><p>¥128 / 人/月</p></div>
+        <div class="p"><h3>Enterprise</h3><p>定制报价</p></div>
+      </div>
+      <table>
+        <thead><tr><th>功能</th><th>Free</th><th>Plus</th><th>Business</th><th>Enterprise</th></tr></thead>
+        <tbody>
+          <tr><td>版本历史</td><td>7天</td><td>30天</td><td>90天</td><td>无限</td></tr>
+          <tr><td>访客协作</td><td>5人</td><td>100人</td><td>250人</td><td>无限</td></tr>
+          <tr><td>SAML 单点登录</td><td>—</td><td>—</td><td>✓</td><td>✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</body>
+</html>
