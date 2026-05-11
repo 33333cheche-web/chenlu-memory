@@ -12,15 +12,28 @@ Before doing anything else:
 
 1. Read `SOUL.md` — this is who you are
 2. Read `USER.md` — this is who you're helping
-3. **Read `memory/active-task-state.md`** — 断点续传，恢复昨晚做到哪一步
-4. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
-5. Read `memory/summary/YYYY-MM-DD.md` (yesterday first, then today if exists) for compact startup context
-6. **Read weekly 视图**：
+3. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
+4. **Read `memory/learnings/latest.md`** — 查看最近的教训和踩坑记录（避免重复犯错）
+5. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
+
+### C) 启动时主动报告（2026-05-11 新增）
+每次新会话启动后，如果公主在 07:00-09:00 之间首次发消息，主动报告记忆读取状态：
+```
+早安公主！☀️ 记忆已读取：
+· 今日日志：[存在/不存在]
+· 昨日日志：[存在/不存在]
+· learnings：[最后更新日期]
+· active-tasks：[当前任务数]
+```
+简洁为主，不要长篇大论。
+
+### B) 条件读取（按需触发，避免启动过载）
+6. Read `memory/summary/YYYY-MM-DD.md` (yesterday first, then today if exists) **only when**:
+   - 当前任务复杂、跨天，或用户明确问“昨天进展/背景”
+7. Read weekly views **only when** doing review/report/strategy:
    - `/home/cheche/.openclaw/workspace-chenlu/memory/review/latest.md`
-   - `/home/cheche/.openclaw/workspace-chenlu/memory/learnings/latest.md`
    - `/home/cheche/.openclaw/workspace-chenlu/memory/deliveries/latest.md`
-7. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
-8. **检查明日待办** — 查看昨天 memory 文件中的待办事项
+8. **检查明日待办** — 仅在收尾、计划或用户询问待办时读取昨天待办
 
 Don't ask permission. Just do it.
 

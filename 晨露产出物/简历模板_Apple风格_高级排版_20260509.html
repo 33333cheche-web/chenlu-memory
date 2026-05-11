@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人简历</title>
+    <style>
+        /* ===== Apple 设计语言 + Frontend Design Pro 规范 ===== */
+        :root {
+            --bg-primary: #f5f5f7;
+            --text-primary: #1d1d1f;
+            --text-secondary: rgba(0, 0, 0, 0.48);
+            --accent: #0071e3;
+            --divider: rgba(0, 0, 0, 0.1);
+            --surface: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.08) 0px 4px 20px 0px;
+            
+            /* 字体栈 - SF Pro 不可用时降级 */
+            --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            
+            /* 间距系统 - 4px 基础 */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-10: 40px;
+            --space-12: 48px;
+            --space-16: 64px;
+            --space-20: 80px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.47;
+            letter-spacing: -0.374px;
+        }
+        
+        /* ===== 页面容器 ===== */
+        .page {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: var(--space-16) var(--space-8);
+            background: var(--surface);
+            min-height: 100vh;
+            box-shadow: var(--shadow);
+        }
+        
+        /* ===== 头部区域 ===== */
+        .header {
+            margin-bottom: var(--space-12);
+            padding-bottom: var(--space-8);
+            border-bottom: 0.5px solid var(--divider);
+        }
+        
+        .name {
+            font-family: var(--font-display);
+            font-size: 48px;
+            font-weight: 600;
+            line-height: 1.07;
+            letter-spacing: -0.28px;
+            margin-bottom: var(--space-3);
+        }
+        
+        .title {
+            font-size: 21px;
+            font-weight: 400;
+            line-height: 1.19;
+            letter-spacing: 0.231px;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-6);
+        }
+        
+        .contact-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-5);
+            font-size: 14px;
+            letter-spacing: -0.224px;
+        }
+        
+        .contact-item {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        
+        .contact-item:hover {
+            color: var(--accent);
+        }
+        
+        .contact-item::before {
+            content: "·";
+            margin-right: var(--space-2);
+            color: var(--divider);
+        }
+        
+        .contact-item:first-child::before {
+            content: none;
+        }
+        
+        /* ===== 区块标题 ===== */
+        .section {
+            margin-bottom: var(--space-12);
+        }
+        
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 400;
+            line-height: 1.14;
+            letter-spacing: 0.196px;
+            margin-bottom: var(--space-6);
+            padding-bottom: var(--space-3);
+            border-bottom: 0.5px solid var(--divider);
+        }
+        
+        /* ===== 经历条目 ===== */
+        .entry {
+            display: grid;
+            grid-template-columns: 140px 1fr;
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
+        }
+        
+        .entry:last-child {
+            margin-bottom: 0;
+        }
+        
+        .entry-time {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: -0.224px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .entry-content h3 {
+            font-family: var(--font-display);
+            font-size: 21px;
+            font-weight: 600;
+            line-height: 1.19;
+            letter-spacing: 0.231px;
+            margin-bottom: var(--space-1);
+        }
+        
+        .entry-content .company {
+            font-size: 17px;
+            color: var(--accent);
+            font-weight: 400;
+            margin-bottom: var(--space-3);
+            letter-spacing: -0.374px;
+        }
+        
+        .entry-content .desc {
+            font-size: 17px;
+            line-height: 1.6;
+            letter-spacing: -0.374px;
+            color: var(--text-secondary);
+        }
+        
+        .entry-content .desc ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .entry-content .desc li {
+            position: relative;
+            padding-left: var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+        
+        .entry-content .desc li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+        
+        /* ===== 技能区块 ===== */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-5);
+        }
+        
+        .skill-category h4 {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: var(--space-3);
+            letter-spacing: -0.374px;
+        }
+        
+        .skill-list {
+            list-style: none;
+            font-size: 14px;
+            line-height: 1.8;
+            letter-spacing: -0.224px;
+            color: var(--text-secondary);
+        }
+        
+        /* ===== 教育区块 ===== */
+        .education-entry {
+            margin-bottom: var(--space-6);
+        }
+        
+        .education-entry:last-child {
+            margin-bottom: 0;
+        }
+        
+        .education-entry h3 {
+            font-family: var(--font-display);
+            font-size: 21px;
+            font-weight: 600;
+            line-height: 1.19;
+            margin-bottom: var(--space-1);
+        }
+        
+        .education-entry .school {
+            font-size: 17px;
+            color: var(--accent);
+            margin-bottom: var(--space-1);
+            letter-spacing: -0.374px;
+        }
+        
+        .education-entry .time {
+            font-size: 14px;
+            color: var(--text-secondary);
+            letter-spacing: -0.224px;
+        }
+        
+        /* ===== 项目区块 ===== */
+        .project-card {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: var(--space-6);
+            margin-bottom: var(--space-5);
+        }
+        
+        .project-card:last-child {
+            margin-bottom: 0;
+        }
+        
+        .project-card h3 {
+            font-family: var(--font-display);
+            font-size: 21px;
+            font-weight: 600;
+            line-height: 1.19;
+            margin-bottom: var(--space-2);
+        }
+        
+        .project-card .meta {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: var(--space-3);
+            letter-spacing: -0.224px;
+        }
+        
+        .project-card .desc {
+            font-size: 17px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+            letter-spacing: -0.374px;
+        }
+        
+        /* ===== 页脚 ===== */
+        .footer {
+            margin-top: var(--space-16);
+            padding-top: var(--space-6);
+            border-top: 0.5px solid var(--divider);
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            letter-spacing: -0.12px;
+        }
+        
+        /* ===== 打印优化 ===== */
+        @media print {
+            body {
+                background: white;
+            }
+            .page {
+                box-shadow: none;
+                max-width: 100%;
+            }
+        }
+        
+        /* ===== 响应式 ===== */
+        @media (max-width: 640px) {
+            .page {
+                padding: var(--space-6);
+            }
+            
+            .name {
+                font-size: 36px;
+            }
+            
+            .entry {
+                grid-template-columns: 1fr;
+                gap: var(--space-2);
+            }
+            
+            .entry-time {
+                margin-bottom: var(--space-1);
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        <!-- 头部 -->
+        <header class="header">
+            <h1 class="name">你的名字</h1>
+            <p class="title">产品设计师 / 全栈开发者</p>
+            <div class="contact-row">
+                <span class="contact-item">your.email@example.com</span>
+                <span class="contact-item">+86 138 0000 0000</span>
+                <span class="contact-item">北京市朝阳区</span>
+                <span class="contact-item">github.com/yourname</span>
+            </div>
+        </header>
+        
+        <!-- 工作经历 -->
+        <section class="section">
+            <h2 class="section-title">工作经历</h2>
+            
+            <div class="entry">
+                <div class="entry-time">2022 — 至今</div>
+                <div class="entry-content">
+                    <h3>高级产品经理</h3>
+                    <p class="company">某知名科技公司</p>
+                    <div class="desc">
+                        <ul>
+                            <li>负责核心产品从 0 到 1 的规划与落地，DAU 增长 300%</li>
+                            <li>主导设计系统搭建，统一 50+ 产品的视觉语言</li>
+                            <li>推动跨部门协作流程优化，需求交付周期缩短 40%</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="entry">
+                <div class="entry-time">2019 — 2022</div>
+                <div class="entry-content">
+                    <h3>产品设计师</h3>
+                    <p class="company">某互联网创业公司</p>
+                    <div class="desc">
+                        <ul>
+                            <li>主导移动端 App 全新改版，用户满意度提升 25%</li>
+                            <li>建立设计规范与组件库，设计效率提升 60%</li>
+                            <li>参与用户研究，输出 20+ 份可用性测试报告</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 专业技能 -->
+        <section class="section">
+            <h2 class="section-title">专业技能</h2>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h4>产品设计</h4>
+                    <ul class="skill-list">
+                        <li>用户体验设计 (UX)</li>
+                        <li>交互原型 (Figma/Sketch)</li>
+                        <li>设计系统搭建</li>
+                        <li>用户研究 & 测试</li>
+                    </ul>
+                </div>
+                <div class="skill-category">
+                    <h4>技术开发</h4>
+                    <ul class="skill-list">
+                        <li>HTML / CSS / JavaScript</li>
+                        <li>React / Vue.js</li>
+                        <li>Python / Node.js</li>
+                        <li>Git / CI/CD</li>
+                    </ul>
+                </div>
+                <div class="skill-category">
+                    <h4>工具 & 方法</h4>
+                    <ul class="skill-list">
+                        <li>敏捷开发 (Scrum)</li>
+                        <li>数据分析 (SQL/Python)</li>
+                        <li>A/B 测试</li>
+                        <li>项目管理</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 教育背景 -->
+        <section class="section">
+            <h2 class="section-title">教育背景</h2>
+            
+            <div class="education-entry">
+                <h3>计算机科学硕士</h3>
+                <p class="school">某某大学</p>
+                <p class="time">2016 — 2019 · GPA 3.8/4.0</p>
+            </div>
+            
+            <div class="education-entry">
+                <h3>工业设计学士</h3>
+                <p class="school">某某艺术学院</p>
+                <p class="time">2012 — 2016 · 优秀毕业生</p>
+            </div>
+        </section>
+        
+        <!-- 项目经历 -->
+        <section class="section">
+            <h2 class="section-title">项目经历</h2>
+            
+            <div class="project-card">
+                <h3>智能设计平台</h3>
+                <p class="meta">2023 · 产品设计负责人</p>
+                <p class="desc">主导 AI 驱动的设计辅助工具从概念到上线，帮助设计师效率提升 5 倍。负责产品策略、交互设计、用户增长全链路。</p>
+            </div>
+            
+            <div class="project-card">
+                <h3>企业级协作系统</h3>
+                <p class="meta">2021 · 核心设计师</p>
+                <p class="desc">参与 10 万+ 用户的企业协作平台设计，负责消息、文档、会议三大模块的交互体验，获年度产品创新奖。</p>
+            </div>
+        </section>
+        
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>更新于 2026 年 5 月 · 使用 Apple 设计语言构建</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>陈晨 — 设计师与创造者</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --font-serif: "Playfair Display", "Noto Serif SC", "Songti SC", serif;
+            --font-sans: "Inter", "PingFang SC", -apple-system, sans-serif;
+            
+            --color-bg: #faf9f7;
+            --color-paper: #ffffff;
+            --color-ink: #1a1a1a;
+            --color-ink-light: #4a4a4a;
+            --color-ink-muted: #8a8a8a;
+            --color-accent: #c41e3a;
+            --color-warm: #f5f0eb;
+            --color-border: #e5e0db;
+            
+            --space-xs: 8px;
+            --space-sm: 16px;
+            --space-md: 24px;
+            --space-lg: 40px;
+            --space-xl: 64px;
+            --space-2xl: 96px;
+            --space-3xl: 128px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            background: var(--color-bg);
+            color: var(--color-ink);
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
+        }
+        
+        /* ===== MAGAZINE SPREAD LAYOUT ===== */
+        .magazine {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--color-paper);
+            position: relative;
+        }
+        
+        /* ===== COVER HERO ===== */
+        .cover {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cover-left {
+            background: var(--color-ink);
+            color: var(--color-paper);
+            padding: var(--space-2xl) var(--space-xl);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+        
+        .cover-left::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--color-accent), transparent);
+            opacity: 0.3;
+        }
+        
+        .masthead {
+            font-family: var(--font-serif);
+            font-size: 11px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            opacity: 0.6;
+            font-weight: 400;
+        }
+        
+        .cover-headline {
+            font-family: var(--font-serif);
+            font-size: clamp(48px, 8vw, 72px);
+            font-weight: 400;
+            line-height: 1.0;
+            letter-spacing: -0.02em;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .cover-headline em {
+            font-style: italic;
+            color: var(--color-accent);
+        }
+        
+        .cover-sub {
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 300;
+            line-height: 1.8;
+            opacity: 0.7;
+            max-width: 320px;
+            letter-spacing: 0.02em;
+        }
+        
+        .cover-right {
+            padding: var(--space-2xl) var(--space-xl);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+            background: linear-gradient(135deg, var(--color-warm) 0%, var(--color-paper) 100%);
+        }
+        
+        .issue-info {
+            position: absolute;
+            top: var(--space-2xl);
+            right: var(--space-xl);
+            text-align: right;
+            font-family: var(--font-sans);
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--color-ink-muted);
+        }
+        
+        .issue-number {
+            font-family: var(--font-serif);
+            font-size: 96px;
+            font-weight: 400;
+            line-height: 1;
+            color: var(--color-border);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .profile-section {
+            border-top: 1px solid var(--color-border);
+            padding-top: var(--space-lg);
+        }
+        
+        .profile-label {
+            font-family: var(--font-sans);
+            font-size: 10px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--color-ink-muted);
+            margin-bottom: var(--space-md);
+        }
+        
+        .profile-text {
+            font-family: var(--font-serif);
+            font-size: 20px;
+            line-height: 1.6;
+            color: var(--color-ink-light);
+            font-weight: 400;
+        }
+        
+        .profile-text em {
+            font-style: italic;
+            color: var(--color-ink);
+        }
+        
+        /* ===== EDITORIAL CONTENT ===== */
+        .editorial {
+            padding: var(--space-3xl) var(--space-xl);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            gap: var(--space-md);
+            margin-bottom: var(--space-2xl);
+            padding-bottom: var(--space-md);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .section-number {
+            font-family: var(--font-serif);
+            font-size: 48px;
+            font-weight: 400;
+            line-height: 1;
+            color: var(--color-border);
+        }
+        
+        .section-title {
+            font-family: var(--font-sans);
+            font-size: 11px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            font-weight: 500;
+            color: var(--color-ink-muted);
+        }
+        
+        /* ===== ASYMMETRIC GRID ===== */
+        .experience-grid {
+            display: grid;
+            grid-template-columns: 2fr 3fr;
+            gap: var(--space-xl);
+            margin-bottom: var(--space-2xl);
+        }
+        
+        .experience-grid:nth-child(even) {
+            grid-template-columns: 3fr 2fr;
+        }
+        
+        .experience-grid:nth-child(even) .exp-visual {
+            order: 2;
+        }
+        
+        .exp-visual {
+            position: relative;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: var(--space-lg);
+            background: var(--color-warm);
+        }
+        
+        .exp-visual::before {
+            content: attr(data-year);
+            font-family: var(--font-serif);
+            font-size: 64px;
+            font-weight: 400;
+            line-height: 1;
+            color: var(--color-border);
+            position: absolute;
+            top: var(--space-md);
+            left: var(--space-md);
+        }
+        
+        .exp-company {
+            font-family: var(--font-serif);
+            font-size: 24px;
+            font-weight: 500;
+            line-height: 1.3;
+            margin-top: auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .exp-role {
+            font-family: var(--font-sans);
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-ink-muted);
+            margin-top: var(--space-xs);
+        }
+        
+        .exp-content {
+            padding: var(--space-md) 0;
+        }
+        
+        .exp-content p {
+            font-family: var(--font-serif);
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--color-ink-light);
+            margin-bottom: var(--space-md);
+        }
+        
+        .exp-content p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .exp-content em {
+            font-style: italic;
+            color: var(--color-ink);
+        }
+        
+        .exp-list {
+            list-style: none;
+            margin-top: var(--space-md);
+        }
+        
+        .exp-list li {
+            font-family: var(--font-sans);
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--color-ink-light);
+            padding-left: var(--space-md);
+            position: relative;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .exp-list li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: var(--color-accent);
+        }
+        
+        /* ===== FULL BLEED SECTION ===== */
+        .full-bleed {
+            background: var(--color-ink);
+            color: var(--color-paper);
+            margin: 0 calc(-1 * var(--space-xl));
+            padding: var(--space-3xl) var(--space-xl);
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-xl);
+        }
+        
+        .skill-category h4 {
+            font-family: var(--font-serif);
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: var(--space-md);
+            padding-bottom: var(--space-xs);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .skill-list {
+            list-style: none;
+        }
+        
+        .skill-list li {
+            font-family: var(--font-sans);
+            font-size: 13px;
+            line-height: 2.2;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 0.02em;
+        }
+        
+        /* ===== EDUCATION CARDS ===== */
+        .edu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-lg);
+            margin-top: var(--space-xl);
+        }
+        
+        .edu-card {
+            border: 1px solid var(--color-border);
+            padding: var(--space-lg);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .edu-card:hover {
+            border-color: var(--color-ink);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+        }
+        
+        .edu-card::before {
+            content: attr(data-num);
+            font-family: var(--font-serif);
+            font-size: 48px;
+            font-weight: 400;
+            line-height: 1;
+            color: var(--color-border);
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+        }
+        
+        .edu-degree {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            font-weight: 500;
+            line-height: 1.3;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .edu-school {
+            font-family: var(--font-sans);
+            font-size: 13px;
+            color: var(--color-accent);
+            font-weight: 500;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .edu-detail {
+            font-family: var(--font-sans);
+            font-size: 12px;
+            color: var(--color-ink-muted);
+            line-height: 1.6;
+        }
+        
+        /* ===== PROJECTS - EDITORIAL STRIP ===== */
+        .projects-strip {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xl);
+        }
+        
+        .project-item {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: var(--space-xl);
+            padding: var(--space-lg) 0;
+            border-bottom: 1px solid var(--color-border);
+            transition: all 0.3s ease;
+        }
+        
+        .project-item:hover {
+            padding-left: var(--space-md);
+        }
+        
+        .project-item:last-child {
+            border-bottom: none;
+        }
+        
+        .project-thumb {
+            background: var(--color-warm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-thumb::after {
+            content: attr(data-cat);
+            font-family: var(--font-sans);
+            font-size: 10px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--color-ink-muted);
+            background: var(--color-paper);
+            padding: 4px 8px;
+            position: absolute;
+            bottom: var(--space-xs);
+            left: var(--space-xs);
+        }
+        
+        .project-info h3 {
+            font-family: var(--font-serif);
+            font-size: 22px;
+            font-weight: 500;
+            line-height: 1.3;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .project-meta {
+            font-family: var(--font-sans);
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--color-ink-muted);
+            margin-bottom: var(--space-sm);
+        }
+        
+        .project-desc {
+            font-family: var(--font-serif);
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--color-ink-light);
+        }
+        
+        .project-stack {
+            font-family: var(--font-sans);
+            font-size: 11px;
+            color: var(--color-ink-muted);
+            margin-top: var(--space-sm);
+            letter-spacing: 0.05em;
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--color-ink);
+            color: var(--color-paper);
+            padding: var(--space-2xl) var(--space-xl);
+            text-align: center;
+        }
+        
+        .footer-magazine {
+            font-family: var(--font-serif);
+            font-size: 32px;
+            font-weight: 400;
+            font-style: italic;
+            margin-bottom: var(--space-md);
+            opacity: 0.9;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+        
+        .footer-links a {
+            font-family: var(--font-sans);
+            font-size: 11px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--color-paper);
+        }
+        
+        .footer-copy {
+            font-family: var(--font-sans);
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 0.1em;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .cover {
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }
+            
+            .cover-left, .cover-right {
+                padding: var(--space-xl) var(--space-lg);
+            }
+            
+            .cover-headline {
+                font-size: 42px;
+            }
+            
+            .issue-number {
+                font-size: 64px;
+            }
+            
+            .experience-grid,
+            .experience-grid:nth-child(even) {
+                grid-template-columns: 1fr;
+            }
+            
+            .experience-grid:nth-child(even) .exp-visual {
+                order: 0;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .edu-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .project-item {
+                grid-template-columns: 1fr;
+            }
+            
+            .editorial {
+                padding: var(--space-xl) var(--space-lg);
+            }
+            
+            .full-bleed {
+                margin: 0 calc(-1 * var(--space-lg));
+                padding: var(--space-xl) var(--space-lg);
+            }
+        }
+        
+        /* Print */
+        @media print {
+            body {
+                background: white;
+            }
+            .magazine {
+                box-shadow: none;
+            }
+            .cover {
+                min-height: auto;
+                page-break-after: always;
+            }
+            .exp-visual {
+                background: #f5f0eb !important;
+            }
+            .full-bleed {
+                background: #1a1a1a !important;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="magazine">
+        
+        <!-- COVER SPREAD -->
+        <section class="cover">
+            <div class="cover-left">
+                <div class="masthead">Portfolio / Issue 01</div>
+                <div>
+                    <h1 class="cover-headline">陈晨<br><em>设计师</em>与<br><em>创造者</em></h1>
+                    <p class="cover-sub">
+                        五年互联网产品经验，从 MIUI 系统界面到飞书文档设计系统，
+                        在字节跳动、阿里巴巴、小米留下设计足迹。
+                    </p>
+                </div>
+                <div style="font-family: var(--font-sans); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; opacity: 0.5;">
+                    Shanghai, China / 2026
+                </div>
+            </div>
+            <div class="cover-right">
+                <div class="issue-info">
+                    <div class="issue-number">01</div>
+                    <div>Vol. 1 / Spring 2026</div>
+                </div>
+                <div class="profile-section">
+                    <div class="profile-label">关于作者</div>
+                    <p class="profile-text">
+                        <em>"设计不是装饰，而是解决问题的方式。"</em><br><br>
+                        从江南大学的视觉传达，到同济大学的交互设计硕士，
+                        再到一线互联网公司的实战磨练——我始终相信，
+                        好的设计能让复杂变得简单，让平凡变得动人。
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- EDITORIAL CONTENT -->
+        <div class="editorial">
+            
+            <!-- Experience -->
+            <section style="margin-bottom: var(--space-3xl);">
+                <div class="section-header">
+                    <span class="section-number">01</span>
+                    <span class="section-title">职业历程</span>
+                </div>
+                
+                <div class="experience-grid">
+                    <div class="exp-visual" data-year="2021">
+                        <div class="exp-company">字节跳动</div>
+                        <div class="exp-role">高级 UI 设计师 / 飞书文档</div>
+                    </div>
+                    <div class="exp-content">
+                        <p>
+                            负责 <em>飞书文档</em> 产品的界面设计和用户体验优化。
+                            主导设计系统搭建，统一 30+ 产品的视觉规范。
+                        </p>
+                        <ul class="exp-list">
+                            <li>日活用户提升 25%，协作效率提升 35%</li>
+                            <li>建立组件库和设计评审机制</li>
+                            <li>推动设计流程标准化</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="experience-grid">
+                    <div class="exp-visual" data-year="2019">
+                        <div class="exp-company">阿里巴巴</div>
+                        <div class="exp-role">前端工程师 / 淘宝</div>
+                    </div>
+                    <div class="exp-content">
+                        <p>
+                            参与 <em>淘宝首页重构</em>，性能优化使首屏加载速度提升 40%。
+                            开发内部组件库，被 15 个业务线采用。
+                        </p>
+                        <ul class="exp-list">
+                            <li>首屏加载速度提升 40%</li>
+                            <li>组件库被 15 个业务线复用</li>
+                            <li>2020 年度优秀员工</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="experience-grid">
+                    <div class="exp-visual" data-year="2017">
+                        <div class="exp-company">小米科技</div>
+                        <div class="exp-role">初级设计师 / MIUI</div>
+                    </div>
+                    <div class="exp-content">
+                        <p>
+                            参与 <em>MIUI 系统界面</em> 的设计迭代，覆盖 3 亿用户。
+                            负责小米商城营销活动的视觉设计。
+                        </p>
+                        <ul class="exp-list">
+                            <li>MIUI 系统界面覆盖 3 亿用户</li>
+                            <li>商城转化率平均提升 15%</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+            
+        </div>
+        
+        <!-- FULL BLEED SKILLS -->
+        <section class="full-bleed">
+            <div class="editorial" style="padding: 0;">
+                <div class="section-header" style="border-color: rgba(255,255,255,0.2);">
+                    <span class="section-number" style="color: rgba(255,255,255,0.2);">02</span>
+                    <span class="section-title" style="color: rgba(255,255,255,0.4);">专业技能</span>
+                </div>
+                
+                <div class="skills-grid">
+                    <div class="skill-category">
+                        <h4>设计</h4>
+                        <ul class="skill-list">
+                            <li>Figma / Sketch / Adobe XD</li>
+                            <li>Photoshop / Illustrator</li>
+                            <li>Principle / After Effects</li>
+                            <li>UI/UX 设计</li>
+                            <li>交互原型</li>
+                            <li>设计系统</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h4>开发</h4>
+                        <ul class="skill-list">
+                            <li>HTML5 / CSS3</li>
+                            <li>JavaScript / TypeScript</li>
+                            <li>React / Vue.js</li>
+                            <li>React Native</li>
+                            <li>Node.js</li>
+                            <li>Tailwind CSS</li>
+                        </ul>
+                    </div>
+                    <div class="skill-category">
+                        <h4>专长</h4>
+                        <ul class="skill-list">
+                            <li>数据可视化</li>
+                            <li>品牌设计</li>
+                            <li>动效设计</li>
+                            <li>用户研究</li>
+                            <li>A/B 测试</li>
+                            <li>敏捷开发</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <div class="editorial">
+            
+            <!-- Education -->
+            <section style="margin-bottom: var(--space-3xl);">
+                <div class="section-header">
+                    <span class="section-number">03</span>
+                    <span class="section-title">教育背景</span>
+                </div>
+                
+                <div class="edu-grid">
+                    <div class="edu-card" data-num="01">
+                        <div class="edu-degree">工业设计硕士</div>
+                        <div class="edu-school">同济大学 · 设计创意学院</div>
+                        <div class="edu-detail">
+                            交互设计与用户体验方向<br>
+                            2015 — 2017
+                        </div>
+                    </div>
+                    <div class="edu-card" data-num="02">
+                        <div class="edu-degree">视觉传达学士</div>
+                        <div class="edu-school">江南大学 · 设计学院</div>
+                        <div class="edu-detail">
+                            国家奖学金获得者 · 优秀毕业生<br>
+                            2011 — 2015
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Projects -->
+            <section style="margin-bottom: var(--space-2xl);">
+                <div class="section-header">
+                    <span class="section-number">04</span>
+                    <span class="section-title">精选作品</span>
+                </div>
+                
+                <div class="projects-strip">
+                    <div class="project-item">
+                        <div class="project-thumb" data-cat="独立项目">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="color: var(--color-ink-muted);">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                            </svg>
+                        </div>
+                        <div class="project-info">
+                            <h3>云笔记应用</h3>
+                            <div class="project-meta">产品设计 & 前端开发</div>
+                            <div class="project-desc">
+                                独立开发的移动端笔记应用，极简设计语言，支持 Markdown 编辑、标签管理和云端同步。
+                                上线 3 个月获 5 万+ 下载，评分 4.8。
+                            </div>
+                            <div class="project-stack">React Native · Node.js · MongoDB</div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-item">
+                        <div class="project-thumb" data-cat="B端产品">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="color: var(--color-ink-muted);">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <line x1="3" y1="9" x2="21" y2="9"/>
+                                <line x1="9" y1="21" x2="9" y2="9"/>
+                            </svg>
+                        </div>
+                        <div class="project-info">
+                            <h3>电商后台管理系统</h3>
+                            <div class="project-meta">UI 设计 & 前端开发</div>
+                            <div class="project-desc">
+                                为中大型电商企业打造的一站式管理后台，涵盖商品管理、订单处理、数据分析等核心模块。
+                                信息架构优化让操作效率提升 40%。
+                            </div>
+                            <div class="project-stack">Vue.js · Element UI · ECharts</div>
+                        </div>
+                    </div>
+                    
+                    <div class="project-item">
+                        <div class="project-thumb" data-cat="小程序">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="color: var(--color-ink-muted);">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                            </svg>
+                        </div>
+                        <div class="project-info">
+                            <h3>健康追踪小程序</h3>
+                            <div class="project-meta">产品设计 · 微信小程序</div>
+                            <div class="project-desc">
+                                整合睡眠监测、运动记录、饮食建议和心情日记。温暖柔和的视觉风格，让健康管理变得轻松愉悦。
+                            </div>
+                            <div class="project-stack">微信小程序 · Taro · 云开发</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+        </div>
+        
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div class="footer-magazine">Chen Chen</div>
+            <div class="footer-links">
+                <a href="#">GitHub</a>
+                <a href="#">Dribbble</a>
+                <a href="#">LinkedIn</a>
+                <a href="#">Email</a>
+            </div>
+            <div class="footer-copy">
+                © 2026 · 用设计让世界更美好
+            </div>
+        </footer>
+        
+    </div>
+</body>
+</html>

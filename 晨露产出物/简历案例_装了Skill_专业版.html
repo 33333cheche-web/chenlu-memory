@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>陈晨 — 高级 UI 设计师 & 前端开发者</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:wght@400&display=swap');
+
+  :root {
+    --font-body: 'DM Sans', -apple-system, sans-serif;
+    --font-display: 'Instrument Serif', Georgia, serif;
+    --color-bg: #faf9f7;
+    --color-surface: #ffffff;
+    --color-ink: #1a1a1a;
+    --color-warm: oklch(0.55 0.04 75);
+    --color-accent: oklch(0.58 0.18 30);
+    --color-muted: oklch(0.6 0.02 75);
+    --color-cream: oklch(0.95 0.01 80);
+    --space-base: 8px;
+    --space-1: calc(var(--space-base) * 1);
+    --space-2: calc(var(--space-base) * 2);
+    --space-3: calc(var(--space-base) * 3);
+    --space-4: calc(var(--space-base) * 4);
+    --space-5: calc(var(--space-base) * 5);
+    --space-6: calc(var(--space-base) * 6);
+    --space-8: calc(var(--space-base) * 8);
+    --space-10: calc(var(--space-base) * 10);
+    --transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--color-bg);
+    color: var(--color-ink);
+    line-height: 1.6;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* 容器 */
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--space-10) var(--space-6);
+  }
+
+  @media (max-width: 700px) {
+    .container {
+      padding: var(--space-6) var(--space-4);
+    }
+  }
+
+  /* 头部 */
+  .hero {
+    margin-bottom: var(--space-10);
+    padding-bottom: var(--space-8);
+    border-bottom: 1px solid var(--color-cream);
+  }
+
+  .hero-name {
+    font-family: var(--font-display);
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--space-3);
+  }
+
+  .hero-title {
+    font-size: 18px;
+    color: var(--color-warm);
+    font-weight: 500;
+    margin-bottom: var(--space-4);
+  }
+
+  .hero-summary {
+    font-size: 15px;
+    color: var(--color-muted);
+    max-width: 65ch;
+    line-height: 1.7;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: var(--space-6);
+    margin-top: var(--space-6);
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  .meta-label {
+    font-size: 11px;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-weight: 600;
+  }
+
+  .meta-value {
+    font-size: 14px;
+    color: var(--color-ink);
+    font-weight: 500;
+  }
+
+  /* 网格布局 */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-10);
+  }
+
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr; gap: var(--space-8); }
+  }
+
+  /* 区块 */
+  .section {
+    margin-bottom: var(--space-10);
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 400;
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-3);
+    border-bottom: 2px solid var(--color-ink);
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+  }
+
+  .section-num {
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--color-accent);
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  /* 经历项 */
+  .exp-item {
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-cream);
+    transition: transform var(--transition);
+  }
+
+  .exp-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .exp-item:hover {
+    transform: translateX(4px);
+  }
+
+  .exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--space-1);
+  }
+
+  .exp-title {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .exp-date {
+    font-size: 13px;
+    color: var(--color-muted);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+
+  .exp-company {
+    font-size: 14px;
+    color: var(--color-accent);
+    font-weight: 500;
+    margin-bottom: var(--space-2);
+  }
+
+  .exp-desc {
+    font-size: 14px;
+    color: var(--color-muted);
+    line-height: 1.7;
+  }
+
+  .exp-desc li {
+    list-style: none;
+    position: relative;
+    padding-left: var(--space-4);
+    margin-bottom: var(--space-1);
+  }
+
+  .exp-desc li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+    font-size: 12px;
+  }
+
+  /* 技能 */
+  .skill-category {
+    margin-bottom: var(--space-5);
+  }
+
+  .skill-category h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: var(--space-2);
+    color: var(--color-ink);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .skill-tag {
+    padding: var(--space-1) var(--space-3);
+    background: var(--color-cream);
+    border-radius: 100px;
+    font-size: 13px;
+    color: var(--color-warm);
+    font-weight: 500;
+    transition: all var(--transition);
+    cursor: default;
+  }
+
+  .skill-tag:hover {
+    background: var(--color-accent);
+    color: #fff;
+    transform: translateY(-2px);
+  }
+
+  /* 项目 */
+  .project-item {
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--color-cream);
+    transition: transform var(--transition);
+  }
+
+  .project-item:last-child {
+    border-bottom: none;
+  }
+
+  .project-item:hover {
+    transform: translateX(4px);
+  }
+
+  .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--space-1);
+  }
+
+  .project-name {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+
+  .project-role {
+    font-size: 12px;
+    color: var(--color-accent);
+    font-weight: 500;
+  }
+
+  .project-desc {
+    font-size: 14px;
+    color: var(--color-muted);
+    line-height: 1.7;
+    margin-bottom: var(--space-2);
+  }
+
+  .project-tech {
+    display: flex;
+    gap: var(--space-1);
+    flex-wrap: wrap;
+  }
+
+  .tech-tag {
+    padding: 3px 10px;
+    border: 1px solid var(--color-cream);
+    font-size: 11px;
+    color: var(--color-muted);
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  /* 教育 */
+  .edu-item {
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--color-cream);
+  }
+
+  .edu-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .edu-school {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--color-ink);
+    margin-bottom: var(--space-1);
+  }
+
+  .edu-degree {
+    font-size: 14px;
+    color: var(--color-muted);
+  }
+
+  .edu-year {
+    font-size: 13px;
+    color: var(--color-accent);
+    margin-top: var(--space-1);
+    font-weight: 500;
+  }
+
+  /* 页脚 */
+  .footer {
+    margin-top: var(--space-10);
+    padding-top: var(--space-6);
+    border-top: 2px solid var(--color-ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+
+  .footer p {
+    font-size: 13px;
+    color: var(--color-muted);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: var(--space-4);
+  }
+
+  .footer-links a {
+    font-size: 13px;
+    color: var(--color-ink);
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+    transition: color var(--transition);
+  }
+
+  .footer-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--color-accent);
+    transition: width var(--transition);
+  }
+
+  .footer-links a:hover {
+    color: var(--color-accent);
+  }
+
+  .footer-links a:hover::after {
+    width: 100%;
+  }
+
+  /* 响应式 */
+  @media (max-width: 700px) {
+    .hero-name { font-size: 36px; }
+    .hero-meta { gap: var(--space-4); }
+    .section-title { font-size: 24px; }
+    .exp-header { flex-direction: column; gap: 4px; }
+    .project-header { flex-direction: column; gap: 4px; }
+    .footer { flex-direction: column; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Hero -->
+  <header class="hero">
+    <h1 class="hero-name">陈晨</h1>
+    <p class="hero-title">高级 UI 设计师 & 前端开发者</p>
+    <p class="hero-summary">5 年互联网产品设计经验，专注于创造简洁优雅的数字体验。具备从设计到开发的完整落地能力。</p>
+    
+    <div class="hero-meta">
+      <div class="meta-item">
+        <span class="meta-label">电话</span>
+        <span class="meta-value">138-0000-0000</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">邮箱</span>
+        <span class="meta-value">chen.chen@example.com</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">地点</span>
+        <span class="meta-value">上海</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">GitHub</span>
+        <span class="meta-value">github.com/chenchen</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Grid -->
+  <div class="grid">
+
+    <!-- Left Column -->
+    <div class="left">
+
+      <!-- Experience -->
+      <section class="section">
+        <h2 class="section-title">
+          <span class="section-num">01</span>
+          工作经历
+        </h2>
+
+        <div class="exp-item">
+          <div class="exp-header">
+            <span class="exp-title">高级 UI 设计师</span>
+            <span class="exp-date">2021 — 至今</span>
+          </div>
+          <div class="exp-company">字节跳动 · 飞书文档团队</div>
+          <ul class="exp-desc">
+            <li>负责飞书文档产品的界面设计和用户体验优化，日活用户提升 25%</li>
+            <li>主导设计系统搭建，统一 30+ 产品的视觉规范，提升协作效率 35%</li>
+            <li>推动设计流程标准化，建立组件库和设计评审机制</li>
+          </ul>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-header">
+            <span class="exp-title">前端开发工程师</span>
+            <span class="exp-date">2019 — 2021</span>
+          </div>
+          <div class="exp-company">阿里巴巴 · 淘宝前端团队</div>
+          <ul class="exp-desc">
+            <li>参与淘宝首页重构，性能优化使首屏加载速度提升 40%</li>
+            <li>开发内部组件库，被 15 个业务线采用，减少重复开发</li>
+            <li>获得 2020 年度优秀员工称号</li>
+          </ul>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-header">
+            <span class="exp-title">初级设计师</span>
+            <span class="exp-date">2017 — 2019</span>
+          </div>
+          <div class="exp-company">小米科技 · MIUI 设计团队</div>
+          <ul class="exp-desc">
+            <li>参与 MIUI 系统界面的设计迭代，覆盖 3 亿用户</li>
+            <li>负责小米商城多个营销活动的视觉设计，转化率平均提升 15%</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Education -->
+      <section class="section">
+        <h2 class="section-title">
+          <span class="section-num">02</span>
+          教育背景
+        </h2>
+
+        <div class="edu-item">
+          <div class="edu-school">同济大学</div>
+          <div class="edu-degree">设计创意学院 · 工业设计硕士</div>
+          <div class="edu-year">2015 — 2017 · 交互设计与用户体验方向</div>
+        </div>
+
+        <div class="edu-item">
+          <div class="edu-school">江南大学</div>
+          <div class="edu-degree">设计学院 · 视觉传达设计学士</div>
+          <div class="edu-year">2011 — 2015 · 国家奖学金获得者</div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- Right Column -->
+    <div class="right">
+
+      <!-- Skills -->
+      <section class="section">
+        <h2 class="section-title">
+          <span class="section-num">03</span>
+          专业技能
+        </h2>
+
+        <div class="skill-category">
+          <h4>设计工具</h4>
+          <div class="skill-tags">
+            <span class="skill-tag">Figma</span>
+            <span class="skill-tag">Sketch</span>
+            <span class="skill-tag">Adobe XD</span>
+            <span class="skill-tag">Photoshop</span>
+            <span class="skill-tag">Illustrator</span>
+            <span class="skill-tag">Principle</span>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <h4>前端技术</h4>
+          <div class="skill-tags">
+            <span class="skill-tag">HTML5 / CSS3</span>
+            <span class="skill-tag">JavaScript</span>
+            <span class="skill-tag">TypeScript</span>
+            <span class="skill-tag">React</span>
+            <span class="skill-tag">Vue.js</span>
+            <span class="skill-tag">Tailwind CSS</span>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <h4>专业能力</h4>
+          <div class="skill-tags">
+            <span class="skill-tag">UI/UX 设计</span>
+            <span class="skill-tag">交互原型</span>
+            <span class="skill-tag">设计系统</span>
+            <span class="skill-tag">数据可视化</span>
+            <span class="skill-tag">品牌设计</span>
+            <span class="skill-tag">动效设计</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Projects -->
+      <section class="section">
+        <h2 class="section-title">
+          <span class="section-num">04</span>
+          项目经历
+        </h2>
+
+        <div class="project-item">
+          <div class="project-header">
+            <span class="project-name">云笔记应用</span>
+            <span class="project-role">产品设计 & 前端开发</span>
+          </div>
+          <p class="project-desc">独立开发的移动端笔记应用，采用极简设计语言，支持 Markdown 编辑、标签管理和云端同步。上线 3 个月获 5 万+ 下载，评分 4.8。</p>
+          <div class="project-tech">
+            <span class="tech-tag">React Native</span>
+            <span class="tech-tag">Node.js</span>
+            <span class="tech-tag">MongoDB</span>
+          </div>
+        </div>
+
+        <div class="project-item">
+          <div class="project-header">
+            <span class="project-name">电商后台管理系统</span>
+            <span class="project-role">UI 设计 & 前端开发</span>
+          </div>
+          <p class="project-desc">为中大型电商企业打造的一站式管理后台，涵盖商品管理、订单处理、数据分析等核心模块。信息架构优化让操作效率提升 40%。</p>
+          <div class="project-tech">
+            <span class="tech-tag">Vue.js</span>
+            <span class="tech-tag">Element UI</span>
+            <span class="tech-tag">ECharts</span>
+          </div>
+        </div>
+
+        <div class="project-item">
+          <div class="project-header">
+            <span class="project-name">健康追踪小程序</span>
+            <span class="project-role">产品设计</span>
+          </div>
+          <p class="project-desc">微信小程序整合睡眠监测、运动记录、饮食建议和心情日记。温暖柔和的视觉风格，让健康管理变得轻松愉悦。</p>
+          <div class="project-tech">
+            <span class="tech-tag">微信小程序</span>
+            <span class="tech-tag">Taro</span>
+            <span class="tech-tag">云开发</span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2024 陈晨 · 用设计让世界更美好</p>
+    <div class="footer-links">
+      <a href="#">GitHub</a>
+      <a href="#">Dribbble</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">邮件联系</a>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>

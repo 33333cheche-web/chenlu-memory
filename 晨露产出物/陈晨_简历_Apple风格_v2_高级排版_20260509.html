@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>陈晨 — 高级 UI 设计师 & 前端开发者</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== Frontend Design Pro + Apple 设计语言 ===== */
+        :root {
+            /* OKLCH 色彩空间 — 感知均匀 */
+            --bg-warm: oklch(97% 0.005 80);      /* 暖白 */
+            --bg-cool: oklch(96% 0.008 260);     /* 冷灰蓝 */
+            --text-primary: oklch(22% 0.01 260);
+            --text-secondary: oklch(55% 0.02 260);
+            --text-muted: oklch(70% 0.015 260);
+            --accent: oklch(55% 0.22 250);       /* Apple Blue in OKLCH */
+            --accent-light: oklch(92% 0.05 250);
+            --accent-hover: oklch(48% 0.25 250);
+            --divider: oklch(88% 0.01 260);
+            --surface: oklch(100% 0 0);
+            --surface-elevated: oklch(99% 0.005 260);
+            
+            /* 字体 */
+            --font-display: "Inter", "PingFang SC", -apple-system, sans-serif;
+            --font-body: "Inter", "PingFang SC", -apple-system, sans-serif;
+            
+            /* 间距系统 — 8px 基础 */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-10: 40px;
+            --space-12: 48px;
+            --space-16: 64px;
+            --space-20: 80px;
+            --space-24: 96px;
+            
+            /* 动效 */
+            --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+            --duration-fast: 150ms;
+            --duration-normal: 300ms;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: var(--font-body);
+            background: var(--bg-warm);
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-size: 16px;
+            line-height: 1.6;
+            letter-spacing: -0.011em;
+        }
+        
+        /* ===== Layout ===== */
+        .page {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--surface);
+        }
+        
+        /* ===== HERO 区域 — 全宽冲击 ===== */
+        .hero {
+            background: var(--text-primary);
+            color: var(--surface);
+            padding: var(--space-24) var(--space-10);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            opacity: 0.08;
+            filter: blur(80px);
+        }
+        
+        .hero-content {
+            max-width: 720px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-label {
+            font-size: 12px;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: oklch(70% 0.05 250);
+            margin-bottom: var(--space-4);
+        }
+        
+        .hero-name {
+            font-family: var(--font-display);
+            font-size: 64px;
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin-bottom: var(--space-4);
+        }
+        
+        .hero-title {
+            font-size: 24px;
+            font-weight: 300;
+            line-height: 1.3;
+            color: oklch(80% 0.02 260);
+            margin-bottom: var(--space-6);
+        }
+        
+        .hero-bio {
+            font-size: 18px;
+            line-height: 1.6;
+            color: oklch(75% 0.015 260);
+            max-width: 55ch;
+            font-weight: 300;
+        }
+        
+        .hero-contact {
+            display: flex;
+            gap: var(--space-6);
+            margin-top: var(--space-8);
+            font-size: 14px;
+            font-weight: 400;
+        }
+        
+        .hero-contact a {
+            color: oklch(75% 0.015 260);
+            text-decoration: none;
+            transition: color var(--duration-fast) var(--ease-out);
+            position: relative;
+        }
+        
+        .hero-contact a::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: width var(--duration-normal) var(--ease-out);
+        }
+        
+        .hero-contact a:hover {
+            color: var(--surface);
+        }
+        
+        .hero-contact a:hover::after {
+            width: 100%;
+        }
+        
+        /* ===== 内容区 ===== */
+        .content {
+            padding: var(--space-16) var(--space-10);
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        
+        /* ===== Section Title ===== */
+        .section {
+            margin-bottom: var(--space-16);
+        }
+        
+        .section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            gap: var(--space-3);
+            margin-bottom: var(--space-8);
+            padding-bottom: var(--space-4);
+            border-bottom: 1px solid var(--divider);
+        }
+        
+        .section-number {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent);
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        
+        /* ===== Experience Entry ===== */
+        .entry {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: var(--space-8);
+            margin-bottom: var(--space-10);
+            padding-bottom: var(--space-10);
+            border-bottom: 1px solid var(--divider);
+            transition: transform var(--duration-fast) var(--ease-out);
+        }
+        
+        .entry:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .entry:hover {
+            transform: translateY(-2px);
+        }
+        
+        .entry-meta {
+            text-align: right;
+        }
+        
+        .entry-time {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        
+        .entry-content h3 {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 1.25;
+            letter-spacing: -0.02em;
+            margin-bottom: var(--space-1);
+        }
+        
+        .entry-company {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--accent);
+            margin-bottom: var(--space-4);
+            letter-spacing: -0.01em;
+        }
+        
+        .entry-desc {
+            font-size: 15px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+            letter-spacing: -0.005em;
+        }
+        
+        .entry-desc ul {
+            list-style: none;
+        }
+        
+        .entry-desc li {
+            position: relative;
+            padding-left: var(--space-4);
+            margin-bottom: var(--space-2);
+        }
+        
+        .entry-desc li::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 11px;
+            width: 5px;
+            height: 5px;
+            border-radius: 2px;
+            background: var(--accent);
+            transform: rotate(45deg);
+        }
+        
+        .entry-tag {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--accent);
+            background: var(--accent-light);
+            padding: var(--space-1) var(--space-3);
+            border-radius: 4px;
+            margin-top: var(--space-3);
+        }
+        
+        /* ===== Skills ===== */
+        .skills-section {
+            background: var(--bg-cool);
+            margin: 0 calc(-1 * var(--space-10));
+            padding: var(--space-16) var(--space-10);
+        }
+        
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-8);
+        }
+        
+        .skill-group h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: var(--space-5);
+            padding-bottom: var(--space-2);
+            border-bottom: 2px solid var(--accent);
+            display: inline-block;
+        }
+        
+        .skill-list {
+            list-style: none;
+            font-size: 15px;
+            line-height: 2;
+            color: var(--text-secondary);
+        }
+        
+        .skill-list li {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+        
+        .skill-bar {
+            flex: 1;
+            height: 3px;
+            background: var(--divider);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .skill-bar-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 2px;
+            transition: width var(--duration-normal) var(--ease-out);
+        }
+        
+        /* ===== Education ===== */
+        .edu-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-8);
+        }
+        
+        .edu-card {
+            background: var(--surface-elevated);
+            border-radius: 12px;
+            padding: var(--space-6);
+            border: 1px solid var(--divider);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .edu-card:hover {
+            box-shadow: 0 4px 20px oklch(80% 0 0 / 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .edu-card h3 {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: var(--space-2);
+        }
+        
+        .edu-card .school {
+            font-size: 15px;
+            color: var(--accent);
+            font-weight: 500;
+            margin-bottom: var(--space-1);
+        }
+        
+        .edu-card .detail {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        
+        /* ===== Projects ===== */
+        .project-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-6);
+        }
+        
+        .project-item {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: var(--space-6);
+            padding: var(--space-6);
+            background: var(--surface-elevated);
+            border-radius: 12px;
+            border: 1px solid var(--divider);
+            transition: all var(--duration-fast) var(--ease-out);
+        }
+        
+        .project-item:hover {
+            border-color: var(--accent-light);
+            box-shadow: 0 2px 12px oklch(80% 0 0 / 0.08);
+        }
+        
+        .project-info h3 {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: var(--space-1);
+        }
+        
+        .project-meta {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: var(--space-3);
+        }
+        
+        .project-desc {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+        
+        .project-stack {
+            font-size: 12px;
+            color: var(--accent);
+            background: var(--accent-light);
+            padding: var(--space-2) var(--space-3);
+            border-radius: 6px;
+            font-weight: 500;
+            align-self: start;
+            white-space: nowrap;
+        }
+        
+        /* ===== Footer ===== */
+        .footer {
+            background: var(--text-primary);
+            color: oklch(70% 0.015 260);
+            padding: var(--space-12) var(--space-10);
+            text-align: center;
+            font-size: 13px;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: var(--space-8);
+            margin-bottom: var(--space-4);
+        }
+        
+        .footer-links a {
+            color: oklch(70% 0.015 260);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: color var(--duration-fast) var(--ease-out);
+            position: relative;
+        }
+        
+        .footer-links a::after {
+            content: "";
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: width var(--duration-normal) var(--ease-out);
+        }
+        
+        .footer-links a:hover {
+            color: var(--surface);
+        }
+        
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* ===== Print ===== */
+        @media print {
+            body {
+                background: white;
+            }
+            .hero {
+                background: #1d1d1f !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .skills-section {
+                background: #f5f5f7 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .entry:hover, .edu-card:hover, .project-item:hover {
+                transform: none;
+            }
+        }
+        
+        /* ===== Responsive ===== */
+        @media (max-width: 680px) {
+            .hero {
+                padding: var(--space-16) var(--space-5);
+            }
+            
+            .hero-name {
+                font-size: 42px;
+            }
+            
+            .hero-title {
+                font-size: 20px;
+            }
+            
+            .content {
+                padding: var(--space-10) var(--space-5);
+            }
+            
+            .entry {
+                grid-template-columns: 1fr;
+                gap: var(--space-3);
+            }
+            
+            .entry-meta {
+                text-align: left;
+            }
+            
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .edu-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .project-item {
+                grid-template-columns: 1fr;
+            }
+            
+            .skills-section {
+                margin: 0 calc(-1 * var(--space-5));
+                padding: var(--space-10) var(--space-5);
+            }
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page">
+        
+        <!-- HERO -->
+        <header class="hero">
+            <div class="hero-content">
+                <div class="hero-label">个人简历 / Résumé</div>
+                <h1 class="hero-name">陈晨</h1>
+                <p class="hero-title">高级 UI 设计师 & 前端开发者</p>
+                <p class="hero-bio">5 年互联网产品设计经验，专注于创造简洁优雅的数字体验。具备从设计到开发的完整落地能力，曾服务字节跳动、阿里巴巴、小米等头部科技企业。</p>
+                <div class="hero-contact">
+                    <a href="#">GitHub</a>
+                    <a href="#">Dribbble</a>
+                    <a href="#">LinkedIn</a>
+                    <a href="#">邮件联系</a>
+                </div>
+            </div>
+        </header>
+        
+        <div class="content">
+            
+            <!-- Experience -->
+            <section class="section">
+                <div class="section-header">
+                    <span class="section-number">01</span>
+                    <span class="section-title">工作经历</span>
+                </div>
+                
+                <div class="entry">
+                    <div class="entry-meta">
+                        <div class="entry-time">2021 — 至今</div>
+                    </div>
+                    <div class="entry-content">
+                        <h3>高级 UI 设计师</h3>
+                        <div class="entry-company">字节跳动 · 飞书文档团队</div>
+                        <div class="entry-desc">
+                            <ul>
+                                <li>负责飞书文档产品的界面设计和用户体验优化，日活用户提升 25%</li>
+                                <li>主导设计系统搭建，统一 30+ 产品的视觉规范，提升协作效率 35%</li>
+                                <li>推动设计流程标准化，建立组件库和设计评审机制</li>
+                            </ul>
+                        </div>
+                        <span class="entry-tag">B端产品 · 设计系统</span>
+                    </div>
+                </div>
+                
+                <div class="entry">
+                    <div class="entry-meta">
+                        <div class="entry-time">2019 — 2021</div>
+                    </div>
+                    <div class="entry-content">
+                        <h3>前端开发工程师</h3>
+                        <div class="entry-company">阿里巴巴 · 淘宝前端团队</div>
+                        <div class="entry-desc">
+                            <ul>
+                                <li>参与淘宝首页重构，性能优化使首屏加载速度提升 40%</li>
+                                <li>开发内部组件库，被 15 个业务线采用，减少重复开发</li>
+                                <li>获得 2020 年度优秀员工称号</li>
+                            </ul>
+                        </div>
+                        <span class="entry-tag">电商 · 性能优化</span>
+                    </div>
+                </div>
+                
+                <div class="entry">
+                    <div class="entry-meta">
+                        <div class="entry-time">2017 — 2019</div>
+                    </div>
+                    <div class="entry-content">
+                        <h3>初级设计师</h3>
+                        <div class="entry-company">小米科技 · MIUI 设计团队</div>
+                        <div class="entry-desc">
+                            <ul>
+                                <li>参与 MIUI 系统界面的设计迭代，覆盖 3 亿用户</li>
+                                <li>负责小米商城多个营销活动的视觉设计，转化率平均提升 15%</li>
+                            </ul>
+                        </div>
+                        <span class="entry-tag">移动端 · 营销设计</span>
+                    </div>
+                </div>
+            </section>
+            
+        </div>
+        
+        <!-- Skills — 全宽区块 -->
+        <section class="skills-section">
+            <div class="content" style="padding-top: 0; padding-bottom: 0;">
+                <div class="section-header">
+                    <span class="section-number">02</span>
+                    <span class="section-title">专业技能</span>
+                </div>
+                
+                <div class="skills-grid">
+                    <div class="skill-group">
+                        <h4>设计工具</h4>
+                        <ul class="skill-list">
+                            <li>Figma <span class="skill-bar"><span class="skill-bar-fill" style="width: 95%"></span></span></li>
+                            <li>Sketch <span class="skill-bar"><span class="skill-bar-fill" style="width: 90%"></span></span></li>
+                            <li>Adobe XD <span class="skill-bar"><span class="skill-bar-fill" style="width: 85%"></span></span></li>
+                            <li>Principle <span class="skill-bar"><span class="skill-bar-fill" style="width: 80%"></span></span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="skill-group">
+                        <h4>前端技术</h4>
+                        <ul class="skill-list">
+                            <li>HTML/CSS <span class="skill-bar"><span class="skill-bar-fill" style="width: 95%"></span></span></li>
+                            <li>JavaScript <span class="skill-bar"><span class="skill-bar-fill" style="width: 90%"></span></span></li>
+                            <li>React / Vue <span class="skill-bar"><span class="skill-bar-fill" style="width: 88%"></span></span></li>
+                            <li>TypeScript <span class="skill-bar"><span class="skill-bar-fill" style="width: 82%"></span></span></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="skill-group">
+                        <h4>专业能力</h4>
+                        <ul class="skill-list">
+                            <li>UI/UX 设计 <span class="skill-bar"><span class="skill-bar-fill" style="width: 95%"></span></span></li>
+                            <li>设计系统 <span class="skill-bar"><span class="skill-bar-fill" style="width: 90%"></span></span></li>
+                            <li>数据可视化 <span class="skill-bar"><span class="skill-bar-fill" style="width: 85%"></span></span></li>
+                            <li>动效设计 <span class="skill-bar"><span class="skill-bar-fill" style="width: 78%"></span></span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <div class="content">
+            
+            <!-- Education -->
+            <section class="section">
+                <div class="section-header">
+                    <span class="section-number">03</span>
+                    <span class="section-title">教育背景</span>
+                </div>
+                
+                <div class="edu-grid">
+                    <div class="edu-card">
+                        <h3>工业设计硕士</h3>
+                        <div class="school">同济大学 · 设计创意学院</div>
+                        <div class="detail">交互设计与用户体验方向<br>2015 — 2017</div>
+                    </div>
+                    
+                    <div class="edu-card">
+                        <h3>视觉传达设计学士</h3>
+                        <div class="school">江南大学 · 设计学院</div>
+                        <div class="detail">国家奖学金获得者 · 优秀毕业生<br>2011 — 2015</div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Projects -->
+            <section class="section">
+                <div class="section-header">
+                    <span class="section-number">04</span>
+                    <span class="section-title">项目经历</span>
+                </div>
+                
+                <div class="project-list">
+                    <div class="project-item">
+                        <div class="project-info">
+                            <h3>云笔记应用</h3>
+                            <div class="project-meta">产品设计 & 前端开发 · 独立项目</div>
+                            <div class="project-desc">独立开发的移动端笔记应用，采用极简设计语言，支持 Markdown 编辑、标签管理和云端同步。上线 3 个月获 5 万+ 下载，评分 4.8。</div>
+                        </div>
+                        <div class="project-stack">React Native<br>Node.js<br>MongoDB</div>
+                    </div>
+                    
+                    <div class="project-item">
+                        <div class="project-info">
+                            <h3>电商后台管理系统</h3>
+                            <div class="project-meta">UI 设计 & 前端开发 · B端产品</div>
+                            <div class="project-desc">为中大型电商企业打造的一站式管理后台，涵盖商品管理、订单处理、数据分析等核心模块。信息架构优化让操作效率提升 40%。</div>
+                        </div>
+                        <div class="project-stack">Vue.js<br>Element UI<br>ECharts</div>
+                    </div>
+                    
+                    <div class="project-item">
+                        <div class="project-info">
+                            <h3>健康追踪小程序</h3>
+                            <div class="project-meta">产品设计 · 微信小程序</div>
+                            <div class="project-desc">微信小程序整合睡眠监测、运动记录、饮食建议和心情日记。温暖柔和的视觉风格，让健康管理变得轻松愉悦。</div>
+                        </div>
+                        <div class="project-stack">微信小程序<br>Taro<br>云开发</div>
+                    </div>
+                </div>
+            </section>
+            
+        </div>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="#">GitHub</a>
+                <a href="#">Dribbble</a>
+                <a href="#">LinkedIn</a>
+                <a href="#">邮件联系</a>
+            </div>
+            <p>© 2026 陈晨 · 用设计让世界更美好</p>
+        </footer>
+        
+    </div>
+</body>
+</html>

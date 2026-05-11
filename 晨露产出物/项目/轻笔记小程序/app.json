@@ -1,0 +1,31 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/detail/detail"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#5B9BD5",
+    "navigationBarTitleText": "轻笔记",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F0F7FA",
+    "enablePullDownRefresh": true
+  },
+  "tabBar": {
+    "color": "#A0AEC0",
+    "selectedColor": "#5B9BD5",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home-active.png"
+      }
+    ]
+  },
+  "cloud": true,
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

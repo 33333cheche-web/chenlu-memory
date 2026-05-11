@@ -1,0 +1,487 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frontend Design Skills 前后对比演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #f5f5f7;
+    color: #1d1d1f;
+    line-height: 1.6;
+  }
+  .page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  /* Header */
+  .page-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .page-header h1 {
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .page-header p {
+    font-size: 18px;
+    color: #86868b;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+  .tab {
+    padding: 10px 28px;
+    border-radius: 100px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    background: #e8e8ed;
+    color: #86868b;
+    transition: all .25s ease;
+  }
+  .tab.on {
+    background: #1d1d1f;
+    color: #fff;
+  }
+
+  /* ======== BEFORE ======== */
+  .before-box {
+    border: 3px solid #86868b;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+  }
+  .before-box .label {
+    background: #86868b;
+    color: #fff;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .before-demo {
+    padding: 24px;
+    background: #fff;
+  }
+  .before-demo .b-top {
+    background: #333;
+    color: #fff;
+    padding: 18px;
+    text-align: center;
+    margin-bottom: 24px;
+    border-radius: 4px;
+  }
+  .before-demo .b-top h2 {
+    font-family: Arial, sans-serif;
+    font-size: 22px;
+    font-weight: bold;
+  }
+  .before-demo .b-hero {
+    background: #f5f5f5;
+    padding: 40px 24px;
+    text-align: center;
+    margin-bottom: 24px;
+    border-radius: 4px;
+  }
+  .before-demo .b-hero h3 {
+    font-family: Arial, sans-serif;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  .before-demo .b-hero p {
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    color: #666;
+  }
+  .before-demo .b-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .before-demo .b-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    background: #fff;
+    border-radius: 4px;
+  }
+  .before-demo .b-card h4 {
+    font-family: Arial, sans-serif;
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+  .before-demo .b-card p {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+  .before-demo .b-btn {
+    display: inline-block;
+    background: #007bff;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    text-decoration: none;
+    border-radius: 4px;
+  }
+
+  /* ======== AFTER ======== */
+  .after-box {
+    border: 3px solid #34c759;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+  }
+  .after-box .label {
+    background: #34c759;
+    color: #fff;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+  .after-demo {
+    background: linear-gradient(180deg, #fafafa 0%, #f5f5f7 100%);
+  }
+  .after-hero {
+    padding: 80px 40px;
+    text-align: center;
+    background: linear-gradient(180deg, #fff 0%, #f5f5f7 100%);
+  }
+  .after-hero h2 {
+    font-size: clamp(36px, 5vw, 64px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #1d1d1f 0%, #434344 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .after-hero p {
+    font-size: 20px;
+    color: #86868b;
+    font-weight: 400;
+  }
+  .after-grid {
+    padding: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+  .a-card {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+    transition: transform .5s cubic-bezier(.4,0,.2,1), box-shadow .5s ease;
+  }
+  .a-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 48px rgba(0,0,0,0.12);
+  }
+  .a-img {
+    height: 160px;
+    background: linear-gradient(135deg, #e8e8ed 0%, #d2d2d7 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #a1a1a6;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .a-body {
+    padding: 24px;
+  }
+  .a-body h4 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+  }
+  .a-body p {
+    font-size: 14px;
+    color: #86868b;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .a-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 22px;
+    background: #0071e3;
+    color: #fff;
+    border-radius: 980px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all .3s ease;
+  }
+  .a-btn:hover {
+    background: #0077ed;
+    transform: scale(1.04);
+    box-shadow: 0 4px 16px rgba(0,113,227,0.3);
+  }
+
+  /* Layout */
+  .side-by-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 40px;
+  }
+  @media (max-width: 900px) {
+    .side-by-side { grid-template-columns: 1fr; }
+  }
+
+  /* Full views */
+  .full-view {
+    display: none;
+  }
+  .full-view.active {
+    display: block;
+  }
+
+  /* Footer */
+  .page-footer {
+    text-align: center;
+    padding: 40px 0;
+    color: #a1a1a6;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="page-header">
+    <h1>Frontend Design Skills</h1>
+    <p>同一个 Prompt，截然不同的输出质量</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" onclick="switchView('side')">左右对比</button>
+    <button class="tab" onclick="switchView('before')">仅看安装前</button>
+    <button class="tab" onclick="switchView('after')">仅看安装后</button>
+  </div>
+
+  <!-- 左右对比 -->
+  <div id="view-side" class="side-by-side">
+    <!-- BEFORE -->
+    <div class="before-box">
+      <div class="label">安装前 — 普通 AI 输出</div>
+      <div class="before-demo">
+        <div class="b-top">
+          <h2>陈晨的作品集</h2>
+        </div>
+        <div class="b-hero">
+          <h3>独立设计师 & 前端开发者</h3>
+          <p>专注于创造简洁优雅的数字体验</p>
+        </div>
+        <div class="b-list">
+          <div class="b-card">
+            <h4>01 - 云笔记应用</h4>
+            <p>一款专注于沉浸写作体验的移动端笔记应用，支持 Markdown 编辑和云端同步。</p>
+            <a href="#" class="b-btn">查看详情</a>
+          </div>
+          <div class="b-card">
+            <h4>02 - 电商后台系统</h4>
+            <p>为中大型电商打造的一站式管理后台，涵盖商品管理和订单处理。</p>
+            <a href="#" class="b-btn">查看详情</a>
+          </div>
+          <div class="b-card">
+            <h4>03 - 健康追踪小程序</h4>
+            <p>关注用户身心健康的微信小程序，整合睡眠监测和运动记录。</p>
+            <a href="#" class="b-btn">查看详情</a>
+          </div>
+          <div class="b-card">
+            <h4>04 - 品牌视觉系统</h4>
+            <p>为科技初创公司打造的全套品牌识别方案，包含 Logo 和应用规范。</p>
+            <a href="#" class="b-btn">查看详情</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AFTER -->
+    <div class="after-box">
+      <div class="label">安装后 — Design Skills 输出</div>
+      <div class="after-demo">
+        <div class="after-hero">
+          <h2>陈晨</h2>
+          <p>独立设计师 & 前端开发者 · 创造非凡体验</p>
+        </div>
+        <div class="after-grid">
+          <div class="a-card">
+            <div class="a-img">云笔记</div>
+            <div class="a-body">
+              <h4>云笔记应用</h4>
+              <p>专注于沉浸写作体验的移动端笔记应用。极简设计，支持 Markdown 编辑、标签管理和云端同步。</p>
+              <a href="#" class="a-btn">探索更多 →</a>
+            </div>
+          </div>
+          <div class="a-card">
+            <div class="a-img">电商后台</div>
+            <div class="a-body">
+              <h4>电商后台系统</h4>
+              <p>一站式管理后台，涵盖商品、订单、数据分析。信息架构优化让操作效率提升 40%。</p>
+              <a href="#" class="a-btn">探索更多 →</a>
+            </div>
+          </div>
+          <div class="a-card">
+            <div class="a-img">健康小程序</div>
+            <div class="a-body">
+              <h4>健康追踪小程序</h4>
+              <p>微信小程序整合睡眠监测、运动记录和饮食建议。温暖柔和的视觉风格让健康管理更轻松。</p>
+              <a href="#" class="a-btn">探索更多 →</a>
+            </div>
+          </div>
+          <div class="a-card">
+            <div class="a-img">品牌设计</div>
+            <div class="a-body">
+              <h4>品牌视觉系统</h4>
+              <p>从零打造的全套品牌识别方案。包括 Logo、色彩系统、字体规范和各类应用场景的视觉指南。</p>
+              <a href="#" class="a-btn">探索更多 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 仅安装前 -->
+  <div id="view-before" class="full-view">
+    <div class="before-box" style="max-width: 900px; margin: 0 auto;">
+      <div class="label">安装前 — 全屏展示</div>
+      <div class="before-demo" style="padding: 40px;">
+        <div class="b-top" style="padding: 24px;">
+          <h2 style="font-size: 24px;">陈晨的作品集</h2>
+        </div>
+        <div class="b-hero" style="padding: 50px 30px;">
+          <h3 style="font-size: 28px;">独立设计师 & 前端开发者</h3>
+          <p style="font-size: 16px; margin-top: 10px;">专注于创造简洁优雅的数字体验</p>
+        </div>
+        <div class="b-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="b-card" style="padding: 20px;">
+            <h4 style="font-size: 20px;">01 - 云笔记应用</h4>
+            <p style="font-size: 14px;">一款专注于沉浸写作体验的移动端笔记应用，支持 Markdown 编辑和云端同步。</p>
+            <a href="#" class="b-btn">查看详情</a>
+          </div>
+          <div class="b-card" style="padding: 20px;">
+            <h4 style="font-size: 20px;">02 - 电商后台系统</h4>
+            <p style="font-size: 14px;">为中大型电商打造的一站式管理后台，涵盖商品管理和订单处理。</p>
+            <a href="#" class="b-btn">查看详情</a>
+          </div>
+          <div class="b-card" style="padding: 20px;">
+            <h4 style="font-size: 20px;">03 - 健康追踪小程序</h4>
+            <p style="font-size: 14px;">关注用户身心健康的微信小程序，整合睡眠监测和运动记录。</p>
+            <a href="#" class="b-btn">查看详情</a>
+          </div>
+          <div class="b-card" style="padding: 20px;">
+            <h4 style="font-size: 20px;">04 - 品牌视觉系统</h4>
+            <p style="font-size: 14px;">为科技初创公司打造的全套品牌识别方案，包含 Logo 和应用规范。</p>
+            <a href="#" class="b-btn">查看详情</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 仅安装后 -->
+  <div id="view-after" class="full-view">
+    <div class="after-box" style="max-width: 900px; margin: 0 auto;">
+      <div class="label">安装后 — 全屏展示</div>
+      <div class="after-demo">
+        <div class="after-hero" style="padding: 100px 40px;">
+          <h2 style="font-size: 56px;">陈晨</h2>
+          <p style="font-size: 22px; margin-top: 16px;">独立设计师 & 前端开发者 · 创造非凡体验</p>
+        </div>
+        <div class="after-grid" style="padding: 50px; gap: 28px;">
+          <div class="a-card">
+            <div class="a-img" style="height: 200px;">云笔记</div>
+            <div class="a-body" style="padding: 28px;">
+              <h4 style="font-size: 20px;">云笔记应用</h4>
+              <p style="font-size: 15px;">专注于沉浸写作体验的移动端笔记应用。极简设计，支持 Markdown 编辑、标签管理和云端同步。</p>
+              <a href="#" class="a-btn">探索更多 →</a>
+            </div>
+          </div>
+          <div class="a-card">
+            <div class="a-img" style="height: 200px;">电商后台</div>
+            <div class="a-body" style="padding: 28px;">
+              <h4 style="font-size: 20px;">电商后台系统</h4>
+              <p style="font-size: 15px;">一站式管理后台，涵盖商品、订单、数据分析。信息架构优化让操作效率提升 40%。</p>
+              <a href="#" class="a-btn">探索更多 →</a>
+            </div>
+          </div>
+          <div class="a-card">
+            <div class="a-img" style="height: 200px;">健康小程序</div>
+            <div class="a-body" style="padding: 28px;">
+              <h4 style="font-size: 20px;">健康追踪小程序</h4>
+              <p style="font-size: 15px;">微信小程序整合睡眠监测、运动记录和饮食建议。温暖柔和的视觉风格让健康管理更轻松。</p>
+              <a href="#" class="a-btn">探索更多 →</a>
+            </div>
+          </div>
+          <div class="a-card">
+            <div class="a-img" style="height: 200px;">品牌设计</div>
+            <div class="a-body" style="padding: 28px;">
+              <h4 style="font-size: 20px;">品牌视觉系统</h4>
+              <p style="font-size: 15px;">从零打造的全套品牌识别方案。包括 Logo、色彩系统、字体规范和各类应用场景的视觉指南。</p>
+              <a href="#" class="a-btn">探索更多 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    Frontend Design Skills 对比演示 · 用浏览器直接打开
+  </div>
+
+</div>
+
+<script>
+  function switchView(name) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    event.target.classList.add('on');
+
+    document.getElementById('view-side').style.display = 'none';
+    document.getElementById('view-before').classList.remove('active');
+    document.getElementById('view-after').classList.remove('active');
+
+    if (name === 'side') {
+      document.getElementById('view-side').style.display = 'grid';
+    } else if (name === 'before') {
+      document.getElementById('view-before').classList.add('active');
+    } else {
+      document.getElementById('view-after').classList.add('active');
+    }
+  }
+</script>
+
+</body>
+</html>

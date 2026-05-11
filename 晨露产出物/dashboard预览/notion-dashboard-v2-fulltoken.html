@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Preview — Notion Design System (Full Token)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Brand & Primary */
+      --colors-primary: #9D59E3;
+      --colors-primary-pressed: #7B3DB8;
+      --colors-primary-deep: #6B35A0;
+      --colors-brand-navy: #0F1729;
+      --colors-brand-navy-deep: #0A0F1A;
+      --colors-brand-navy-mid: #1A2342;
+      --colors-link-blue: #2E75CC;
+      --colors-link-blue-pressed: #1E5AA0;
+
+      /* Brand Spectrum */
+      --colors-brand-pink: #FF6B9D;
+      --colors-brand-pink-deep: #E05582;
+      --colors-brand-orange: #FF9F43;
+      --colors-brand-orange-deep: #D97B2A;
+      --colors-brand-purple: #9D59E3;
+      --colors-brand-purple-300: #D4B3F0;
+      --colors-brand-purple-800: #4A1F75;
+      --colors-brand-teal: #00B894;
+      --colors-brand-green: #00D26A;
+      --colors-brand-yellow: #FDCB6E;
+      --colors-brand-brown: #8D6E63;
+
+      /* Card Tints */
+      --colors-card-tint-peach: #FFF0E8;
+      --colors-card-tint-rose: #FFEBEF;
+      --colors-card-tint-mint: #E8FFF3;
+      --colors-card-tint-lavender: #F0E8FF;
+      --colors-card-tint-sky: #E8F4FF;
+      --colors-card-tint-yellow: #FFFBE8;
+      --colors-card-tint-yellow-bold: #FFE066;
+      --colors-card-tint-cream: #FFF8F0;
+      --colors-card-tint-gray: #F5F5F5;
+
+      /* Surface */
+      --colors-canvas: #FFFFFF;
+      --colors-surface: #F7F7F7;
+      --colors-surface-soft: #FAFAFA;
+      --colors-hairline: #E5E5E5;
+      --colors-hairline-soft: #F0F0F0;
+      --colors-hairline-strong: #D4D4D4;
+
+      /* Text */
+      --colors-ink-deep: #000000;
+      --colors-ink: #1A1A1A;
+      --colors-charcoal: #333333;
+      --colors-slate: #666666;
+      --colors-steel: #999999;
+      --colors-stone: #B3B3B3;
+      --colors-muted: #CCCCCC;
+      --colors-on-dark: #FFFFFF;
+      --colors-on-dark-muted: rgba(255,255,255,0.6);
+
+      /* Semantic */
+      --colors-semantic-success: #00D26A;
+      --colors-semantic-warning: #FF9F43;
+      --colors-semantic-error: #FF4757;
+
+      /* Spacing */
+      --spacing-xxs: 4px;
+      --spacing-xs: 8px;
+      --spacing-sm: 12px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      --spacing-xxl: 48px;
+      --spacing-section: 64px;
+      --spacing-section-lg: 96px;
+      --spacing-hero: 120px;
+
+      /* Border Radius */
+      --rounded-xs: 4px;
+      --rounded-sm: 6px;
+      --rounded-md: 8px;
+      --rounded-lg: 12px;
+      --rounded-xl: 16px;
+      --rounded-xxl: 20px;
+      --rounded-xxxl: 24px;
+      --rounded-full: 9999px;
+
+      /* Shadows */
+      --shadow-subtle: rgba(15,15,15,0.04) 0px 1px 2px 0px;
+      --shadow-card: rgba(15,15,15,0.08) 0px 4px 12px 0px;
+      --shadow-mockup: rgba(15,15,15,0.20) 0px 24px 48px -8px;
+      --shadow-modal: rgba(15,15,15,0.16) 0px 16px 48px -8px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, system-ui, 'Segoe UI', Helvetica, sans-serif;
+      color: var(--colors-ink);
+      background: var(--colors-canvas);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 var(--spacing-xl); }
+
+    /* ========== Promo Banner ========== */
+    .promo-banner {
+      background: var(--colors-surface);
+      padding: var(--spacing-sm) var(--spacing-md);
+      text-align: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--colors-ink);
+      border-bottom: 1px solid var(--colors-hairline-soft);
+    }
+
+    /* ========== Navigation ========== */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--colors-canvas);
+      height: 64px;
+      border-bottom: 1px solid var(--colors-hairline);
+      display: flex;
+      align-items: center;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xl);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      font-weight: 600;
+      font-size: 18px;
+      color: var(--colors-ink);
+      text-decoration: none;
+    }
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      background: var(--colors-ink);
+      border-radius: var(--rounded-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--colors-on-dark);
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .nav-links {
+      display: flex;
+      gap: var(--spacing-lg);
+    }
+    .nav-links a {
+      color: var(--colors-slate);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      transition: color 0.15s ease;
+    }
+    .nav-links a:hover { color: var(--colors-ink); }
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    /* ========== Buttons ========== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--spacing-xs);
+      padding: 10px 18px;
+      border-radius: var(--rounded-md);
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      white-space: nowrap;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.30;
+    }
+    .btn-primary {
+      background: var(--colors-primary);
+      color: var(--colors-on-dark);
+    }
+    .btn-primary:hover { background: var(--colors-primary-pressed); }
+    .btn-dark {
+      background: var(--colors-ink-deep);
+      color: var(--colors-on-dark);
+    }
+    .btn-secondary {
+      background: transparent;
+      color: var(--colors-ink);
+      border: 1px solid var(--colors-hairline-strong);
+    }
+    .btn-secondary:hover { background: var(--colors-surface); }
+    .btn-on-dark {
+      background: var(--colors-on-dark);
+      color: var(--colors-ink);
+    }
+    .btn-secondary-on-dark {
+      background: transparent;
+      color: var(--colors-on-dark);
+      border: 1px solid var(--colors-on-dark-muted);
+    }
+    .btn-secondary-on-dark:hover { background: rgba(255,255,255,0.1); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--colors-ink);
+      padding: 8px 12px;
+      border-radius: var(--rounded-sm);
+    }
+    .btn-ghost:hover { background: var(--colors-surface); }
+
+    /* ========== Hero Band ========== */
+    .hero-band {
+      background: var(--colors-brand-navy);
+      color: var(--colors-on-dark);
+      padding: var(--spacing-hero) 0 var(--spacing-section-lg);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-decoration {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .sticky-dot {
+      position: absolute;
+      border-radius: var(--rounded-full);
+      opacity: 0.85;
+    }
+    .dot-1 { width: 16px; height: 16px; background: var(--colors-brand-pink); top: 15%; left: 8%; }
+    .dot-2 { width: 12px; height: 12px; background: var(--colors-brand-orange); top: 25%; right: 12%; }
+    .dot-3 { width: 20px; height: 20px; background: var(--colors-brand-teal); top: 60%; left: 5%; }
+    .dot-4 { width: 14px; height: 14px; background: var(--colors-brand-green); bottom: 30%; right: 8%; }
+    .dot-5 { width: 18px; height: 18px; background: var(--colors-brand-purple-300); top: 40%; left: 15%; }
+    .dot-6 { width: 10px; height: 10px; background: var(--colors-brand-yellow); bottom: 40%; left: 20%; }
+    .dot-7 { width: 16px; height: 16px; background: var(--colors-brand-pink); top: 20%; right: 25%; }
+    .dot-8 { width: 12px; height: 12px; background: var(--colors-brand-orange); bottom: 25%; right: 20%; }
+
+    .mesh-wire {
+      position: absolute;
+      opacity: 0.3;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .hero-display {
+      font-size: clamp(36px, 7vw, 80px);
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: -2px;
+      color: var(--colors-on-dark);
+    }
+    .hero-subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.50;
+      color: var(--colors-on-dark-muted);
+      margin-top: var(--spacing-lg);
+    }
+    .hero-buttons {
+      display: flex;
+      gap: var(--spacing-md);
+      justify-content: center;
+      margin-top: var(--spacing-xl);
+      flex-wrap: wrap;
+    }
+
+    /* ========== Workspace Mockup ========== */
+    .workspace-mockup {
+      background: var(--colors-canvas);
+      border-radius: var(--rounded-lg);
+      border: 1px solid var(--colors-hairline);
+      box-shadow: var(--shadow-mockup);
+      margin-top: var(--spacing-xxl);
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+      overflow: hidden;
+    }
+    .mockup-header {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md) var(--spacing-lg);
+      border-bottom: 1px solid var(--colors-hairline-soft);
+    }
+    .mockup-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: var(--rounded-full);
+    }
+    .mockup-dot-red { background: #FF5F56; }
+    .mockup-dot-yellow { background: #FFBD2E; }
+    .mockup-dot-green { background: #27C93F; }
+    .mockup-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--colors-slate);
+      margin-left: var(--spacing-sm);
+    }
+    .mockup-body { padding: var(--spacing-lg); }
+    .kanban-board {
+      display: flex;
+      gap: var(--spacing-md);
+      overflow-x: auto;
+    }
+    .kanban-column {
+      min-width: 240px;
+      background: var(--colors-surface-soft);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-md);
+    }
+    .kanban-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-md);
+    }
+    .kanban-header-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--colors-charcoal);
+    }
+    .kanban-count {
+      font-size: 12px;
+      color: var(--colors-steel);
+      background: var(--colors-canvas);
+      padding: 2px 8px;
+      border-radius: var(--rounded-full);
+    }
+    .kanban-card {
+      background: var(--colors-canvas);
+      border: 1px solid var(--colors-hairline);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-md);
+      margin-bottom: var(--spacing-sm);
+      box-shadow: var(--shadow-subtle);
+    }
+    .kanban-card-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--colors-charcoal);
+      margin-bottom: var(--spacing-xs);
+    }
+    .kanban-card-meta { display: flex; gap: var(--spacing-xs); align-items: center; }
+    .status-tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--rounded-sm);
+    }
+    .tag-red { background: var(--colors-card-tint-rose); color: var(--colors-brand-pink-deep); }
+    .tag-blue { background: var(--colors-card-tint-sky); color: var(--colors-link-blue); }
+    .tag-green { background: var(--colors-card-tint-mint); color: var(--colors-brand-green); }
+    .tag-purple { background: var(--colors-card-tint-lavender); color: var(--colors-brand-purple-800); }
+    .tag-orange { background: var(--colors-card-tint-peach); color: var(--colors-brand-orange-deep); }
+    .tag-teal { background: #E0F7F0; color: var(--colors-brand-teal); }
+
+    /* ========== Sections ========== */
+    .section { padding: var(--spacing-section-lg) 0; }
+    .section-tight { padding: var(--spacing-section) 0; }
+    .section-alt { background: var(--colors-surface-soft); }
+
+    .feature-header {
+      text-align: center;
+      max-width: 640px;
+      margin: 0 auto var(--spacing-xxl);
+    }
+    .heading-2 {
+      font-size: clamp(28px, 2.5vw, 36px);
+      font-weight: 600;
+      line-height: 1.20;
+      letter-spacing: -0.5px;
+    }
+    .body-md {
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.55;
+    }
+    .body-sm { font-size: 14px; font-weight: 400; line-height: 1.50; }
+    .body-sm-medium { font-size: 14px; font-weight: 500; line-height: 1.50; }
+    .caption-bold { font-size: 13px; font-weight: 600; line-height: 1.40; }
+
+    /* ========== Status Panel ========== */
+    .sticky-panel {
+      background: var(--colors-surface);
+      border-radius: var(--rounded-xl);
+      padding: var(--spacing-xxl);
+      border: 1px solid var(--colors-hairline);
+    }
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-xl);
+    }
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md);
+      background: var(--colors-canvas);
+      border-radius: var(--rounded-md);
+      border: 1px solid var(--colors-hairline);
+    }
+    .status-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: var(--rounded-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--colors-on-dark);
+    }
+    .icon-red { background: var(--colors-brand-pink); }
+    .icon-blue { background: var(--colors-link-blue); }
+    .icon-green { background: var(--colors-brand-green); }
+    .icon-purple { background: var(--colors-primary); }
+    .icon-teal { background: var(--colors-brand-teal); }
+
+    /* ========== Cards ========== */
+    .card-feature {
+      background: var(--colors-canvas);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-xxl);
+      border: 1px solid var(--colors-hairline);
+    }
+    .card-feature-yellow-bold {
+      background: var(--colors-card-tint-yellow-bold);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-xxl);
+      color: var(--colors-charcoal);
+    }
+    .card-feature-peach { background: var(--colors-card-tint-peach); border-radius: var(--rounded-lg); padding: var(--spacing-xxl); }
+    .card-feature-rose { background: var(--colors-card-tint-rose); border-radius: var(--rounded-lg); padding: var(--spacing-xxl); }
+    .card-feature-mint { background: var(--colors-card-tint-mint); border-radius: var(--rounded-lg); padding: var(--spacing-xxl); }
+    .card-feature-sky { background: var(--colors-card-tint-sky); border-radius: var(--rounded-lg); padding: var(--spacing-xxl); }
+    .card-feature-lavender { background: var(--colors-card-tint-lavender); border-radius: var(--rounded-lg); padding: var(--spacing-xxl); }
+    .card-feature-cream { background: var(--colors-card-tint-cream); border-radius: var(--rounded-lg); padding: var(--spacing-xxl); }
+
+    /* ========== Agent Tiles ========== */
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-lg);
+      margin-top: var(--spacing-xl);
+    }
+    .agent-tile {
+      background: var(--colors-canvas);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-xl);
+      border: 1px solid var(--colors-hairline);
+      transition: box-shadow 0.2s ease;
+    }
+    .agent-tile:hover { box-shadow: var(--shadow-card); }
+    .agent-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--rounded-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: var(--spacing-md);
+    }
+
+    /* ========== Grid ========== */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-lg);
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-lg);
+    }
+
+    /* ========== Badges ========== */
+    .badge-tag-purple {
+      background: var(--colors-card-tint-lavender);
+      color: var(--colors-brand-purple-800);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--rounded-sm);
+      display: inline-block;
+    }
+    .badge-tag-orange {
+      background: var(--colors-card-tint-peach);
+      color: var(--colors-brand-orange-deep);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--rounded-sm);
+      display: inline-block;
+    }
+    .badge-tag-green {
+      background: var(--colors-card-tint-mint);
+      color: var(--colors-brand-green);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--rounded-sm);
+      display: inline-block;
+    }
+    .badge-popular {
+      background: var(--colors-primary);
+      color: var(--colors-on-dark);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--rounded-full);
+      display: inline-block;
+    }
+
+    /* ========== Pricing ========== */
+    .pricing-card {
+      background: var(--colors-canvas);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-xxl);
+      border: 1px solid var(--colors-hairline);
+      display: flex;
+      flex-direction: column;
+    }
+    .pricing-card-featured {
+      background: var(--colors-surface);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-xxl);
+      border: 2px solid var(--colors-primary);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .pricing-tier-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: var(--spacing-xs);
+    }
+    .pricing-tier-desc {
+      font-size: 14px;
+      color: var(--colors-slate);
+      margin-bottom: var(--spacing-md);
+    }
+    .pricing-price {
+      font-size: 48px;
+      font-weight: 600;
+      line-height: 1;
+      margin-bottom: var(--spacing-xs);
+    }
+    .pricing-price span {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--colors-slate);
+    }
+    .pricing-features {
+      list-style: none;
+      margin: var(--spacing-lg) 0;
+      flex: 1;
+    }
+    .pricing-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-xs) 0;
+      font-size: 14px;
+      color: var(--colors-charcoal);
+    }
+    .pricing-features li::before {
+      content: "✓";
+      color: var(--colors-brand-green);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    /* ========== Table ========== */
+    .comparison-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--colors-canvas);
+      border-radius: var(--rounded-md);
+      border: 1px solid var(--colors-hairline);
+      overflow: hidden;
+      margin-top: var(--spacing-xl);
+    }
+    .comparison-table th,
+    .comparison-table td {
+      padding: var(--spacing-md) var(--spacing-lg);
+      font-size: 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--colors-hairline-soft);
+    }
+    .comparison-table th {
+      font-weight: 600;
+      color: var(--colors-ink);
+      background: var(--colors-surface-soft);
+    }
+    .comparison-table td { color: var(--colors-charcoal); }
+    .comparison-table tr:last-child td { border-bottom: none; }
+
+    /* ========== Stats ========== */
+    .stats-section {
+      background: var(--colors-surface);
+      border-radius: var(--rounded-lg);
+      padding: 40px var(--spacing-xxl);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-xl);
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 48px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      line-height: 1.1;
+    }
+    .stat-label {
+      font-size: 14px;
+      color: var(--colors-slate);
+      margin-top: var(--spacing-xs);
+    }
+
+    /* ========== FAQ ========== */
+    .faq-item {
+      background: var(--colors-canvas);
+      border-radius: var(--rounded-md);
+      padding: var(--spacing-xl);
+      border-bottom: 1px solid var(--colors-hairline);
+    }
+    .faq-question {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: var(--spacing-sm);
+      color: var(--colors-ink);
+    }
+    .faq-answer {
+      font-size: 16px;
+      color: var(--colors-slate);
+      line-height: 1.55;
+    }
+
+    /* ========== CTA ========== */
+    .cta-banner {
+      background: var(--colors-surface);
+      border-radius: var(--rounded-lg);
+      padding: var(--spacing-section) var(--spacing-xxl);
+      text-align: center;
+    }
+
+    /* ========== Footer ========== */
+    .footer {
+      background: var(--colors-canvas);
+      padding: var(--spacing-section) var(--spacing-xxl);
+      border-top: 1px solid var(--colors-hairline);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: var(--spacing-xl);
+    }
+    .footer-column h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--colors-ink);
+      margin-bottom: var(--spacing-md);
+    }
+    .footer-column a {
+      display: block;
+      color: var(--colors-steel);
+      text-decoration: none;
+      font-size: 14px;
+      padding: var(--spacing-xxs) 0;
+      transition: color 0.15s ease;
+    }
+    .footer-column a:hover { color: var(--colors-ink); }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 1024px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: repeat(3, 1fr); }
+      .nav-links { display: none; }
+    }
+    @media (max-width: 768px) {
+      .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .agent-grid { grid-template-columns: 1fr; }
+      .status-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero-display { font-size: 36px; }
+    }
+
+    /* ========== Utilities ========== */
+    .mb-sm { margin-bottom: var(--spacing-sm); }
+    .mb-md { margin-bottom: var(--spacing-md); }
+    .mb-lg { margin-bottom: var(--spacing-lg); }
+    .mb-xl { margin-bottom: var(--spacing-xl); }
+    .mt-sm { margin-top: var(--spacing-sm); }
+    .mt-md { margin-top: var(--spacing-md); }
+    .mt-lg { margin-top: var(--spacing-lg); }
+    .mt-xl { margin-top: var(--spacing-xl); }
+    .text-center { text-align: center; }
+  </style>
+</head>
+<body>
+
+  <!-- Promo Banner -->
+  <div class="promo-banner">
+    🚀 开发者：5月13日全新开发者平台抢先体验 — <a href="#" style="color: var(--colors-link-blue); text-decoration: none; font-weight: 500;">立即了解 →</a>
+  </div>
+
+  <!-- Top Navigation -->
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="#" class="logo">
+          <div class="logo-mark">N</div>
+          <span>Notion</span>
+        </a>
+        <div class="nav-links">
+          <a href="#">产品</a>
+          <a href="#">AI</a>
+          <a href="#">解决方案</a>
+          <a href="#">资源</a>
+          <a href="#">企业版</a>
+          <a href="#">价格</a>
+        </div>
+      </div>
+      <div class="nav-right">
+        <a href="#" class="btn btn-primary" style="padding: 8px 14px; font-size: 13px;">免费开始使用</a>
+        <a href="#" class="btn btn-ghost">登录</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Band -->
+  <section class="hero-band">
+    <div class="hero-decoration">
+      <div class="sticky-dot dot-1"></div>
+      <div class="sticky-dot dot-2"></div>
+      <div class="sticky-dot dot-3"></div>
+      <div class="sticky-dot dot-4"></div>
+      <div class="sticky-dot dot-5"></div>
+      <div class="sticky-dot dot-6"></div>
+      <div class="sticky-dot dot-7"></div>
+      <div class="sticky-dot dot-8"></div>
+      <svg class="mesh-wire" style="top: 10%; left: 2%; width: 180px; height: 180px;" viewBox="0 0 180 180" fill="none">
+        <path d="M20 20C60 40 100 30 160 20" stroke="white" stroke-width="1" stroke-dasharray="4 4"/>
+        <path d="M20 60C50 80 110 70 160 60" stroke="white" stroke-width="1" stroke-dasharray="4 4"/>
+        <path d="M20 100C70 120 120 100 160 100" stroke="white" stroke-width="1" stroke-dasharray="4 4"/>
+        <path d="M20 140C60 160 100 140 160 140" stroke="white" stroke-width="1" stroke-dasharray="4 4"/>
+        <line x1="30" y1="10" x2="30" y2="170" stroke="white" stroke-width="0.5" stroke-dasharray="3 3"/>
+        <line x1="90" y1="10" x2="90" y2="170" stroke="white" stroke-width="0.5" stroke-dasharray="3 3"/>
+        <line x1="150" y1="10" x2="150" y2="170" stroke="white" stroke-width="0.5" stroke-dasharray="3 3"/>
+      </svg>
+      <svg class="mesh-wire" style="bottom: 15%; right: 3%; width: 150px; height: 150px;" viewBox="0 0 150 150" fill="none">
+        <circle cx="75" cy="75" r="60" stroke="white" stroke-width="0.5" stroke-dasharray="5 5" opacity="0.5"/>
+        <circle cx="75" cy="75" r="40" stroke="white" stroke-width="0.5" stroke-dasharray="3 3" opacity="0.3"/>
+        <circle cx="75" cy="75" r="20" stroke="white" stroke-width="0.5" opacity="0.2"/>
+      </svg>
+    </div>
+
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-display">Meet the night shift.</h1>
+        <p class="hero-subtitle">一站式工作空间，让团队24小时高效协作。笔记、文档、项目管理，全部在一个地方。</p>
+        <div class="hero-buttons">
+          <a href="#" class="btn btn-primary">免费开始使用</a>
+          <a href="#" class="btn btn-secondary-on-dark">申请演示</a>
+        </div>
+
+        <!-- Workspace Mockup Card -->
+        <div class="workspace-mockup">
+          <div class="mockup-header">
+            <div class="mockup-dot mockup-dot-red"></div>
+            <div class="mockup-dot mockup-dot-yellow"></div>
+            <div class="mockup-dot mockup-dot-green"></div>
+            <span class="mockup-title">Ramp 总部看板</span>
+          </div>
+          <div class="mockup-body">
+            <div class="kanban-board">
+              <div class="kanban-column">
+                <div class="kanban-header">
+                  <span class="kanban-header-title">待处理</span>
+                  <span class="kanban-count">3</span>
+                </div>
+                <div class="kanban-card">
+                  <div class="kanban-card-title">更新产品路线图</div>
+                  <div class="kanban-card-meta"><span class="status-tag tag-red">高优先级</span></div>
+                </div>
+                <div class="kanban-card">
+                  <div class="kanban-card-title">设计系统评审</div>
+                  <div class="kanban-card-meta"><span class="status-tag tag-blue">设计中</span></div>
+                </div>
+                <div class="kanban-card">
+                  <div class="kanban-card-title">API 文档更新</div>
+                  <div class="kanban-card-meta"><span class="status-tag tag-green">已完成</span></div>
+                </div>
+              </div>
+              <div class="kanban-column">
+                <div class="kanban-header">
+                  <span class="kanban-header-title">进行中</span>
+                  <span class="kanban-count">2</span>
+                </div>
+                <div class="kanban-card">
+                  <div class="kanban-card-title">Q3 营销活动策划</div>
+                  <div class="kanban-card-meta"><span class="status-tag tag-purple">审核中</span></div>
+                </div>
+                <div class="kanban-card">
+                  <div class="kanban-card-title">客户反馈整理</div>
+                  <div class="kanban-card-meta"><span class="status-tag tag-orange">待确认</span></div>
+                </div>
+              </div>
+              <div class="kanban-column">
+                <div class="kanban-header">
+                  <span class="kanban-header-title">已完成</span>
+                  <span class="kanban-count">4</span>
+                </div>
+                <div class="kanban-card">
+                  <div class="kanban-card-title">v2.5 版本发布</div>
+                  <div class="kanban-card-meta"><span class="status-tag tag-teal">已上线</span></div>
+                </div>
+                <div class="kanban-card">
+                  <div class="kanban-card-title">团队培训计划</div>
+                  <div class="kanban-card-meta"><span class="status-tag tag-green">已完成</span></div>
+                </div>
+                <div class="kanban-card">
+                  <div class="kanban-card-title">季度报告汇总</div>
+                  <div class="kanban-card-meta"><span class="status-tag tag-green">已完成</span></div>
+                </div>
+                <div class="kanban-card">
+                  <div class="kanban-card-title">安全审计</div>
+                  <div class="kanban-card-meta"><span class="status-tag tag-teal">已通过</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature: Keep work moving -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="feature-header">
+        <span class="badge-tag-purple mb-md">实时协作</span>
+        <h2 class="heading-2">Keep work moving 24/7</h2>
+        <p class="body-md" style="color: var(--colors-slate); margin-top: var(--spacing-md);">无论团队成员身在何处，所有更新实时同步。告别版本混乱，拥抱即时协作。</p>
+      </div>
+      <div class="sticky-panel">
+        <div class="status-grid">
+          <div class="status-item">
+            <div class="status-icon icon-red">!</div>
+            <div>
+              <div class="body-sm-medium">紧急事项</div>
+              <div class="body-sm" style="color: var(--colors-slate);">2 项待处理</div>
+            </div>
+          </div>
+          <div class="status-item">
+            <div class="status-icon icon-blue">●</div>
+            <div>
+              <div class="body-sm-medium">进行中</div>
+              <div class="body-sm" style="color: var(--colors-slate);">5 项活跃</div>
+            </div>
+          </div>
+          <div class="status-item">
+            <div class="status-icon icon-green">✓</div>
+            <div>
+              <div class="body-sm-medium">已完成</div>
+              <div class="body-sm" style="color: var(--colors-slate);">12 项今日</div>
+            </div>
+          </div>
+          <div class="status-item">
+            <div class="status-icon icon-purple">★</div>
+            <div>
+              <div class="body-sm-medium">待审核</div>
+              <div class="body-sm" style="color: var(--colors-slate);">3 项等待</div>
+            </div>
+          </div>
+          <div class="status-item">
+            <div class="status-icon icon-teal">→</div>
+            <div>
+              <div class="body-sm-medium">已归档</div>
+              <div class="body-sm" style="color: var(--colors-slate);">28 项累计</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature: AI Assistants -->
+  <section class="section">
+    <div class="container">
+      <div class="feature-header">
+        <span class="badge-tag-orange mb-md">AI 驱动</span>
+        <h2 class="heading-2">Ask your on-demand assistants</h2>
+        <p class="body-md" style="color: var(--colors-slate); margin-top: var(--spacing-md);">内置 AI 助手帮你写作、总结、翻译、头脑风暴。就像有一位随时待命的专业顾问。</p>
+      </div>
+      <div class="card-feature-yellow-bold mb-lg">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--spacing-lg);">
+          <div>
+            <h3 style="font-size: 28px; font-weight: 600; line-height: 1.25; margin-bottom: 8px;">AI 已准备好帮你</h3>
+            <p class="body-md" style="color: var(--colors-charcoal);">从撰写文档到分析数据，Notion AI 让复杂任务变得简单。一键生成、智能续写、自动总结。</p>
+          </div>
+          <a href="#" class="btn btn-dark">探索 AI 功能</a>
+        </div>
+      </div>
+      <div class="agent-grid">
+        <div class="agent-tile">
+          <div class="agent-avatar" style="background: var(--colors-card-tint-peach);">📝</div>
+          <h4 style="font-size: 22px; font-weight: 600; line-height: 1.30; margin-bottom: 8px;">智能写作</h4>
+          <p class="body-sm" style="color: var(--colors-slate);">从大纲到完整文档，AI 帮你梳理思路、润色文字，写作效率提升 10 倍。</p>
+        </div>
+        <div class="agent-tile">
+          <div class="agent-avatar" style="background: var(--colors-card-tint-rose);">🔍</div>
+          <h4 style="font-size: 22px; font-weight: 600; line-height: 1.30; margin-bottom: 8px;">知识问答</h4>
+          <p class="body-sm" style="color: var(--colors-slate);">基于你的工作空间内容，AI 能准确回答任何问题，就像团队知识库活了过来。</p>
+        </div>
+        <div class="agent-tile">
+          <div class="agent-avatar" style="background: var(--colors-card-tint-mint);">📊</div>
+          <h4 style="font-size: 22px; font-weight: 600; line-height: 1.30; margin-bottom: 8px;">数据分析</h4>
+          <p class="body-sm" style="color: var(--colors-slate);">自动从数据库中提取洞察，生成报告和可视化图表，决策更有依据。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature: Bring all work together -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="feature-header">
+        <span class="badge-tag-green mb-md">一体化</span>
+        <h2 class="heading-2">Bring all your work together</h2>
+        <p class="body-md" style="color: var(--colors-slate); margin-top: var(--spacing-md);">告别工具碎片化。笔记、任务、数据库、日历，全部在一个平台无缝协作。</p>
+      </div>
+      <div class="grid-3">
+        <div class="card-feature-sky">
+          <div style="background: var(--colors-canvas); border-radius: var(--rounded-md); padding: var(--spacing-md); margin-bottom: var(--spacing-md); border: 1px solid var(--colors-hairline);">
+            <div class="body-sm-medium" style="color: var(--colors-link-blue); margin-bottom: var(--spacing-xs);">📚 快速入门</div>
+            <div class="body-sm" style="color: var(--colors-slate);">5 分钟掌握核心功能</div>
+          </div>
+          <h4 style="font-size: 22px; font-weight: 600; line-height: 1.30; margin-bottom: 8px;">知识库</h4>
+          <p class="body-sm" style="color: var(--colors-slate);">团队文档、SOP、培训材料集中管理，支持全文搜索和版本历史。</p>
+        </div>
+        <div class="card-feature-lavender">
+          <div style="background: var(--colors-canvas); border-radius: var(--rounded-md); padding: var(--spacing-md); margin-bottom: var(--spacing-md); border: 1px solid var(--colors-hairline);">
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center;">
+              <div class="body-sm" style="color: var(--colors-stone);">日</div>
+              <div class="body-sm" style="color: var(--colors-stone);">一</div>
+              <div class="body-sm" style="color: var(--colors-stone);">二</div>
+              <div class="body-sm" style="color: var(--colors-stone);">三</div>
+              <div class="body-sm" style="color: var(--colors-stone);">四</div>
+              <div class="body-sm" style="color: var(--colors-stone);">五</div>
+              <div class="body-sm" style="color: var(--colors-stone);">六</div>
+              <div class="body-sm" style="padding: 2px;">1</div>
+              <div class="body-sm" style="padding: 2px;">2</div>
+              <div class="body-sm" style="padding: 2px; background: var(--colors-primary); color: white; border-radius: var(--rounded-sm);">3</div>
+              <div class="body-sm" style="padding: 2px;">4</div>
+              <div class="body-sm" style="padding: 2px;">5</div>
+              <div class="body-sm" style="padding: 2px;">6</div>
+              <div class="body-sm" style="padding: 2px;">7</div>
+            </div>
+          </div>
+          <h4 style="font-size: 22px; font-weight: 600; line-height: 1.30; margin-bottom: 8px;">日历视图</h4>
+          <p class="body-sm" style="color: var(--colors-slate);">任务与日程完美结合，拖拽安排、截止日期一目了然，时间管理更高效。</p>
+        </div>
+        <div class="card-feature-cream">
+          <div style="background: var(--colors-brand-brown); border-radius: var(--rounded-md); padding: var(--spacing-md); margin-bottom: var(--spacing-md);">
+            <div class="body-sm-medium" style="color: var(--colors-on-dark); margin-bottom: var(--spacing-xs);">⭐ 客户评价</div>
+            <div class="body-sm" style="color: rgba(255,255,255,0.8);">"团队效率提升了 40%"</div>
+          </div>
+          <h4 style="font-size: 22px; font-weight: 600; line-height: 1.30; margin-bottom: 8px;">客户管理</h4>
+          <p class="body-sm" style="color: var(--colors-slate);">CRM 集成、反馈追踪、关系维护，让每位客户都感受到被重视。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="section-tight">
+    <div class="container">
+      <div class="stats-section">
+        <div class="stats-grid">
+          <div>
+            <div class="stat-value">200万+</div>
+            <div class="stat-label">活跃用户</div>
+          </div>
+          <div>
+            <div class="stat-value">35%</div>
+            <div class="stat-label">效率提升</div>
+          </div>
+          <div>
+            <div class="stat-value">50+</div>
+            <div class="stat-label">集成工具</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="feature-header">
+        <h2 class="heading-2">选择适合你的方案</h2>
+        <p class="body-md" style="color: var(--colors-slate); margin-top: var(--spacing-md);">从个人到企业，每个阶段都有完美匹配。随时升级，无隐藏费用。</p>
+      </div>
+      <div class="grid-4">
+        <div class="pricing-card">
+          <div class="pricing-tier-name">免费版</div>
+          <div class="pricing-tier-desc">个人入门</div>
+          <div class="pricing-price">¥0<span>/月</span></div>
+          <ul class="pricing-features">
+            <li>无限页面与区块</li>
+            <li>跨设备同步</li>
+            <li>API 访问</li>
+            <li>5 位访客协作</li>
+            <li>7 天版本历史</li>
+          </ul>
+          <a href="#" class="btn btn-secondary" style="width: 100%;">开始使用</a>
+        </div>
+        <div class="pricing-card-featured">
+          <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--colors-primary); color: var(--colors-on-dark); font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: var(--rounded-full);">最受欢迎</div>
+          <div class="pricing-tier-name">进阶版</div>
+          <div class="pricing-tier-desc">个人专业</div>
+          <div class="pricing-price">¥68<span>/月</span></div>
+          <ul class="pricing-features">
+            <li>免费版全部功能</li>
+            <li>无限文件上传</li>
+            <li>30 天版本历史</li>
+            <li>100 位访客</li>
+            <li>优先邮件支持</li>
+            <li>自定义域名</li>
+          </ul>
+          <a href="#" class="btn btn-primary" style="width: 100%;">立即升级</a>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-tier-name">商业版</div>
+          <div class="pricing-tier-desc">团队协作</div>
+          <div class="pricing-price">¥128<span>/人/月</span></div>
+          <ul class="pricing-features">
+            <li>进阶版全部功能</li>
+            <li>团队权限管理</li>
+            <li>90 天版本历史</li>
+            <li>250 位访客</li>
+            <li>SAML 单点登录</li>
+            <li>高级安全控制</li>
+            <li>批量用户管理</li>
+          </ul>
+          <a href="#" class="btn btn-secondary" style="width: 100%;">免费试用</a>
+        </div>
+        <div class="pricing-card">
+          <div class="pricing-tier-name">企业版</div>
+          <div class="pricing-tier-desc">大型组织</div>
+          <div class="pricing-price">定制<span>报价</span></div>
+          <ul class="pricing-features">
+            <li>商业版全部功能</li>
+            <li>无限版本历史</li>
+            <li>高级审计日志</li>
+            <li>专属客户成功经理</li>
+            <li>定制化培训</li>
+            <li>SLA 保障</li>
+            <li>私有部署选项</li>
+          </ul>
+          <a href="#" class="btn btn-secondary" style="width: 100%;">联系销售</a>
+        </div>
+      </div>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>功能对比</th>
+            <th style="text-align: center;">免费版</th>
+            <th style="text-align: center; color: var(--colors-primary);">进阶版</th>
+            <th style="text-align: center;">商业版</th>
+            <th style="text-align: center;">企业版</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>页面与区块数量</td><td style="text-align: center;">无限</td><td style="text-align: center;">无限</td><td style="text-align: center;">无限</td><td style="text-align: center;">无限</td></tr>
+          <tr><td>文件上传限制</td><td style="text-align: center;">5MB</td><td style="text-align: center;">无限</td><td style="text-align: center;">无限</td><td style="text-align: center;">无限</td></tr>
+          <tr><td>版本历史</td><td style="text-align: center;">7 天</td><td style="text-align: center;">30 天</td><td style="text-align: center;">90 天</td><td style="text-align: center;">无限</td></tr>
+          <tr><td>访客协作</td><td style="text-align: center;">5 人</td><td style="text-align: center;">100 人</td><td style="text-align: center;">250 人</td><td style="text-align: center;">无限</td></tr>
+          <tr><td>API 访问</td><td style="text-align: center;">✓</td><td style="text-align: center;">✓</td><td style="text-align: center;">✓</td><td style="text-align: center;">✓</td></tr>
+          <tr><td>团队权限管理</td><td style="text-align: center; color: var(--colors-muted);">—</td><td style="text-align: center; color: var(--colors-muted);">—</td><td style="text-align: center;">✓</td><td style="text-align: center;">✓</td></tr>
+          <tr><td>SAML 单点登录</td><td style="text-align: center; color: var(--colors-muted);">—</td><td style="text-align: center; color: var(--colors-muted);">—</td><td style="text-align: center;">✓</td><td style="text-align: center;">✓</td></tr>
+          <tr><td>审计日志</td><td style="text-align: center; color: var(--colors-muted);">—</td><td style="text-align: center; color: var(--colors-muted);">—</td><td style="text-align: center; color: var(--colors-muted);">—</td><td style="text-align: center;">✓</td></tr>
+          <tr><td>专属客户成功经理</td><td style="text-align: center; color: var(--colors-muted);">—</td><td style="text-align: center; color: var(--colors-muted);">—</td><td style="text-align: center; color: var(--colors-muted);">—</td><td style="text-align: center;">✓</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section">
+    <div class="container" style="max-width: 800px;">
+      <div class="feature-header">
+        <h2 class="heading-2">常见问题</h2>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+        <div class="faq-item">
+          <div class="faq-question">免费版有什么限制？</div>
+          <div class="faq-answer">免费版提供无限页面和区块、跨设备同步以及基础协作功能。文件上传限制为 5MB，版本历史保留 7 天。对于大多数个人用户来说，免费版已经足够强大。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">可以随时升级或降级吗？</div>
+          <div class="faq-answer">当然可以。你可以随时升级或降级方案，费用按比例计算。降级后，超出新方案限制的内容会被保留但设为只读。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">数据安全如何保障？</div>
+          <div class="faq-answer">我们采用银行级加密标准（AES-256），所有数据传输通过 TLS 1.3 加密。企业版额外提供 SOC 2 Type II 合规认证、高级审计日志和私有部署选项。</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">是否支持离线使用？</div>
+          <div class="faq-answer">桌面应用和移动应用都支持离线模式。离线时创建的内容会在恢复网络连接后自动同步，确保你的工作不受网络环境影响。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section-tight">
+    <div class="container">
+      <div class="cta-banner">
+        <h2 style="font-size: clamp(36px, 3.5vw, 48px); font-weight: 600; line-height: 1.15; letter-spacing: -0.5px; margin-bottom: var(--spacing-md);">准备好开始了吗？</h2>
+        <p class="body-md" style="color: var(--colors-slate); margin-bottom: var(--spacing-xl);">加入 200 万用户的行列，体验更高效的工作方式</p>
+        <div style="display: flex; gap: var(--spacing-md); justify-content: center; flex-wrap: wrap;">
+          <a href="#" class="btn btn-primary">免费开始使用</a>
+          <a href="#" class="btn btn-secondary">联系销售团队</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-column">
+          <h4>产品</h4>
+          <a href="#">笔记与文档</a>
+          <a href="#">维基与知识库</a>
+          <a href="#">项目管理</a>
+          <a href="#">数据库</a>
+          <a href="#">Notion AI</a>
+          <a href="#">模板库</a>
+        </div>
+        <div class="footer-column">
+          <h4>下载</h4>
+          <a href="#">iOS 应用</a>
+          <a href="#">Android 应用</a>
+          <a href="#">Mac 应用</a>
+          <a href="#">Windows 应用</a>
+          <a href="#">Web 版本</a>
+        </div>
+        <div class="footer-column">
+          <h4>资源</h4>
+          <a href="#">帮助中心</a>
+          <a href="#">社区论坛</a>
+          <a href="#">开发者文档</a>
+          <a href="#">博客</a>
+          <a href="#">路线图</a>
+        </div>
+        <div class="footer-column">
+          <h4>解决方案</h4>
+          <a href="#">创业公司</a>
+          <a href="#">教育</a>
+          <a href="#">非营利组织</a>
+          <a href="#">企业</a>
+          <a href="#">个人</a>
+        </div>
+        <div class="footer-column">
+          <h4>公司</h4>
+          <a href="#">关于我们</a>
+          <a href="#">加入我们</a>
+          <a href="#">媒体资源</a>
+          <a href="#">联系我们</a>
+        </div>
+        <div class="footer-column">
+          <h4>法律</h4>
+          <a href="#">隐私政策</a>
+          <a href="#">服务条款</a>
+          <a href="#">Cookie 设置</a>
+          <a href="#">许可协议</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

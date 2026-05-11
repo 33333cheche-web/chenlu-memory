@@ -16,29 +16,32 @@ DASHBOARD_PID=$(pgrep -f "openclaw-dashboard.py" || true)
 if [ -z "$DASHBOARD_PID" ]; then
     echo "[$TIMESTAMP] Dashboard 进程未运行，正在启动..." >> "$LOG_FILE"
     
-    # 启动 dashboard
-    cd /home/cheche
-    nohup /usr/bin/python3 /home/cheche/openclaw-dashboard.py > /tmp/openclaw-dashboard.log 2>&1 &
-    sleep 3
-    
-    # 再次检查
-    NEW_PID=$(pgrep -f "openclaw-dashboard.py" || true)
-    if [ -n "$NEW_PID" ]; then
-        echo "[$TIMESTAMP] Dashboard 已恢复 ✅ PID: $NEW_PID" >> "$LOG_FILE"
-        $OPENCLAW_HOME/../.npm-global/bin/openclaw message send \
-            --channel feishu \
-            --target "$TARGET_USER" \
-            --message "💧 Dashboard 刚才挂了，晨露已经自动重启成功啦！PID: $NEW_PID ✅" \
-            2>> "$LOG_FILE"
-    else
-        echo "[$TIMESTAMP] Dashboard 启动失败，需要人工介入" >> "$LOG_FILE"
-        $OPENCLAW_HOME/../.npm-global/bin/openclaw message send \
-            --channel feishu \
-            --target "$TARGET_USER" \
-            --message "⚠️ Dashboard 挂了且自动重启失败！请找晨露紧急处理！" \
-            2>> "$LOG_FILE"
+    # 检查 dashboard 状态并重启
+    if [ -z "$NEW_PID" ]; then
+        echo "[$TIMESTAMP] Dashboard 启动失败，使用 systemd 重试..." >> "$LOG_FILE"
+        # 使用 systemd 启动（不再用 nohup，避免端口冲突）
+        systemctl --user restart openclaw-dashboard.service
+        sleep 3
+        
+        # 检查 systemd 状态
+        if systemctl --user is-active openclaw-dashboard.service >/dev/null 2>&1; then
+            SYSTEMD_PID=$(systemctl --user show openclaw-dashboard.service -p MainPID | cut -d= -f2)
+            echo "[$TIMESTAMP] Dashboard 已通过 systemd 恢复 ✅ PID: $SYSTEMD_PID" >> "$LOG_FILE"
+            $OPENCLAW_HOME/../.npm-global/bin/openclaw message send \
+                --channel feishu \
+                --target "$TARGET_USER" \
+                --message "💧 Dashboard 刚才挂了，晨露已通过 systemd 自动重启成功啦！✅" \
+                2>> "$LOG_FILE"
+        else
+            echo "[$TIMESTAMP] Dashboard systemd 启动也失败了" >> "$LOG_FILE"
+            $OPENCLAW_HOME/../.npm-global/bin/openclaw message send \
+                --channel feishu \
+                --target "$TARGET_USER" \
+                --message "⚠️ Dashboard 挂了且自动重启失败！systemd 也无法启动，请找晨露紧急处理！" \
+                2>> "$LOG_FILE"
+        fi
+        exit
     fi
-    exit
 fi
 
 # 检查 HTTP 响应
@@ -46,29 +49,23 @@ HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080 2>/dev/
 if [ "$HTTP_CODE" != "200" ]; then
     echo "[$TIMESTAMP] Dashboard HTTP 异常 (code: $HTTP_CODE)，尝试重启..." >> "$LOG_FILE"
     
-    # 杀掉旧进程
-    kill "$DASHBOARD_PID" 2>/dev/null || kill -9 "$DASHBOARD_PID" 2>/dev/null
-    sleep 1
-    
-    # 重新启动
-    cd /home/cheche
-    nohup /usr/bin/python3 /home/cheche/openclaw-dashboard.py > /tmp/openclaw-dashboard.log 2>&1 &
+    # 使用 systemd 重启
+    systemctl --user restart openclaw-dashboard.service
     sleep 3
     
-    NEW_PID=$(pgrep -f "openclaw-dashboard.py" || true)
-    if [ -n "$NEW_PID" ]; then
-        echo "[$TIMESTAMP] Dashboard 已重启 ✅ PID: $NEW_PID" >> "$LOG_FILE"
+    if systemctl --user is-active openclaw-dashboard.service > /dev/null 2>&1; then
+        echo "[$TIMESTAMP] Dashboard 已通过 systemd 重启 ✅" >> "$LOG_FILE"
         $OPENCLAW_HOME/../.npm-global/bin/openclaw message send \
             --channel feishu \
             --target "$TARGET_USER" \
-            --message "💧 Dashboard HTTP 异常，已自动重启恢复 ✅ PID: $NEW_PID" \
+            --message "💧 Dashboard HTTP 异常，已通过 systemd 自动重启恢复 ✅" \
             2>> "$LOG_FILE"
     else
-        echo "[$TIMESTAMP] Dashboard 重启失败" >> "$LOG_FILE"
+        echo "[$TIMESTAMP] Dashboard systemd 重启失败" >> "$LOG_FILE"
         $OPENCLAW_HOME/../.npm-global/bin/openclaw message send \
             --channel feishu \
             --target "$TARGET_USER" \
-            --message "⚠️ Dashboard 重启失败！HTTP 异常且恢复失败，请人工检查！" \
+            --message "⚠️ Dashboard 重启失败！HTTP 异常且 systemd 恢复失败，请人工检查！" \
             2>> "$LOG_FILE"
     fi
     exit

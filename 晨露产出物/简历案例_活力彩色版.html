@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>陈晨 — 设计师作品集</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+
+  :root {
+    --font-display: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+    --font-body: 'Noto Sans SC', -apple-system, sans-serif;
+    
+    /* 活力配色 */
+    --c-bg: #faf9f7;
+    --c-card: #ffffff;
+    --c-text: #1a1a2e;
+    --c-text-light: #4a4a6a;
+    --c-muted: #8888a0;
+    
+    /* 渐变强调色 */
+    --c-accent-1: #ff6b6b;
+    --c-accent-2: #4ecdc4;
+    --c-accent-3: #ffe66d;
+    --c-accent-4: #a8e6cf;
+    --c-accent-5: #ff8b94;
+    
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-warm: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --gradient-cool: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    --gradient-green: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    
+    --space: 8px;
+    --radius: 16px;
+    --radius-sm: 8px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.06);
+    --shadow-lg: 0 12px 48px rgba(0,0,0,0.12);
+    
+    --transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--c-bg);
+    color: var(--c-text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ========== 页面容器 ========== */
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  /* ========== 彩色头部 ========== */
+  .hero {
+    background: var(--gradient-primary);
+    border-radius: 24px;
+    padding: 48px 40px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+    color: white;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -10%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 50%;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+    backdrop-filter: blur(10px);
+  }
+
+  .hero-name {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-title {
+    font-size: 18px;
+    opacity: 0.9;
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+
+  .hero-contact {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    font-size: 14px;
+    opacity: 0.85;
+  }
+
+  .hero-contact span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hero-contact .icon {
+    width: 20px;
+    height: 20px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+  }
+
+  /* ========== 网格布局 ========== */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+  }
+
+  @media (max-width: 768px) {
+    .grid { grid-template-columns: 1fr; }
+    .hero { padding: 32px 24px; }
+  }
+
+  /* ========== 卡片 ========== */
+  .card {
+    background: var(--c-card);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    transition: transform var(--transition), box-shadow var(--transition);
+    border: 1px solid rgba(0,0,0,0.04);
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f0f0f5;
+  }
+
+  .card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .card-icon.purple { background: var(--gradient-primary); }
+  .card-icon.pink { background: var(--gradient-warm); }
+  .card-icon.blue { background: var(--gradient-cool); }
+  .card-icon.green { background: var(--gradient-green); }
+
+  .card-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--c-text);
+  }
+
+  /* ========== 经历项 ========== */
+  .exp-item {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed #e8e8f0;
+    position: relative;
+  }
+
+  .exp-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .exp-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--c-text);
+  }
+
+  .exp-date {
+    font-size: 12px;
+    color: var(--c-muted);
+    font-weight: 500;
+    padding: 2px 8px;
+    background: #f5f5fa;
+    border-radius: 100px;
+  }
+
+  .exp-company {
+    font-size: 13px;
+    color: var(--c-accent-1);
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .exp-desc {
+    font-size: 13px;
+    color: var(--c-text-light);
+    line-height: 1.7;
+  }
+
+  .exp-desc li {
+    list-style: none;
+    position: relative;
+    padding-left: 18px;
+    margin-bottom: 4px;
+  }
+
+  .exp-desc li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--c-accent-2);
+    font-weight: 700;
+  }
+
+  /* ========== 技能云 ========== */
+  .skill-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .skill-tag {
+    padding: 8px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all var(--transition);
+    cursor: default;
+    border: 2px solid transparent;
+  }
+
+  .skill-tag:hover {
+    transform: scale(1.05) rotate(-2deg);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .skill-tag.red {
+    background: #fff0f0;
+    color: #e74c3c;
+    border-color: #ffd0d0;
+  }
+  .skill-tag.blue {
+    background: #f0f8ff;
+    color: #3498db;
+    border-color: #d0e8ff;
+  }
+  .skill-tag.green {
+    background: #f0fff4;
+    color: #2ecc71;
+    border-color: #d0f5d8;
+  }
+  .skill-tag.yellow {
+    background: #fffbf0;
+    color: #f39c12;
+    border-color: #ffe8a0;
+  }
+  .skill-tag.purple {
+    background: #f8f0ff;
+    color: #9b59b6;
+    border-color: #e8d0ff;
+  }
+
+  /* ========== 项目卡片 ========== */
+  .project-card {
+    background: linear-gradient(135deg, #fafafa 0%, #f5f5ff 100%);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+    border-left: 4px solid var(--c-accent-2);
+    transition: all var(--transition);
+  }
+
+  .project-card:hover {
+    transform: translateX(8px);
+    box-shadow: var(--shadow);
+  }
+
+  .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .project-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--c-text);
+  }
+
+  .project-role {
+    font-size: 11px;
+    color: var(--c-accent-1);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .project-desc {
+    font-size: 13px;
+    color: var(--c-text-light);
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+
+  .project-tech {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tech-dot {
+    padding: 4px 10px;
+    background: white;
+    border: 1px solid #e8e8f0;
+    border-radius: 100px;
+    font-size: 11px;
+    color: var(--c-muted);
+    font-weight: 500;
+  }
+
+  /* ========== 教育卡片 ========== */
+  .edu-card {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed #e8e8f0;
+  }
+
+  .edu-card:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .edu-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--gradient-green);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .edu-content h4 {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--c-text);
+    margin-bottom: 2px;
+  }
+
+  .edu-content p {
+    font-size: 12px;
+    color: var(--c-text-light);
+    line-height: 1.5;
+  }
+
+  .edu-year {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 2px 8px;
+    background: #f0f0f5;
+    border-radius: 100px;
+    font-size: 11px;
+    color: var(--c-muted);
+    font-weight: 500;
+  }
+
+  /* ========== 页脚 ========== */
+  .footer {
+    margin-top: 40px;
+    padding: 24px;
+    background: var(--c-text);
+    border-radius: var(--radius);
+    color: white;
+    text-align: center;
+  }
+
+  .footer p {
+    font-size: 14px;
+    opacity: 0.8;
+    margin-bottom: 12px;
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .footer-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.7;
+    transition: opacity var(--transition);
+  }
+
+  .footer-links a:hover {
+    opacity: 1;
+  }
+
+  /* ========== 装饰元素 ========== */
+  .deco {
+    position: fixed;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .deco-1 {
+    top: 10%;
+    right: 5%;
+    background: var(--c-accent-1);
+  }
+
+  .deco-2 {
+    bottom: 20%;
+    left: 5%;
+    background: var(--c-accent-2);
+  }
+
+  /* ========== 统计条 ========== */
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: 16px;
+    background: white;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+  }
+
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .stat-label {
+    font-size: 12px;
+    color: var(--c-muted);
+    margin-top: 4px;
+  }
+
+  /* ========== 响应式 ========== */
+  @media (max-width: 768px) {
+    .grid { grid-template-columns: 1fr; }
+    .stats-bar { grid-template-columns: 1fr; }
+    .hero-contact { flex-direction: column; gap: 8px; }
+  }
+
+  /* 减少动画 */
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 背景装饰 -->
+<div class="deco deco-1"></div>
+<div class="deco deco-2"></div>
+
+<div class="page">
+
+  <!-- Hero Header -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="hero-badge">👋 你好，我是</div>
+      <h1 class="hero-name">陈晨</h1>
+      <p class="hero-title">高级 UI 设计师 & 前端开发者 · 5 年经验 · 上海</p>
+      <div class="hero-contact">
+        <span><span class="icon">📱</span> 138-0000-0000</span>
+        <span><span class="icon">✉️</span> chen.chen@example.com</span>
+        <span><span class="icon">🔗</span> github.com/chenchen</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 统计条 -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num">5+</div>
+      <div class="stat-label">年设计经验</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">30+</div>
+      <div class="stat-label">产品项目</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">40%</div>
+      <div class="stat-label">效率提升</div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <!-- 主内容区 -->
+    <div class="main">
+
+      <!-- 工作经历 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon purple">💼</div>
+          <h2 class="card-title">工作经历</h2>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-header">
+            <span class="exp-title">高级 UI 设计师</span>
+            <span class="exp-date">2021 — 至今</span>
+          </div>
+          <div class="exp-company">字节跳动 · 飞书文档团队</div>
+          <ul class="exp-desc">
+            <li>负责飞书文档产品的界面设计和用户体验优化，日活用户提升 25%</li>
+            <li>主导设计系统搭建，统一 30+ 产品的视觉规范，提升协作效率 35%</li>
+            <li>推动设计流程标准化，建立组件库和设计评审机制</li>
+          </ul>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-header">
+            <span class="exp-title">前端开发工程师</span>
+            <span class="exp-date">2019 — 2021</span>
+          </div>
+          <div class="exp-company">阿里巴巴 · 淘宝前端团队</div>
+          <ul class="exp-desc">
+            <li>参与淘宝首页重构，性能优化使首屏加载速度提升 40%</li>
+            <li>开发内部组件库，被 15 个业务线采用，减少重复开发</li>
+            <li>获得 2020 年度优秀员工称号</li>
+          </ul>
+        </div>
+
+        <div class="exp-item">
+          <div class="exp-header">
+            <span class="exp-title">初级设计师</span>
+            <span class="exp-date">2017 — 2019</span>
+          </div>
+          <div class="exp-company">小米科技 · MIUI 设计团队</div>
+          <ul class="exp-desc">
+            <li>参与 MIUI 系统界面的设计迭代，覆盖 3 亿用户</li>
+            <li>负责小米商城多个营销活动的视觉设计，转化率平均提升 15%</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 项目经历 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon blue">🚀</div>
+          <h2 class="card-title">精选项目</h2>
+        </div>
+
+        <div class="project-card">
+          <div class="project-header">
+            <span class="project-name">云笔记应用</span>
+            <span class="project-role">独立开发</span>
+          </div>
+          <p class="project-desc">独立开发的移动端笔记应用，支持 Markdown 编辑、标签管理和云端同步。上线 3 个月获 5 万+ 下载，评分 4.8。</p>
+          <div class="project-tech">
+            <span class="tech-dot">React Native</span>
+            <span class="tech-dot">Node.js</span>
+            <span class="tech-dot">MongoDB</span>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-header">
+            <span class="project-name">电商后台管理系统</span>
+            <span class="project-role">B端产品</span>
+          </div>
+          <p class="project-desc">为中大型电商企业打造的一站式管理后台，涵盖商品管理、订单处理、数据分析等核心模块，操作效率提升 40%。</p>
+          <div class="project-tech">
+            <span class="tech-dot">Vue.js</span>
+            <span class="tech-dot">Element UI</span>
+            <span class="tech-dot">ECharts</span>
+          </div>
+        </div>
+
+        <div class="project-card">
+          <div class="project-header">
+            <span class="project-name">健康追踪小程序</span>
+            <span class="project-role">微信小程序</span>
+          </div>
+          <p class="project-desc">微信小程序整合睡眠监测、运动记录、饮食建议和心情日记。温暖柔和的视觉风格，让健康管理变得轻松愉悦。</p>
+          <div class="project-tech">
+            <span class="tech-dot">微信小程序</span>
+            <span class="tech-dot">Taro</span>
+            <span class="tech-dot">云开发</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+
+      <!-- 技能 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon pink">🎨</div>
+          <h2 class="card-title">技能</h2>
+        </div>
+        <div class="skill-cloud">
+          <span class="skill-tag red">Figma</span>
+          <span class="skill-tag blue">Sketch</span>
+          <span class="skill-tag green">Adobe XD</span>
+          <span class="skill-tag yellow">Photoshop</span>
+          <span class="skill-tag purple">Illustrator</span>
+          <span class="skill-tag red">React</span>
+          <span class="skill-tag blue">Vue.js</span>
+          <span class="skill-tag green">TypeScript</span>
+          <span class="skill-tag yellow">Tailwind</span>
+          <span class="skill-tag purple">Node.js</span>
+          <span class="skill-tag red">UI/UX</span>
+          <span class="skill-tag blue">设计系统</span>
+          <span class="skill-tag green">动效设计</span>
+          <span class="skill-tag yellow">品牌设计</span>
+        </div>
+      </div>
+
+      <!-- 教育 -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon green">🎓</div>
+          <h2 class="card-title">教育</h2>
+        </div>
+        
+        <div class="edu-card">
+          <div class="edu-icon">🏫</div>
+          <div class="edu-content">
+            <h4>同济大学</h4>
+            <p>设计创意学院 · 工业设计硕士</p>
+            <span class="edu-year">2015 — 2017</span>
+          </div>
+        </div>
+
+        <div class="edu-card">
+          <div class="edu-icon">🏛️</div>
+          <div class="edu-content">
+            <h4>江南大学</h4>
+            <p>设计学院 · 视觉传达设计学士</p>
+            <span class="edu-year">2011 — 2015</span>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2024 陈晨 · 用设计让世界更美好 ✨</p>
+    <div class="footer-links">
+      <a href="#">GitHub</a>
+      <a href="#">Dribbble</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">邮件</a>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>

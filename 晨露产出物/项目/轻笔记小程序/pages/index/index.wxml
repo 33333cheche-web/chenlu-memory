@@ -1,0 +1,96 @@
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <text class="title">轻笔记</text>
+    <text class="subtitle">简单记录，温柔生活</text>
+  </view>
+
+  <!-- 快速输入区 -->
+  <view class="input-section card">
+    <!-- 模式切换 -->
+    <view class="mode-switch">
+      <view class="mode-btn {{currentMode === 'note' ? 'active' : ''}}" bindtap="switchMode" data-mode="note">
+        📝 笔记
+      </view>
+      <view class="mode-btn {{currentMode === 'task' ? 'active' : ''}}" bindtap="switchMode" data-mode="task">
+        ☑️ 任务
+      </view>
+    </view>
+
+    <!-- 笔记输入框 -->
+    <view wx:if="{{currentMode === 'note'}}">
+      <textarea 
+        class="input-box" 
+        placeholder="今天想写点什么..." 
+        value="{{inputContent}}"
+        bindinput="onInput"
+        maxlength="500"
+      ></textarea>
+    </view>
+
+    <!-- 任务输入区 -->
+    <view wx:if="{{currentMode === 'task'}}" class="task-input-area">
+      <view class="task-list-preview">
+        <view wx:for="{{tempTasks}}" wx:key="index" class="task-item">
+          <checkbox checked="{{item.completed}}" bindtap="toggleTempTask" data-index="{{index}}"/>
+          <input 
+            class="task-input" 
+            placeholder="输入任务..."
+            value="{{item.content}}"
+            bindinput="onTaskInput"
+            data-index="{{index}}"
+          ></input>
+        </view>
+      </view>
+      <view class="add-task-btn" bindtap="addTempTask">+ 添加任务</view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="input-actions">
+      <view class="btn btn-primary" bindtap="saveContent">保存</view>
+      <view class="btn btn-secondary" bindtap="selectCategory">{{currentCategory || '选择分类'}} ▼</view>
+    </view>
+  </view>
+
+  <!-- 分类列表 -->
+  <view class="categories-section card">
+    <view class="section-title">📂 我的分类</view>
+    
+    <view wx:for="{{categories}}" wx:key="id" class="category-item" bindtap="goToCategory" data-id="{{item.id}}">
+      <view class="category-left">
+        <text class="category-icon">{{item.icon}}</text>
+        <view class="category-info">
+          <text class="category-name">{{item.name}}</text>
+          <text class="category-desc">{{item.desc}}</text>
+        </view>
+      </view>
+      <view class="category-count">{{item.count}}</view>
+    </view>
+  </view>
+
+  <!-- 最近编辑 -->
+  <view class="recent-section card">
+    <view class="section-title">📝 最近编辑</view>
+    
+    <view wx:for="{{recentNotes}}" wx:key="id" class="note-item" bindtap="editNote" data-id="{{item.id}}">
+      <view class="note-content">{{item.type === 'task' ? '☑️ ' : ''}}{{item.content}}</view>
+      <view class="note-meta">{{item.timeText}} · {{item.category}}</view>
+    </view>
+    
+    <view wx:if="{{recentNotes.length === 0}}" class="empty-tip">
+      还没有笔记，来写一条吧～
+    </view>
+  </view>
+</view>
+
+<!-- 分类选择弹窗 -->
+<view class="category-popup" wx:if="{{showCategoryPopup}}">
+  <view class="popup-mask" bindtap="closeCategoryPopup"></view>
+  <view class="popup-content">
+    <view class="popup-title">选择分类</view>
+    <view wx:for="{{categories}}" wx:key="id" class="popup-item" bindtap="confirmCategory" data-name="{{item.name}}">
+      <text>{{item.icon}} {{item.name}}</text>
+      <text wx:if="{{currentCategory === item.name}}" class="check-icon">✓</text>
+    </view>
+  </view>
+</view>

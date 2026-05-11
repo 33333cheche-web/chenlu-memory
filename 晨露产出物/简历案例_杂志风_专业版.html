@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>陈晨 — Portfolio 2024</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Crimson+Pro:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap');
+
+  :root {
+    --font-serif: 'Crimson Pro', Georgia, 'Times New Roman', serif;
+    --font-sans: 'DM Sans', -apple-system, sans-serif;
+    
+    /* OKLCH 色彩空间 - 感知均匀 */
+    --c-ink: oklch(0.18 0.02 280);
+    --c-ink-light: oklch(0.35 0.02 280);
+    --c-warm: oklch(0.55 0.05 75);
+    --c-warm-light: oklch(0.65 0.04 75);
+    --c-accent: oklch(0.58 0.18 30);
+    --c-accent-hover: oklch(0.52 0.2 30);
+    --c-cream: oklch(0.96 0.01 80);
+    --c-cream-dark: oklch(0.92 0.02 80);
+    --c-paper: oklch(0.98 0.005 80);
+    --c-white: #ffffff;
+    
+    /* 间距系统 - 8px 基础 */
+    --space-1: 8px;
+    --space-2: 16px;
+    --space-3: 24px;
+    --space-4: 32px;
+    --space-5: 40px;
+    --space-6: 48px;
+    --space-8: 64px;
+    --space-10: 80px;
+    --space-12: 96px;
+    
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-fast: 0.15s var(--ease-out);
+    --transition-base: 0.3s var(--ease-out);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--c-paper);
+    color: var(--c-ink);
+    line-height: 1.65;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ========== 页面容器 ========== */
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--c-white);
+    min-height: 100vh;
+    box-shadow: 0 0 120px rgba(0,0,0,0.04);
+  }
+
+  /* ========== 杂志风头部 ========== */
+  .masthead {
+    padding: var(--space-10) var(--space-6) var(--space-8);
+    border-bottom: 1px solid var(--c-cream);
+    position: relative;
+  }
+
+  .masthead::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--c-accent) 0%, oklch(0.6 0.15 45) 50%, var(--c-warm) 100%);
+  }
+
+  .issue-tag {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--c-warm);
+    margin-bottom: var(--space-4);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--space-8);
+    align-items: end;
+  }
+
+  @media (max-width: 768px) {
+    .hero-grid { grid-template-columns: 1fr; gap: var(--space-4); }
+    .masthead { padding: var(--space-6) var(--space-4); }
+  }
+
+  .hero-name {
+    font-family: var(--font-serif);
+    font-size: clamp(48px, 7vw, 88px);
+    font-weight: 400;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--c-ink);
+    margin-bottom: var(--space-3);
+  }
+
+  .hero-name .accent {
+    color: var(--c-accent);
+    font-style: italic;
+  }
+
+  .hero-role {
+    font-family: var(--font-serif);
+    font-size: clamp(18px, 2.5vw, 24px);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--c-warm);
+    line-height: 1.3;
+  }
+
+  .hero-contact {
+    text-align: right;
+    font-size: 13px;
+    color: var(--c-warm-light);
+    line-height: 2;
+  }
+
+  .hero-contact .label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--c-cream-dark);
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .hero-contact { text-align: left; }
+  }
+
+  /* ========== 杂志正文区 ========== */
+  .editorial {
+    padding: var(--space-8) var(--space-6);
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--space-10);
+  }
+
+  @media (max-width: 900px) {
+    .editorial { grid-template-columns: 1fr; gap: var(--space-6); padding: var(--space-6); }
+  }
+
+  /* ========== 章节标题 ========== */
+  .chapter {
+    margin-bottom: var(--space-8);
+  }
+
+  .chapter-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2);
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-3);
+    border-bottom: 2px solid var(--c-ink);
+  }
+
+  .chapter-num {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--c-accent);
+    letter-spacing: 0.05em;
+  }
+
+  .chapter-title {
+    font-family: var(--font-serif);
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  /* ========== 经历项 ========== */
+  .story {
+    margin-bottom: var(--space-6);
+    padding-bottom: var(--space-6);
+    border-bottom: 1px solid var(--c-cream);
+    transition: transform var(--transition-base);
+  }
+
+  .story:hover {
+    transform: translateX(6px);
+  }
+
+  .story:last-child {
+    border-bottom: none;
+  }
+
+  .story-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--space-1);
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .story-title {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--c-ink);
+  }
+
+  .story-date {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--c-warm-light);
+    letter-spacing: 0.03em;
+  }
+
+  .story-sub {
+    font-size: 13px;
+    color: var(--c-accent);
+    font-weight: 500;
+    margin-bottom: var(--space-2);
+    letter-spacing: 0.02em;
+  }
+
+  .story-body {
+    font-size: 14px;
+    color: var(--c-ink-light);
+    line-height: 1.75;
+  }
+
+  .story-body li {
+    list-style: none;
+    position: relative;
+    padding-left: var(--space-3);
+    margin-bottom: 6px;
+  }
+
+  .story-body li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--c-accent);
+    font-size: 11px;
+  }
+
+  /* ========== 侧边栏 ========== */
+  .sidebar {
+    position: sticky;
+    top: var(--space-4);
+    align-self: start;
+  }
+
+  @media (max-width: 900px) {
+    .sidebar { position: static; }
+  }
+
+  .sidebar-block {
+    margin-bottom: var(--space-8);
+  }
+
+  .sidebar-title {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: var(--space-3);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--c-cream);
+  }
+
+  /* ========== 技能标签 ========== */
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    padding: 6px 14px;
+    background: var(--c-cream);
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--c-warm);
+    transition: all var(--transition-fast);
+    cursor: default;
+  }
+
+  .tag:hover {
+    background: var(--c-accent);
+    color: var(--c-white);
+    transform: translateY(-2px);
+  }
+
+  /* ========== 项目卡片 ========== */
+  .showcase {
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-5);
+    border-bottom: 1px solid var(--c-cream);
+    transition: transform var(--transition-base);
+  }
+
+  .showcase:hover {
+    transform: translateX(6px);
+  }
+
+  .showcase:last-child {
+    border-bottom: none;
+  }
+
+  .showcase-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: var(--space-1);
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  .showcase-name {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--c-ink);
+  }
+
+  .showcase-role {
+    font-size: 11px;
+    color: var(--c-accent);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .showcase-desc {
+    font-size: 13px;
+    color: var(--c-ink-light);
+    line-height: 1.7;
+    margin-bottom: var(--space-2);
+  }
+
+  .showcase-tech {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tech-pill {
+    padding: 3px 10px;
+    border: 1px solid var(--c-cream);
+    font-size: 11px;
+    color: var(--c-warm-light);
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  /* ========== 教育背景 ========== */
+  .academy {
+    margin-bottom: var(--space-4);
+  }
+
+  .academy-name {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--c-ink);
+    margin-bottom: 2px;
+  }
+
+  .academy-degree {
+    font-size: 13px;
+    color: var(--c-ink-light);
+  }
+
+  .academy-year {
+    font-size: 12px;
+    color: var(--c-accent);
+    font-weight: 500;
+    margin-top: 4px;
+  }
+
+  /* ========== 页脚 ========== */
+  .colophon {
+    padding: var(--space-6);
+    border-top: 2px solid var(--c-ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .colophon p {
+    font-size: 12px;
+    color: var(--c-warm-light);
+    font-style: italic;
+  }
+
+  .colophon-links {
+    display: flex;
+    gap: var(--space-4);
+  }
+
+  .colophon-links a {
+    font-size: 13px;
+    color: var(--c-ink);
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+    transition: color var(--transition-fast);
+  }
+
+  .colophon-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--c-accent);
+    transition: width var(--transition-base);
+  }
+
+  .colophon-links a:hover {
+    color: var(--c-accent);
+  }
+
+  .colophon-links a:hover::after {
+    width: 100%;
+  }
+
+  /* ========== 装饰元素 ========== */
+  .drop-cap::first-letter {
+    font-family: var(--font-serif);
+    font-size: 3em;
+    float: left;
+    line-height: 0.8;
+    margin-right: 8px;
+    color: var(--c-accent);
+    font-weight: 400;
+  }
+
+  /* ========== 打印优化 ========== */
+  @media print {
+    .page { box-shadow: none; }
+    .story:hover, .showcase:hover, .tag:hover { transform: none; }
+    body { background: white; }
+  }
+
+  /* ========== 减少动画偏好 ========== */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- Masthead -->
+  <header class="masthead">
+    <div class="issue-tag">Portfolio Issue · 2024</div>
+    <div class="hero-grid">
+      <div>
+        <h1 class="hero-name">陈<span class="accent">晨</span></h1>
+        <p class="hero-role">高级 UI 设计师 & 前端开发者</p>
+      </div>
+      <div class="hero-contact">
+        <div><span class="label">电话</span><br>138-0000-0000</div>
+        <div><span class="label">邮箱</span><br>chen.chen@example.com</div>
+        <div><span class="label">地点</span><br>上海</div>
+        <div><span class="label">GitHub</span><br>github.com/chenchen</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Editorial Content -->
+  <div class="editorial">
+
+    <!-- Main Column -->
+    <main class="main">
+
+      <!-- Experience -->
+      <section class="chapter">
+        <div class="chapter-header">
+          <span class="chapter-num">01</span>
+          <h2 class="chapter-title">工作经历</h2>
+        </div>
+
+        <article class="story">
+          <div class="story-meta">
+            <h3 class="story-title">高级 UI 设计师</h3>
+            <span class="story-date">2021 — 至今</span>
+          </div>
+          <div class="story-sub">字节跳动 · 飞书文档团队</div>
+          <ul class="story-body">
+            <li>负责飞书文档产品的界面设计和用户体验优化，日活用户提升 25%</li>
+            <li>主导设计系统搭建，统一 30+ 产品的视觉规范，提升协作效率 35%</li>
+            <li>推动设计流程标准化，建立组件库和设计评审机制</li>
+          </ul>
+        </article>
+
+        <article class="story">
+          <div class="story-meta">
+            <h3 class="story-title">前端开发工程师</h3>
+            <span class="story-date">2019 — 2021</span>
+          </div>
+          <div class="story-sub">阿里巴巴 · 淘宝前端团队</div>
+          <ul class="story-body">
+            <li>参与淘宝首页重构，性能优化使首屏加载速度提升 40%</li>
+            <li>开发内部组件库，被 15 个业务线采用，减少重复开发</li>
+            <li>获得 2020 年度优秀员工称号</li>
+          </ul>
+        </article>
+
+        <article class="story">
+          <div class="story-meta">
+            <h3 class="story-title">初级设计师</h3>
+            <span class="story-date">2017 — 2019</span>
+          </div>
+          <div class="story-sub">小米科技 · MIUI 设计团队</div>
+          <ul class="story-body">
+            <li>参与 MIUI 系统界面的设计迭代，覆盖 3 亿用户</li>
+            <li>负责小米商城多个营销活动的视觉设计，转化率平均提升 15%</li>
+          </ul>
+        </article>
+      </section>
+
+      <!-- Projects -->
+      <section class="chapter">
+        <div class="chapter-header">
+          <span class="chapter-num">02</span>
+          <h2 class="chapter-title">精选项目</h2>
+        </div>
+
+        <article class="showcase">
+          <div class="showcase-header">
+            <h3 class="showcase-name">云笔记应用</h3>
+            <span class="showcase-role">产品设计 & 前端开发</span>
+          </div>
+          <p class="showcase-desc">独立开发的移动端笔记应用，采用极简设计语言，支持 Markdown 编辑、标签管理和云端同步。上线 3 个月获 5 万+ 下载，评分 4.8。</p>
+          <div class="showcase-tech">
+            <span class="tech-pill">React Native</span>
+            <span class="tech-pill">Node.js</span>
+            <span class="tech-pill">MongoDB</span>
+          </div>
+        </article>
+
+        <article class="showcase">
+          <div class="showcase-header">
+            <h3 class="showcase-name">电商后台管理系统</h3>
+            <span class="showcase-role">UI 设计 & 前端开发</span>
+          </div>
+          <p class="showcase-desc">为中大型电商企业打造的一站式管理后台，涵盖商品管理、订单处理、数据分析等核心模块。信息架构优化让操作效率提升 40%。</p>
+          <div class="showcase-tech">
+            <span class="tech-pill">Vue.js</span>
+            <span class="tech-pill">Element UI</span>
+            <span class="tech-pill">ECharts</span>
+          </div>
+        </article>
+
+        <article class="showcase">
+          <div class="showcase-header">
+            <h3 class="showcase-name">健康追踪小程序</h3>
+            <span class="showcase-role">产品设计</span>
+          </div>
+          <p class="showcase-desc">微信小程序整合睡眠监测、运动记录、饮食建议和心情日记。温暖柔和的视觉风格，让健康管理变得轻松愉悦。</p>
+          <div class="showcase-tech">
+            <span class="tech-pill">微信小程序</span>
+            <span class="tech-pill">Taro</span>
+            <span class="tech-pill">云开发</span>
+          </div>
+        </article>
+      </section>
+
+    </main>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+
+      <!-- Skills -->
+      <div class="sidebar-block">
+        <h3 class="sidebar-title">专业技能</h3>
+        <div class="tag-cloud">
+          <span class="tag">Figma</span>
+          <span class="tag">Sketch</span>
+          <span class="tag">Adobe XD</span>
+          <span class="tag">Photoshop</span>
+          <span class="tag">Illustrator</span>
+          <span class="tag">Principle</span>
+          <span class="tag">HTML/CSS</span>
+          <span class="tag">JavaScript</span>
+          <span class="tag">TypeScript</span>
+          <span class="tag">React</span>
+          <span class="tag">Vue.js</span>
+          <span class="tag">Tailwind CSS</span>
+          <span class="tag">UI/UX</span>
+          <span class="tag">交互原型</span>
+          <span class="tag">设计系统</span>
+          <span class="tag">数据可视化</span>
+          <span class="tag">品牌设计</span>
+          <span class="tag">动效设计</span>
+        </div>
+      </div>
+
+      <!-- Education -->
+      <div class="sidebar-block">
+        <h3 class="sidebar-title">教育背景</h3>
+        
+        <div class="academy">
+          <div class="academy-name">同济大学</div>
+          <div class="academy-degree">设计创意学院 · 工业设计硕士</div>
+          <div class="academy-year">2015 — 2017</div>
+        </div>
+
+        <div class="academy">
+          <div class="academy-name">江南大学</div>
+          <div class="academy-degree">设计学院 · 视觉传达设计学士</div>
+          <div class="academy-year">2011 — 2015</div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="colophon">
+    <p>© 2024 陈晨 · 用设计让世界更美好</p>
+    <div class="colophon-links">
+      <a href="#">GitHub</a>
+      <a href="#">Dribbble</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">邮件联系</a>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>

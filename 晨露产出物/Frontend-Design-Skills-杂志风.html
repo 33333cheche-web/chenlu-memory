@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>陈晨 — 独立设计师 & 前端开发者</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+  :root {
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Inter', -apple-system, sans-serif;
+    --color-paper: #faf8f5;
+    --color-ink: #1a1a1a;
+    --color-warm: #8b7355;
+    --color-accent: #c45c3e;
+    --color-muted: #a0998e;
+    --color-cream: #f0ebe3;
+    --space-unit: 1rem;
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 2rem;
+    --space-lg: 4rem;
+    --space-xl: 6rem;
+    --transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--color-paper);
+    color: var(--color-ink);
+    line-height: 1.7;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Editorial Grid */
+  .editorial-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 100vh;
+  }
+
+  @media (max-width: 900px) {
+    .editorial-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Left: Portrait Area */
+  .portrait-side {
+    background: var(--color-ink);
+    color: var(--color-paper);
+    padding: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .portrait-side::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(135deg, transparent 0%, rgba(196, 92, 62, 0.08) 100%);
+  }
+
+  .issue-label {
+    font-family: var(--font-body);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-warm);
+    margin-bottom: var(--space-lg);
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-name {
+    font-family: var(--font-display);
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 700;
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    margin-bottom: var(--space-md);
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-name span {
+    display: block;
+    color: var(--color-accent);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 0.6em;
+    margin-top: var(--space-xs);
+    letter-spacing: 0.02em;
+  }
+
+  .hero-bio {
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--color-warm);
+    max-width: 400px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-bio p + p {
+    margin-top: var(--space-sm);
+  }
+
+  .contact-block {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px solid rgba(139, 115, 85, 0.3);
+    position: relative;
+    z-index: 1;
+  }
+
+  .contact-block p {
+    font-size: 13px;
+    color: var(--color-warm);
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-xs);
+  }
+
+  .tag-row {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+    margin-top: var(--space-md);
+  }
+
+  .tag {
+    padding: 6px 16px;
+    border: 1px solid rgba(139, 115, 85, 0.4);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-warm);
+    transition: all var(--transition);
+  }
+
+  .tag:hover {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-paper);
+  }
+
+  /* Right: Content Side */
+  .content-side {
+    padding: var(--space-xl);
+    overflow-y: auto;
+  }
+
+  /* Section Headers */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 2px solid var(--color-ink);
+  }
+
+  .section-num {
+    font-family: var(--font-display);
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  /* Experience - Magazine Layout */
+  .exp-grid {
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  .exp-item {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: var(--space-md);
+    padding: var(--space-md) 0;
+    border-bottom: 1px solid var(--color-cream);
+  }
+
+  .exp-item:last-child {
+    border-bottom: none;
+  }
+
+  .exp-date {
+    font-size: 13px;
+    color: var(--color-muted);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: var(--space-xs);
+  }
+
+  .exp-content h3 {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .exp-content .company {
+    font-size: 14px;
+    color: var(--color-accent);
+    font-weight: 500;
+    margin-bottom: var(--space-sm);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .exp-content ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .exp-content li {
+    font-size: 14px;
+    color: var(--color-muted);
+    line-height: 1.7;
+    padding-left: var(--space-sm);
+    position: relative;
+    margin-bottom: 6px;
+  }
+
+  .exp-content li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+  }
+
+  /* Stats Bar */
+  .stats-bar {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-md);
+    margin: var(--space-lg) 0;
+    padding: var(--space-md);
+    background: var(--color-cream);
+  }
+
+  .stat-item {
+    text-align: center;
+  }
+
+  .stat-item .num {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--color-accent);
+    line-height: 1;
+  }
+
+  .stat-item .label {
+    font-size: 11px;
+    color: var(--color-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-top: 6px;
+  }
+
+  /* Skills */
+  .skills-list {
+    columns: 2;
+    column-gap: var(--space-lg);
+  }
+
+  @media (max-width: 600px) {
+    .skills-list { columns: 1; }
+  }
+
+  .skill-row {
+    break-inside: avoid;
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--color-cream);
+  }
+
+  .skill-row h4 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    margin-bottom: var(--space-xs);
+  }
+
+  .skill-track {
+    height: 3px;
+    background: var(--color-cream);
+    position: relative;
+    margin-top: var(--space-sm);
+  }
+
+  .skill-fill {
+    height: 100%;
+    background: var(--color-accent);
+    position: relative;
+  }
+
+  .skill-fill::after {
+    content: attr(data-pct);
+    position: absolute;
+    right: 0;
+    top: -24px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+
+  /* Projects - Magazine Cards */
+  .projects-grid {
+    display: grid;
+    gap: var(--space-lg);
+  }
+
+  .project-feature {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    border-bottom: 2px solid var(--color-ink);
+    padding-bottom: var(--space-lg);
+    margin-bottom: var(--space-lg);
+  }
+
+  @media (max-width: 700px) {
+    .project-feature { grid-template-columns: 1fr; }
+  }
+
+  .project-visual {
+    background: var(--color-cream);
+    min-height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ===== 假项目效果图 - CSS模拟真实界面 ===== */
+
+  /* 项目1 - 云笔记：手机界面 */
+  .project-visual.note-app {
+    background: #1a1a2e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .project-visual.note-app .phone-mockup {
+    width: 140px;
+    height: 260px;
+    background: #fff;
+    border-radius: 20px;
+    padding: 8px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    position: relative;
+  }
+  .project-visual.note-app .phone-screen {
+    width: 100%;
+    height: 100%;
+    background: #faf8f5;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .project-visual.note-app .phone-header {
+    height: 28px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 4px;
+  }
+  .project-visual.note-app .phone-header .dot {
+    width: 4px;
+    height: 4px;
+    background: #ccc;
+    border-radius: 50%;
+  }
+  .project-visual.note-app .note-content {
+    flex: 1;
+    padding: 12px;
+  }
+  .project-visual.note-app .note-line {
+    height: 3px;
+    background: #ddd;
+    border-radius: 2px;
+    margin-bottom: 6px;
+  }
+  .project-visual.note-app .note-line:nth-child(1) { width: 80%; }
+  .project-visual.note-app .note-line:nth-child(2) { width: 60%; }
+  .project-visual.note-app .note-line:nth-child(3) { width: 90%; }
+  .project-visual.note-app .note-line:nth-child(4) { width: 40%; }
+  .project-visual.note-app .note-line:nth-child(5) { width: 70%; }
+  .project-visual.note-app .note-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    background: #c45c3e;
+    color: #fff;
+    font-size: 8px;
+    border-radius: 4px;
+    margin-top: 8px;
+  }
+
+  /* 项目2 - 电商后台：Dashboard界面 */
+  .project-visual.ecommerce {
+    background: #f5f5f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .project-visual.ecommerce .dash-mockup {
+    width: 240px;
+    height: 160px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 50px 1fr;
+  }
+  .project-visual.ecommerce .dash-sidebar {
+    background: #1a1a2e;
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .project-visual.ecommerce .dash-sidebar .nav-item {
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+  }
+  .project-visual.ecommerce .dash-sidebar .nav-item:nth-child(1) { width: 70%; }
+  .project-visual.ecommerce .dash-sidebar .nav-item:nth-child(2) { width: 50%; }
+  .project-visual.ecommerce .dash-sidebar .nav-item:nth-child(3) { width: 60%; }
+  .project-visual.ecommerce .dash-main {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .project-visual.ecommerce .dash-header {
+    height: 8px;
+    width: 40%;
+    background: #ddd;
+    border-radius: 4px;
+  }
+  .project-visual.ecommerce .dash-chart {
+    flex: 1;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 6px;
+    opacity: 0.8;
+    position: relative;
+  }
+  .project-visual.ecommerce .dash-chart::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60%;
+    background: linear-gradient(to top, rgba(255,255,255,0.3) 0%, transparent 100%);
+    border-radius: 0 0 6px 6px;
+  }
+
+  /* 项目3 - 健康小程序：卡片界面 */
+  .project-visual.health {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .project-visual.health .health-mockup {
+    width: 160px;
+    height: 240px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .project-visual.health .health-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .project-visual.health .health-icon {
+    width: 24px;
+    height: 24px;
+    background: #4caf50;
+    border-radius: 50%;
+  }
+  .project-visual.health .health-title {
+    height: 6px;
+    width: 60px;
+    background: #ddd;
+    border-radius: 3px;
+  }
+  .project-visual.health .health-card {
+    background: #f1f8e9;
+    border-radius: 12px;
+    padding: 12px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .project-visual.health .health-bar {
+    height: 4px;
+    background: #c8e6c9;
+    border-radius: 2px;
+    position: relative;
+  }
+  .project-visual.health .health-bar::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 70%;
+    background: #4caf50;
+    border-radius: 2px;
+  }
+  .project-visual.health .health-stat {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .project-visual.health .stat-box {
+    flex: 1;
+    height: 30px;
+    background: #fff;
+    border-radius: 8px;
+  }
+
+  /* 项目4 - 品牌设计：Logo展示 */
+  .project-visual.branding {
+    background: #faf8f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .project-visual.branding .brand-mockup {
+    width: 200px;
+    height: 200px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 3px solid var(--color-cream);
+  }
+  .project-visual.branding .brand-logo {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #c45c3e 0%, #e07b5f 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .project-visual.branding .brand-name {
+    height: 6px;
+    width: 80px;
+    background: #ddd;
+    border-radius: 3px;
+  }
+  .project-visual.branding .brand-tagline {
+    height: 4px;
+    width: 50px;
+    background: #eee;
+    border-radius: 2px;
+  }
+
+  .project-info h3 {
+    font-family: var(--font-display);
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: var(--space-xs);
+    line-height: 1.2;
+  }
+
+  .project-info .cat {
+    font-size: 12px;
+    color: var(--color-accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-md);
+    font-weight: 500;
+  }
+
+  .project-info p {
+    font-size: 15px;
+    color: var(--color-muted);
+    line-height: 1.8;
+    margin-bottom: var(--space-md);
+  }
+
+  .project-tags {
+    display: flex;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-md);
+  }
+
+  .project-tag {
+    padding: 4px 12px;
+    background: var(--color-cream);
+    font-size: 12px;
+    color: var(--color-muted);
+  }
+
+  .project-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-ink);
+    text-decoration: none;
+    border-bottom: 2px solid var(--color-accent);
+    padding-bottom: 4px;
+    transition: all var(--transition);
+  }
+
+  .project-link:hover {
+    color: var(--color-accent);
+    gap: 12px;
+  }
+
+  /* Education */
+  .edu-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+  }
+
+  @media (max-width: 600px) {
+    .edu-row { grid-template-columns: 1fr; }
+  }
+
+  .edu-card {
+    padding: var(--space-md);
+    border: 1px solid var(--color-cream);
+    transition: all var(--transition);
+  }
+
+  .edu-card:hover {
+    border-color: var(--color-accent);
+    background: var(--color-cream);
+  }
+
+  .edu-card h4 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    margin-bottom: 6px;
+  }
+
+  .edu-card .degree {
+    font-size: 14px;
+    color: var(--color-muted);
+    margin-bottom: 4px;
+  }
+
+  .edu-card .year {
+    font-size: 12px;
+    color: var(--color-muted);
+    letter-spacing: 0.05em;
+  }
+
+  /* Footer */
+  .magazine-footer {
+    margin-top: var(--space-xl);
+    padding-top: var(--space-lg);
+    border-top: 2px solid var(--color-ink);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--space-md);
+  }
+
+  .magazine-footer p {
+    font-size: 13px;
+    color: var(--color-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: var(--space-md);
+  }
+
+  .footer-links a {
+    font-size: 13px;
+    color: var(--color-ink);
+    text-decoration: none;
+    font-weight: 500;
+    position: relative;
+  }
+
+  .footer-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--color-accent);
+    transition: width var(--transition);
+  }
+
+  .footer-links a:hover::after {
+    width: 100%;
+  }
+</style>
+</head>
+<body>
+
+<div class="editorial-grid">
+
+  <!-- Left: Portrait/Hero -->
+  <div class="portrait-side">
+    <div>
+      <div class="issue-label">Portfolio Issue · 2024</div>
+      <h1 class="hero-name">
+        陈晨
+        <span>独立设计师 & 前端开发者</span>
+      </h1>
+    </div>
+
+    <div>
+      <div class="hero-bio">
+        <p>专注于创造简洁优雅的数字体验。从品牌视觉到交互界面，从静态页面到动态应用。</p>
+        <p>5 年经验 · 30+ 产品项目 · 让复杂问题变得直观。</p>
+      </div>
+
+      <div class="contact-block">
+        <p>chen.chen@example.com</p>
+        <p>138-0000-0000 · 上海</p>
+      </div>
+
+      <div class="tag-row">
+        <span class="tag">UI/UX</span>
+        <span class="tag">前端开发</span>
+        <span class="tag">品牌设计</span>
+        <span class="tag">数据可视化</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Content -->
+  <div class="content-side">
+
+    <!-- Experience -->
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title">工作经历</span>
+    </div>
+
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="num">5+</div>
+        <div class="label">年经验</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">30+</div>
+        <div class="label">产品项目</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">40%</div>
+        <div class="label">效率提升</div>
+      </div>
+    </div>
+
+    <div class="exp-grid">
+      <div class="exp-item">
+        <div class="exp-date">2021 — 至今</div>
+        <div class="exp-content">
+          <h3>高级 UI 设计师</h3>
+          <div class="company">字节跳动</div>
+          <ul>
+            <li>负责飞书文档产品的界面设计和用户体验优化</li>
+            <li>主导设计系统搭建，统一 30+ 产品的视觉规范</li>
+            <li>推动设计流程标准化，团队效率提升 35%</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-date">2019 — 2021</div>
+        <div class="exp-content">
+          <h3>前端开发工程师</h3>
+          <div class="company">阿里巴巴</div>
+          <ul>
+            <li>参与淘宝首页重构，性能优化提升加载速度 40%</li>
+            <li>开发内部组件库，被 15 个业务线采用</li>
+            <li>获得 2020 年度优秀员工称号</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-date">2017 — 2019</div>
+        <div class="exp-content">
+          <h3>初级设计师</h3>
+          <div class="company">小米科技</div>
+          <ul>
+            <li>参与 MIUI 系统界面的设计迭代</li>
+            <li>负责小米商城多个营销活动的视觉设计</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skills -->
+    <div class="section-header" style="margin-top: var(--space-xl);">
+      <span class="section-num">02</span>
+      <span class="section-title">专业技能</span>
+    </div>
+
+    <div class="skills-list">
+      <div class="skill-row">
+        <h4>Figma</h4>
+        <div class="skill-track">
+          <div class="skill-fill" style="width: 95%" data-pct="95%"></div>
+        </div>
+      </div>
+      <div class="skill-row">
+        <h4>React</h4>
+        <div class="skill-track">
+          <div class="skill-fill" style="width: 85%" data-pct="85%"></div>
+        </div>
+      </div>
+      <div class="skill-row">
+        <h4>Vue.js</h4>
+        <div class="skill-track">
+          <div class="skill-fill" style="width: 80%" data-pct="80%"></div>
+        </div>
+      </div>
+      <div class="skill-row">
+        <h4>TypeScript</h4>
+        <div class="skill-track">
+          <div class="skill-fill" style="width: 75%" data-pct="75%"></div>
+        </div>
+      </div>
+      <div class="skill-row">
+        <h4>CSS / 动画</h4>
+        <div class="skill-track">
+          <div class="skill-fill" style="width: 90%" data-pct="90%"></div>
+        </div>
+      </div>
+      <div class="skill-row">
+        <h4>数据可视化</h4>
+        <div class="skill-track">
+          <div class="skill-fill" style="width: 70%" data-pct="70%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projects -->
+    <div class="section-header" style="margin-top: var(--space-xl);">
+      <span class="section-num">03</span>
+      <span class="section-title">精选作品</span>
+    </div>
+
+    <div class="projects-grid">
+      <div class="project-feature">
+        <div class="project-visual note-app" data-label="01"><span class="visual-label">01</span></div>
+        <div class="project-info">
+          <div class="cat">产品设计 · 移动端</div>
+          <h3>云笔记应用</h3>
+          <p>一款专注于沉浸写作体验的移动端笔记应用。支持 Markdown 编辑、标签管理、云端同步和离线模式。采用极简设计语言，让用户随时随地记录灵感。</p>
+          <div class="project-tags">
+            <span class="project-tag">React</span>
+            <span class="project-tag">移动端</span>
+            <span class="project-tag">Markdown</span>
+          </div>
+          <a href="#" class="project-link">查看项目 →</a>
+        </div>
+      </div>
+
+      <div class="project-feature">
+        <div class="project-visual ecommerce" data-label="02">
+          <div class="dash-mockup">
+            <div class="dash-sidebar">
+              <div class="nav-item"></div>
+              <div class="nav-item"></div>
+              <div class="nav-item"></div>
+            </div>
+            <div class="dash-main">
+              <div class="dash-header"></div>
+              <div class="dash-chart"></div>
+            </div>
+          </div>
+        </div>
+        <div class="project-info">
+          <div class="cat">B端设计 · 后台系统</div>
+          <h3>电商后台管理系统</h3>
+          <p>为中大型电商企业打造的一站式管理后台。涵盖商品管理、订单处理、数据分析等核心模块。信息架构优化让操作效率提升 40%。</p>
+          <div class="project-tags">
+            <span class="project-tag">Vue</span>
+            <span class="project-tag">数据可视化</span>
+            <span class="project-tag">Dashboard</span>
+          </div>
+          <a href="#" class="project-link">查看项目 →</a>
+        </div>
+      </div>
+
+      <div class="project-feature">
+        <div class="project-visual health" data-label="03"><span class="visual-label">03</span></div>
+        <div class="project-info">
+          <div class="cat">小程序 · 健康科技</div>
+          <h3>健康追踪小程序</h3>
+          <p>微信小程序整合睡眠监测、运动记录、饮食建议和心情日记。温暖柔和的视觉风格，让健康管理变得轻松愉悦。</p>
+          <div class="project-tags">
+            <span class="project-tag">微信小程序</span>
+            <span class="project-tag">健康科技</span>
+            <span class="project-tag">数据同步</span>
+          </div>
+          <a href="#" class="project-link">查看项目 →</a>
+        </div>
+      </div>
+
+      <div class="project-feature">
+        <div class="project-visual branding" data-label="04">
+          <div class="brand-mockup">
+            <div class="brand-logo">B</div>
+            <div class="brand-name"></div>
+            <div class="brand-tagline"></div>
+          </div>
+        </div>
+        <div class="project-info">
+          <div class="cat">品牌设计 · VI 系统</div>
+          <h3>企业品牌视觉系统</h3>
+          <p>为科技初创公司从零打造的全套品牌识别方案。包括 Logo 设计、色彩系统、字体规范和各类应用场景的视觉指南。</p>
+          <div class="project-tags">
+            <span class="project-tag">品牌策略</span>
+            <span class="project-tag">VI 设计</span>
+            <span class="project-tag">初创公司</span>
+          </div>
+          <a href="#" class="project-link">查看项目 →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Education -->
+    <div class="section-header" style="margin-top: var(--space-xl);">
+      <span class="section-num">04</span>
+      <span class="section-title">教育背景</span>
+    </div>
+
+    <div class="edu-row">
+      <div class="edu-card">
+        <h4>同济大学</h4>
+        <div class="degree">设计创意学院 · 工业设计硕士</div>
+        <div class="year">2015 — 2017 · 交互设计与用户体验</div>
+      </div>
+      <div class="edu-card">
+        <h4>江南大学</h4>
+        <div class="degree">设计学院 · 视觉传达设计学士</div>
+        <div class="year">2011 — 2015 · 国家奖学金获得者</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="magazine-footer">
+      <p>© 2024 陈晨 · 用设计让世界更美好</p>
+      <div class="footer-links">
+        <a href="#">GitHub</a>
+        <a href="#">Dribbble</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">邮件</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>>>
+</html>>l>>v class="magazine-footer">
+      <p>© 2024 陈晨 · 用设计让世界更美好</p>
+      <div class="footer-links">
+        <a href="#">GitHub</a>
+        <a href="#">Dribbble</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">邮件</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>>>
+</html>>l>>      <a href="#">邮件</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>>>
+</html>>l>>

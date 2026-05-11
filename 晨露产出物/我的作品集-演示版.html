@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>陈晨 - 作品集</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #f5f5f7;
+    color: #1d1d1f;
+    line-height: 1.6;
+  }
+  .page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  header h1 {
+    font-size: clamp(36px, 5vw, 60px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #1d1d1f 0%, #434344 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  header p {
+    font-size: 20px;
+    color: #86868b;
+    max-width: 600px;
+    margin: 0 auto 24px;
+  }
+  .tags {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .tag {
+    padding: 8px 20px;
+    background: #fff;
+    border-radius: 100px;
+    font-size: 14px;
+    color: #666;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 32px;
+    margin-bottom: 60px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+    transition: transform .5s cubic-bezier(.4,0,.2,1), box-shadow .5s ease;
+  }
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 48px rgba(0,0,0,0.12);
+  }
+  .card-img {
+    height: 220px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(255,255,255,0.9);
+    font-size: 48px;
+    font-weight: 300;
+  }
+  .card:nth-child(2) .card-img { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+  .card:nth-child(3) .card-img { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+  .card:nth-child(4) .card-img { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+  .card:nth-child(5) .card-img { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+  .card:nth-child(6) .card-img { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+
+  .card-body {
+    padding: 32px;
+  }
+  .card-body h3 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+  .card-body p {
+    font-size: 15px;
+    color: #86868b;
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+  .card-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+  }
+  .card-tag {
+    padding: 6px 14px;
+    background: #f5f5f7;
+    border-radius: 100px;
+    font-size: 13px;
+    color: #666;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    background: #0071e3;
+    color: #fff;
+    border-radius: 980px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    transition: all .3s ease;
+  }
+  .btn:hover {
+    background: #0077ed;
+    transform: scale(1.04);
+    box-shadow: 0 4px 16px rgba(0,113,227,0.3);
+  }
+
+  footer {
+    text-align: center;
+    padding: 60px 0 40px;
+    color: #a1a1a6;
+    font-size: 15px;
+  }
+  footer a {
+    color: #0071e3;
+    text-decoration: none;
+    margin: 0 12px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header>
+    <h1>陈晨</h1>
+    <p>独立设计师 & 前端开发者，专注于创造简洁优雅的数字体验。</p>
+    <div class="tags">
+      <span class="tag">UI/UX 设计</span>
+      <span class="tag">前端开发</span>
+      <span class="tag">品牌设计</span>
+      <span class="tag">数据可视化</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-img">01</div>
+      <div class="card-body">
+        <h3>云笔记应用</h3>
+        <p>一款专注于沉浸写作体验的移动端笔记应用。采用极简设计语言，支持 Markdown 编辑、标签管理和云端同步，让用户随时随地记录灵感。</p>
+        <div class="card-tags">
+          <span class="card-tag">产品设计</span>
+          <span class="card-tag">React</span>
+          <span class="card-tag">移动端</span>
+        </div>
+        <a href="#" class="btn">查看详情 →</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img">02</div>
+      <div class="card-body">
+        <h3>电商后台系统</h3>
+        <p>为中大型电商企业打造的一站式管理后台。涵盖商品管理、订单处理、数据分析等核心模块，通过信息架构优化将操作效率提升 40%。</p>
+        <div class="card-tags">
+          <span class="card-tag">B端设计</span>
+          <span class="card-tag">Vue</span>
+          <span class="card-tag">数据可视化</span>
+        </div>
+        <a href="#" class="btn">查看详情 →</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img">03</div>
+      <div class="card-body">
+        <h3>健康追踪小程序</h3>
+        <p>一款关注用户身心健康的微信小程序，整合睡眠监测、运动记录和饮食建议。采用温暖柔和的视觉风格，让健康管理变得轻松愉悦。</p>
+        <div class="card-tags">
+          <span class="card-tag">小程序</span>
+          <span class="card-tag">微信生态</span>
+          <span class="card-tag">健康科技</span>
+        </div>
+        <a href="#" class="btn">查看详情 →</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img">04</div>
+      <div class="card-body">
+        <h3>企业品牌视觉系统</h3>
+        <p>为科技初创公司从零打造的全套品牌识别方案。包括 Logo 设计、色彩系统、字体规范和各类应用场景的视觉指南，帮助品牌在市场中建立专业形象。</p>
+        <div class="card-tags">
+          <span class="card-tag">品牌设计</span>
+          <span class="card-tag">VI 系统</span>
+          <span class="card-tag">初创公司</span>
+        </div>
+        <a href="#" class="btn">查看详情 →</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img">05</div>
+      <div class="card-body">
+        <h3>金融数据仪表盘</h3>
+        <p>面向投资分析师的实时数据监控平台。将复杂的金融数据转化为直观的图表和洞察，支持自定义视图和预警推送，辅助快速决策。</p>
+        <div class="card-tags">
+          <span class="card-tag">Dashboard</span>
+          <span class="card-tag">D3.js</span>
+          <span class="card-tag">金融科技</span>
+        </div>
+        <a href="#" class="btn">查看详情 →</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-img">06</div>
+      <div class="card-body">
+        <h3>在线教育平台</h3>
+        <p>面向职业人士的在线学习平台，提供交互式课程和实战项目。设计注重学习动机的激发，通过进度可视化和成就系统提升完课率。</p>
+        <div class="card-tags">
+          <span class="card-tag">教育科技</span>
+          <span class="card-tag">交互设计</span>
+          <span class="card-tag">Web 应用</span>
+        </div>
+        <a href="#" class="btn">查看详情 →</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2024 陈晨 · 
+      <a href="#">GitHub</a> · 
+      <a href="#">Dribbble</a> · 
+      <a href="#">邮件联系</a>
+    </p>
+  </footer>
+
+</div>
+
+</body>
+</html>

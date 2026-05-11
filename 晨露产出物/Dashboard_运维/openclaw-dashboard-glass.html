@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPENCLAW — System Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-deep: #0a0a0f;
+    --bg-surface: rgba(255,255,255,0.03);
+    --bg-elevated: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(255,255,255,0.15);
+    --text-primary: rgba(255,255,255,0.9);
+    --text-secondary: rgba(255,255,255,0.5);
+    --text-tertiary: rgba(255,255,255,0.3);
+    --accent-cyan: #22d3ee;
+    --accent-violet: #a78bfa;
+    --accent-rose: #fb7185;
+    --accent-amber: #fbbf24;
+    --accent-emerald: #34d399;
+    --accent-blue: #60a5fa;
+    --font-sans: 'Inter', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(circle at 20% 50%, rgba(120,80,200,0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(34,211,238,0.05) 0%, transparent 50%);
+  }
+
+  .app {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 32px;
+    min-height: 100vh;
+  }
+
+  /* ========== Glass Card Base ========== */
+  .glass {
+    background: var(--bg-surface);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    transition: all var(--transition);
+  }
+
+  .glass:hover {
+    background: var(--bg-elevated);
+    border-color: var(--border-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  }
+
+  /* ========== Header ========== */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .brand-logo {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--accent-violet), var(--accent-cyan));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  .brand-text h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .brand-text p {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+
+  .header-meta {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: rgba(52,211,153,0.1);
+    border: 1px solid rgba(52,211,153,0.2);
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent-emerald);
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent-emerald);
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(52,211,153,0.5);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .time-display {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  /* ========== Metrics Row ========== */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  @media (max-width: 900px) {
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .metric-card {
+    padding: 24px;
+  }
+
+  .metric-card .label {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .metric-card .value {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+
+  .metric-card .trend {
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .metric-card .trend.up { color: var(--accent-emerald); }
+  .metric-card .trend.down { color: var(--accent-rose); }
+
+  .metric-card:nth-child(1) .value { color: var(--accent-cyan); }
+  .metric-card:nth-child(2) .value { color: var(--accent-violet); }
+  .metric-card:nth-child(3) .value { color: var(--accent-amber); }
+  .metric-card:nth-child(4) .value { color: var(--accent-emerald); }
+
+  /* ========== Main Grid ========== */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+  }
+
+  @media (max-width: 1100px) {
+    .main-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ========== Bot Cards ========== */
+  .section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .bot-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .bot-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    gap: 16px;
+    align-items: center;
+    padding: 16px 20px;
+  }
+
+  .bot-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    position: relative;
+  }
+
+  .bot-avatar::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-deep);
+  }
+
+  .bot-avatar.online::after { background: var(--accent-emerald); }
+  .bot-avatar.busy::after { background: var(--accent-amber); }
+
+  .bot-avatar.charles { background: rgba(96,165,250,0.15); }
+  .bot-avatar.asin { background: rgba(167,139,250,0.15); }
+  .bot-avatar.chenlu { background: rgba(34,211,238,0.15); }
+  .bot-avatar.mumu { background: rgba(251,177,36,0.15); }
+  .bot-avatar.melody { background: rgba(251,113,133,0.15); }
+  .bot-avatar.sean { background: rgba(239,68,68,0.15); }
+
+  .bot-info h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .bot-info p {
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  .bot-stats {
+    text-align: right;
+  }
+
+  .bot-stats .num {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .bot-stats .label {
+    font-size: 11px;
+    color: var(--text-tertiary);
+  }
+
+  .bot-action {
+    opacity: 0;
+    transition: opacity var(--transition);
+  }
+
+  .bot-row:hover .bot-action {
+    opacity: 1;
+  }
+
+  .btn-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+
+  .btn-icon:hover {
+    background: var(--bg-surface);
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+  }
+
+  /* ========== Activity Feed ========== */
+  .activity-feed {
+    padding: 24px;
+  }
+
+  .activity-feed h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 20px;
+  }
+
+  .activity-item {
+    display: flex;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .activity-item:last-child {
+    border-bottom: none;
+  }
+
+  .activity-time {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+    min-width: 48px;
+    padding-top: 2px;
+  }
+
+  .activity-content {
+    flex: 1;
+  }
+
+  .activity-bot {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .activity-bot.charles { color: var(--accent-blue); }
+  .activity-bot.asin { color: var(--accent-violet); }
+  .activity-bot.chenlu { color: var(--accent-cyan); }
+  .activity-bot.mumu { color: var(--accent-amber); }
+  .activity-bot.melody { color: var(--accent-rose); }
+  .activity-bot.sean { color: #ef4444; }
+
+  .activity-text {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    line-height: 1.5;
+  }
+
+  /* ========== Chart Placeholder ========== */
+  .chart-area {
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .chart-header h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .chart-legend {
+    display: flex;
+    gap: 16px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .chart-body {
+    height: 200px;
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .chart-bar {
+    flex: 1;
+    background: linear-gradient(to top, var(--accent-violet), var(--accent-cyan));
+    border-radius: 4px 4px 0 0;
+    opacity: 0.6;
+    transition: opacity var(--transition);
+    position: relative;
+  }
+
+  .chart-bar:hover {
+    opacity: 1;
+  }
+
+  .chart-bar::after {
+    content: attr(data-val);
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+    opacity: 0;
+    transition: opacity var(--transition);
+  }
+
+  .chart-bar:hover::after {
+    opacity: 1;
+  }
+
+  /* ========== Footer ========== */
+  .footer {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-tertiary);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .footer-links a {
+    color: var(--text-tertiary);
+    text-decoration: none;
+    transition: color var(--transition);
+  }
+
+  .footer-links a:hover {
+    color: var(--text-secondary);
+  }
+
+  /* ========== Responsive ========== */
+  @media (max-width: 768px) {
+    .app { padding: 16px; }
+    .metrics { grid-template-columns: 1fr; }
+    .bot-row { grid-template-columns: auto 1fr; }
+    .bot-stats, .bot-action { display: none; }
+    .header { flex-direction: column; gap: 16px; align-items: flex-start; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="brand">
+      <div class="brand-logo">O</div>
+      <div class="brand-text">
+        <h1>OPENCLAW</h1>
+        <p>6 Bots System Dashboard</p>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        All Systems Operational
+      </div>
+      <div class="time-display">2024.05.07 — 15:42:18 UTC+8</div>
+    </div>
+  </header>
+
+  <!-- Metrics -->
+  <div class="metrics">
+    <div class="glass metric-card">
+      <div class="label">Active Bots</div>
+      <div class="value">6</div>
+      <div class="trend up">↑ 100% uptime</div>
+    </div>
+    <div class="glass metric-card">
+      <div class="label">Tasks Today</div>
+      <div class="value">142</div>
+      <div class="trend up">↑ 23% vs yesterday</div>
+    </div>
+    <div class="glass metric-card">
+      <div class="label">Avg Response</div>
+      <div class="value">23ms</div>
+      <div class="trend down">↓ 12% faster</div>
+    </div>
+    <div class="glass metric-card">
+      <div class="label">Health Score</div>
+      <div class="value">98.4</div>
+      <div class="trend up">↑ Excellent</div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="glass chart-area">
+    <div class="chart-header">
+      <h2>Task Distribution — Last 24h</h2>
+      <div class="chart-legend">
+        <div class="legend-item">
+          <span class="legend-dot" style="background: var(--accent-violet)"></span>
+          Charles
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot" style="background: var(--accent-cyan)"></span>
+          Others
+        </div>
+      </div>
+    </div>
+    <div class="chart-body">
+      <div class="chart-bar" style="height: 45%" data-val="45"></div>
+      <div class="chart-bar" style="height: 62%" data-val="62"></div>
+      <div class="chart-bar" style="height: 38%" data-val="38"></div>
+      <div class="chart-bar" style="height: 78%" data-val="78"></div>
+      <div class="chart-bar" style="height: 55%" data-val="55"></div>
+      <div class="chart-bar" style="height: 90%" data-val="90"></div>
+      <div class="chart-bar" style="height: 42%" data-val="42"></div>
+      <div class="chart-bar" style="height: 68%" data-val="68"></div>
+      <div class="chart-bar" style="height: 35%" data-val="35"></div>
+      <div class="chart-bar" style="height: 82%" data-val="82"></div>
+      <div class="chart-bar" style="height: 58%" data-val="58"></div>
+      <div class="chart-bar" style="height: 72%" data-val="72"></div>
+    </div>
+  </div>
+
+  <!-- Main Grid -->
+  <div class="main-grid">
+
+    <!-- Bot List -->
+    <div>
+      <div class="section-title">Active Bots</div>
+      <div class="bot-list">
+
+        <div class="glass bot-row">
+          <div class="bot-avatar charles online">🤖</div>
+          <div class="bot-info">
+            <h3>Charles</h3>
+            <p>Task Orchestrator · GPT-4 Turbo</p>
+          </div>
+          <div class="bot-stats">
+            <div class="num">42</div>
+            <div class="label">tasks</div>
+          </div>
+          <div class="bot-action">
+            <button class="btn-icon">→</button>
+          </div>
+        </div>
+
+        <div class="glass bot-row">
+          <div class="bot-avatar asin online">🧠</div>
+          <div class="bot-info">
+            <h3>Asin</h3>
+            <p>Research Analyst · Claude 3 Opus</p>
+          </div>
+          <div class="bot-stats">
+            <div class="num">28</div>
+            <div class="label">tasks</div>
+          </div>
+          <div class="bot-action">
+            <button class="btn-icon">→</button>
+          </div>
+        </div>
+
+        <div class="glass bot-row">
+          <div class="bot-avatar chenlu online">💻</div>
+          <div class="bot-info">
+            <h3>Chenlu</h3>
+            <p>Full-Stack Dev · Kimi K2.5</p>
+          </div>
+          <div class="bot-stats">
+            <div class="num">35</div>
+            <div class="label">tasks</div>
+          </div>
+          <div class="bot-action">
+            <button class="btn-icon">→</button>
+          </div>
+        </div>
+
+        <div class="glass bot-row">
+          <div class="bot-avatar mumu busy">🎨</div>
+          <div class="bot-info">
+            <h3>Mumu</h3>
+            <p>Creative Designer · DALL-E 3</p>
+          </div>
+          <div class="bot-stats">
+            <div class="num">18</div>
+            <div class="label">tasks</div>
+          </div>
+          <div class="bot-action">
+            <button class="btn-icon">→</button>
+          </div>
+        </div>
+
+        <div class="glass bot-row">
+          <div class="bot-avatar melody online">🎵</div>
+          <div class="bot-info">
+            <h3>Melody</h3>
+            <p>Content Writer · GPT-4</p>
+          </div>
+          <div class="bot-stats">
+            <div class="num">31</div>
+            <div class="label">tasks</div>
+          </div>
+          <div class="bot-action">
+            <button class="btn-icon">→</button>
+          </div>
+        </div>
+
+        <div class="glass bot-row">
+          <div class="bot-avatar sean online">🔧</div>
+          <div class="bot-info">
+            <h3>Sean</h3>
+            <p>DevOps Engineer · GPT-4</p>
+          </div>
+          <div class="bot-stats">
+            <div class="num">24</div>
+            <div class="label">tasks</div>
+          </div>
+          <div class="bot-action">
+            <button class="btn-icon">→</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Activity -->
+    <div>
+      <div class="section-title">Recent Activity</div>
+      <div class="glass activity-feed">
+
+        <div class="activity-item">
+          <div class="activity-time">15:28</div>
+          <div class="activity-content">
+            <div class="activity-bot chenlu">Chenlu</div>
+            <div class="activity-text">Generated Memphis-style dashboard design</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-time">15:22</div>
+          <div class="activity-content">
+            <div class="activity-bot mumu">Mumu</div>
+            <div class="activity-text">Processing image batch: 3 items in queue</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-time">15:15</div>
+          <div class="activity-content">
+            <div class="activity-bot charles">Charles</div>
+            <div class="activity-text">Scheduled daily report cron job updated</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-time">15:08</div>
+          <div class="activity-content">
+            <div class="activity-bot asin">Asin</div>
+            <div class="activity-text">Completed web search: 12 results summarized</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-time">14:55</div>
+          <div class="activity-content">
+            <div class="activity-bot melody">Melody</div>
+            <div class="activity-text">Drafted blog post: "OpenClaw Skills Guide"</div>
+          </div>
+        </div>
+
+        <div class="activity-item">
+          <div class="activity-time">14:42</div>
+          <div class="activity-content">
+            <div class="activity-bot sean">Sean</div>
+            <div class="activity-text">System backup completed: 6 bots configs saved</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2024 OpenClaw System · All Bots Operational</p>
+    <div class="footer-links">
+      <a href="#">Documentation</a>
+      <a href="#">Settings</a>
+      <a href="#">Logs</a>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>

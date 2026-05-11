@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OPENCLAW — System Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #faf9f7;
+    --bg-secondary: #f5f3f0;
+    --bg-card: #ffffff;
+    --border-light: rgba(0,0,0,0.06);
+    --border-medium: rgba(0,0,0,0.1);
+    --text-primary: #1a1a1a;
+    --text-secondary: #666666;
+    --text-tertiary: #999999;
+    --accent-gold: #c9a962;
+    --accent-rose: #d4a5a5;
+    --accent-sage: #a8b5a0;
+    --accent-slate: #7a8b9a;
+    --accent-warm: #c4a882;
+    --font-serif: 'Playfair Display', 'Georgia', serif;
+    --font-sans: 'Inter', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    --transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 48px 40px;
+  }
+
+  /* ========== Header ========== */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border-medium);
+    margin-bottom: 48px;
+  }
+
+  .brand h1 {
+    font-family: var(--font-serif);
+    font-size: 52px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    line-height: 1.1;
+  }
+
+  .brand p {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-top: 8px;
+    font-weight: 400;
+  }
+
+  .header-meta {
+    text-align: right;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 1px solid var(--border-medium);
+    border-radius: 24px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+  }
+
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4caf50;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .time-display {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-tertiary);
+    margin-top: 8px;
+    letter-spacing: 0.05em;
+  }
+
+  /* ========== Magazine Grid ========== */
+  .magazine-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    margin-bottom: 64px;
+  }
+
+  @media (max-width: 1100px) {
+    .magazine-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 700px) {
+    .magazine-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ========== Bot Card ========== */
+  .bot-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: var(--transition);
+    position: relative;
+  }
+
+  .bot-card:hover {
+    border-color: var(--border-medium);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+    transform: translateY(-2px);
+  }
+
+  .bot-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--accent-gold);
+    opacity: 0;
+    transition: var(--transition);
+  }
+
+  .bot-card:hover::before {
+    opacity: 1;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 240px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(30%);
+    transition: var(--transition);
+  }
+
+  .bot-card:hover .card-image img {
+    filter: grayscale(0%);
+    transform: scale(1.03);
+  }
+
+  .card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 20px;
+    background: linear-gradient(to top, rgba(0,0,0,0.5), transparent);
+  }
+
+  .card-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 2px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+  }
+
+  .card-status .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #4caf50;
+  }
+
+  .card-status.busy .dot {
+    background: #ff9800;
+  }
+
+  .card-content {
+    padding: 28px;
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 16px;
+  }
+
+  .card-name {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+  }
+
+  .card-role {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .card-divider {
+    height: 1px;
+    background: var(--border-light);
+    margin: 16px 0;
+  }
+
+  .card-meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .meta-label {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .meta-value {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+  }
+
+  .btn-magazine {
+    flex: 1;
+    padding: 10px 16px;
+    border: 1px solid var(--border-medium);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: var(--transition);
+  }
+
+  .btn-magazine:hover {
+    background: var(--text-primary);
+    color: var(--bg-card);
+    border-color: var(--text-primary);
+  }
+
+  .btn-restart {
+    padding: 10px;
+    border: 1px solid var(--border-light);
+    background: transparent;
+    color: var(--text-tertiary);
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: var(--transition);
+  }
+
+  .btn-restart:hover {
+    border-color: var(--accent-rose);
+    color: var(--accent-rose);
+  }
+
+  /* ========== Section ========== */
+  .section-title {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 32px;
+    letter-spacing: -0.01em;
+  }
+
+  /* ========== Footer ========== */
+  .footer {
+    border-top: 1px solid var(--border-medium);
+    padding-top: 32px;
+    margin-top: 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer p {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    letter-spacing: 0.05em;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+  }
+
+  .footer-links a {
+    font-size: 12px;
+    color: var(--text-tertiary);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: var(--transition);
+  }
+
+  .footer-links a:hover {
+    color: var(--text-primary);
+  }
+
+  /* ========== Flip Card ========== */
+  .flip-card {
+    perspective: 1000px;
+    height: 480px;
+  }
+
+  .flip-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+  }
+
+  .flip-card.flipped .flip-card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .flip-card-front, .flip-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 4px;
+  }
+
+  .flip-card-front {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    overflow: hidden;
+  }
+
+  .flip-card-back {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    padding: 28px;
+    transform: rotateY(180deg);
+    overflow-y: auto;
+  }
+
+  .flip-card-back::-webkit-scrollbar {
+    width: 3px;
+  }
+
+  .flip-card-back::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .flip-card-back::-webkit-scrollbar-thumb {
+    background: var(--border-medium);
+    border-radius: 2px;
+  }
+
+  .back-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .back-header h3 {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .file-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+  }
+
+  .file-item:hover {
+    border-color: var(--border-medium);
+    background: var(--bg-primary);
+  }
+
+  .file-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .file-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .file-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .file-path {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-tertiary);
+    margin-top: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .file-tag {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 2px 6px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .file-tag.html { background: rgba(122,139,154,0.1); color: var(--accent-slate); }
+  .file-tag.docx { background: rgba(201,169,98,0.1); color: var(--accent-gold); }
+  .file-tag.md { background: rgba(212,165,165,0.1); color: var(--accent-rose); }
+  .file-tag.py { background: rgba(168,181,160,0.1); color: var(--accent-sage); }
+  .file-tag.js { background: rgba(196,168,130,0.1); color: var(--accent-warm); }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Header -->
+  <header class="header">
+    <div class="brand">
+      <h1>OPENCLAW</h1>
+      <p>Bots System Dashboard</p>
+    </div>
+    <div class="header-meta">
+      <div class="status-pill">
+        <span class="status-dot"></span>
+        All Systems Operational
+      </div>
+      <div class="time-display">2026.05.07 — 17:53 UTC+8</div>
+    </div>
+  </header>
+
+  <!-- Magazine Grid -->
+  <div class="section-title">Bot Fleet</div>
+  <div class="magazine-grid">
+
+    <!-- Charles -->
+    <div class="flip-card" id="card-charles">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div class="card-image">
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD..." alt="Charles">
+            <div class="card-overlay">
+              <div class="card-status"><span class="dot"></span>Online</div>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="card-header">
+              <div class="card-name">Charles</div>
+              <div class="card-role">Task Orchestrator</div>
+            </div>
+            <div class="card-divider"></div>
+            <div class="card-meta">
+              <div class="meta-item">
+                <span class="meta-label">Model</span>
+                <span class="meta-value">GPT-4 Turbo</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Tasks</span>
+                <span class="meta-value">42 completed</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Active</span>
+                <span class="meta-value">2 min ago</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Skills</span>
+                <span class="meta-value">cron, web_search</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-magazine" onclick="flipCard('card-charles')">View Deliverables</button>
+              <button class="btn-restart">↻</button>
+            </div>
+          </div>
+        </div>
+        <div class="flip-card-back">
+          <div class="back-header">
+            <h3>Charles — Deliverables</h3>
+          </div>
+          <div class="file-list">
+            <a class="file-item" href="#">
+              <span class="file-icon">📝</span>
+              <div class="file-info">
+                <div class="file-name">Daily Report Automation</div>
+                <div class="file-path">/workspace/cron/daily-report.sh</div>
+              </div>
+              <span class="file-tag js">JS</span>
+            </a>
+            <a class="file-item" href="#">
+              <span class="file-icon">📊</span>
+              <div class="file-info">
+                <div class="file-name">Task Scheduler Module</div>
+                <div class="file-path">/workspace/tasks/scheduler.py</div>
+              </div>
+              <span class="file-tag py">PY</span>
+            </a>
+            <a class="file-item" href="#">
+              <span class="file-icon">🔍</span>
+              <div class="file-info">
+                <div class="file-name">Search Integration Config</div>
+                <div class="file-path">/workspace/config/search.yaml</div>
+              </div>
+              <span class="file-tag md">MD</span>
+            </a>
+          </div>
+          <div class="card-actions" style="margin-top: 16px;">
+            <button class="btn-magazine" onclick="flipCard('card-charles')">← Back</button>
+            <button class="btn-restart">↻</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Asin -->
+    <div class="flip-card" id="card-asin">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div class="card-image">
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD..." alt="Asin">
+            <div class="card-overlay">
+              <div class="card-status"><span class="dot"></span>Online</div>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="card-header">
+              <div class="card-name">Asin</div>
+              <div class="card-role">Research Analyst</div>
+            </div>
+            <div class="card-divider"></div>
+            <div class="card-meta">
+              <div class="meta-item">
+                <span class="meta-label">Model</span>
+                <span class="meta-value">Claude 3 Opus</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Tasks</span>
+                <span class="meta-value">28 completed</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Active</span>
+                <span class="meta-value">5 min ago</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Skills</span>
+                <span class="meta-value">tavily, summarize</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-magazine" onclick="flipCard('card-asin')">View Deliverables</button>
+              <button class="btn-restart">↻</button>
+            </div>
+          </div>
+        </div>
+        <div class="flip-card-back">
+          <div class="back-header">
+            <h3>Asin — Deliverables</h3>
+          </div>
+          <div class="file-list">
+            <a class="file-item" href="#">
+              <span class="file-icon">📑</span>
+              <div class="file-info">
+                <div class="file-name">Market Research Report Q2</div>
+                <div class="file-path">/workspace/reports/q2-market.md</div>
+              </div>
+              <span class="file-tag md">MD</span>
+            </a>
+            <a class="file-item" href="#">
+              <span class="file-icon">🔬</span>
+              <div class="file-info">
+                <div class="file-name">Data Analysis Pipeline</div>
+                <div class="file-path">/workspace/analysis/pipeline.py</div>
+              </div>
+              <span class="file-tag py">PY</span>
+            </a>
+            <a class="file-item" href="#">
+              <span class="file-icon">📚</span>
+              <div class="file-info">
+                <div class="file-name">Knowledge Base Indexer</div>
+                <div class="file-path">/workspace/kb/indexer.js</div>
+              </div>
+              <span class="file-tag js">JS</span>
+            </a>
+          </div>
+          <div class="card-actions" style="margin-top: 16px;">
+            <button class="btn-magazine" onclick="flipCard('card-asin')">← Back</button>
+            <button class="btn-restart">↻</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sean -->
+    <div class="flip-card" id="card-sean">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div class="card-image">
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD..." alt="Sean">
+            <div class="card-overlay">
+              <div class="card-status"><span class="dot"></span>Online</div>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="card-header">
+              <div class="card-name">Sean</div>
+              <div class="card-role">DevOps Engineer</div>
+            </div>
+            <div class="card-divider"></div>
+            <div class="card-meta">
+              <div class="meta-item">
+                <span class="meta-label">Model</span>
+                <span class="meta-value">GPT-4</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Tasks</span>
+                <span class="meta-value">24 completed</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Active</span>
+                <span class="meta-value">15 min ago</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Skills</span>
+                <span class="meta-value">deploy, monitor</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-magazine" onclick="flipCard('card-sean')">View Deliverables</button>
+              <button class="btn-restart">↻</button>
+            </div>
+          </div>
+        </div>
+        <div class="flip-card-back">
+          <div class="back-header">
+            <h3>Sean — Deliverables</h3>
+          </div>
+          <div class="file-list">
+            <a class="file-item" href="#">
+              <span class="file-icon">🐳</span>
+              <div class="file-info">
+                <div class="file-name">Docker Compose Stack</div>
+                <div class="file-path">/workspace/docker/docker-compose.yml</div>
+              </div>
+              <span class="file-tag md">MD</span>
+            </a>
+            <a class="file-item" href="#">
+              <span class="file-icon">📡</span>
+              <div class="file-info">
+                <div class="file-name">Monitoring Dashboard</div>
+                <div class="file-path">/workspace/monitor/grafana.json</div>
+              </div>
+              <span class="file-tag js">JS</span>
+            </a>
+            <a class="file-item" href="#">
+              <span class="file-icon">🔐</span>
+              <div class="file-info">
+                <div class="file-name">Backup Automation</div>
+                <div class="file-path">/workspace/backup/auto-backup.sh</div>
+              </div>
+              <span class="file-tag md">MD</span>
+            </a>
+          </div>
+          <div class="card-actions" style="margin-top: 16px;">
+            <button class="btn-magazine" onclick="flipCard('card-sean')">← Back</button>
+            <button class="btn-restart">↻</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 沐木 -->
+    <div class="flip-card" id="card-mumu">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div class="card-image">
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD..." alt="沐木">
+            <div class="card-overlay">
+              <div class="card-status busy"><span class="dot"></span>Busy</div>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="card-header">
+              <div class="card-name">沐木</div>
+              <div class="card-role">Creative Designer</div>
+            </div>
+            <div class="card-divider"></div>
+            <div class="card-meta">
+              <div class="meta-item">
+                <span class="meta-label">Model</span>
+                <span class="meta-value">DALL-E 3</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Tasks</span>
+                <span class="meta-value">18 completed</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Active</span>
+                <span class="meta-value">12 min ago</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Skills</span>
+                <span class="meta-value">image_gen, design</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-magazine" onclick="flipCard('card-mumu')">View Deliverables</button>
+              <button class="btn-restart">↻</button>
+            </div>
+          </div>
+        </div>
+        <div class="flip-card-back">
+          <div class="back-header">
+            <h3>沐木 — Deliverables</h3>
+          </div>
+          <div class="file-list">
+            <a class="file-item" href="#">
+              <span class="file-icon">🖼️</span>
+              <div class="file-info">
+                <div class="file-name">Bot Avatar Set (6 images)</div>
+                <div class="file-path">/workspace/assets/avatars/</div>
+              </div>
+              <span class="file-tag html">HTML</span>
+            </a>
+            <a class="file-item" href="#">
+              <span class="file-icon">🎭</span>
+              <div class="file-info">
+                <div class="file-name">Dashboard Theme Pack</div>
+                <div class="file-path">/workspace/themes/dark-glass.css</div>
+              </div>
+              <span class="file-tag html">HTML</span>
+            </a>
+            <a class="file-item" href="#">
+              <span class="file-icon">✨</span>
+              <div class="file-info">
+                <div class="file-name">Icon Library v2</div>
+                <div class="file-path">/workspace/icons/library.svg</div>
+              </div>
+              <span class="file-tag md">MD</span>
+            </a>
+          </div>
+          <div class="card-actions" style="margin-top: 16px;">
+            <button class="btn-magazine" onclick="flipCard('card-mumu')">← Back</button>
+            <button class="btn-restart">↻</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Melody -->
+    <div class="flip-card" id="card-melody">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div class="card-image">
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD..." alt="Melody">
+            <div class="card-overlay">
+              <div class="card-status"><span class="dot"></span>Online</div>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="card-header">
+              <div class="card-name">Melody</div>
+              <div class="card-role">Content Writer</div>
+            </div>
+            <div class="card-divider"></div>
+            <div class="card-meta">
+              <div class="meta-item">
+                <span class="meta-label">Model</span>
+                <span class="meta-value">GPT-4</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Tasks</span>
+                <span class="meta-value">31 completed</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Active</span>
+                <span class="meta-value">8 min ago</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Skills</span>
+                <span class="meta-value">writing, tts</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-magazine" onclick="flipCard('card-melody')">View Deliverables</button>
+              <button class="btn-restart">↻</button>
+            </div>
+          </div>
+        </div>
+        <div class="flip-card-back">
+          <div class="back-header">
+            <h3>Melody — Deliverables</h3>
+          </div>
+          <div class="file-list">
+            <a class="file-item" href="#">
+              <span class="file-icon">📖</span>
+              <div class="file-info">
+                <div class="file-name">OpenClaw User Guide</div>
+                <div class="file-path">/workspace/docs/user-guide.md</div>
+              </div>
+              <span class="file-tag md">MD</span>
+            </a>
+            <a class="file-item" href="#">
+              <span class="file-icon">📝</span>
+              <div class="file-info">
+                <div class="file-name">Blog Post: AI Skills</div>
+                <div class="file-path">/workspace/blog/ai-skills.md</div>
+              </div>
+              <span class="file-tag md">MD</span>
+            </a>
+            <a class="file-item" href="#">
+              <span class="file-icon">🎙️</span>
+              <div class="file-info">
+                <div class="file-name">TTS Voice Pack</div>
+                <div class="file-path">/workspace/audio/voices/</div>
+              </div>
+              <span class="file-tag html">HTML</span>
+            </a>
+          </div>
+          <div class="card-actions" style="margin-top: 16px;">
+            <button class="btn-magazine" onclick="flipCard('card-melody')">← Back</button>
+            <button class="btn-restart">↻</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 晨露 -->
+    <div class="flip-card" id="card-chenlu">
+      <div class="flip-card-inner">
+        <div class="flip-card-front">
+          <div class="card-image">
+            <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD..." alt="晨露">
+            <div class="card-overlay">
+              <div class="card-status"><span class="dot"></span>Online</div>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="card-header">
+              <div class="card-name">晨露</div>
+              <div class="card-role">Full-Stack Dev</div>
+            </div>
+            <div class="card-divider"></div>
+            <div class="card-meta">
+              <div class="meta-item">
+                <span class="meta-label">Model</span>
+                <span class="meta-value">Kimi K2.5</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Tasks</span>
+                <span class="meta-value">35 completed</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Active</span>
+                <span class="meta-value">Just now</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Skills</span>
+                <span class="meta-value">frontend, design</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn-magazine" onclick="flipCard('card-chenlu')">View Deliverables</button>
+              <button class="btn-restart">↻</button>
+            </div>
+          </div>
+        </div>
+        <div class="flip-card-back">
+          <div class="back-header">
+            <h3>晨露 — Deliverables</h3>
+          </div>
+          <div class="file-list">
+            <a class="file-item" href="#">
+              <span class="file-icon">🎨</span>
+              <div class="file-info">
+                <div class="file-name">Dashboard UI Components</div>
+                <div class="file-path">/workspace/dashboard/components/</div>
+              </div>
+              <span class="file-tag html">HTML</span>
+            </a>
+            <a class="file-item" href="#">
+              <span class="file-icon">📱</span>
+              <div class="file-info">
+                <div class="file-name">Resume Case Study (6 variants)</div>
+                <div class="file-path">/workspace/resume-case/</div>
+              </div>
+              <span class="file-tag html">HTML</span>
+            </a>
+            <a class="file-item" href="#">
+              <span class="file-icon">🌐</span>
+              <div class="file-info">
+                <div class="file-name">API Gateway Handler</div>
+                <div class="file-path">/workspace/api/gateway.js</div>
+              </div>
+              <span class="file-tag js">JS</span>
+            </a>
+            <a class="file-item" href="#">
+              <span class="file-icon">⚙️</span>
+              <div class="file-info">
+                <div class="file-name">Deploy Script v3</div>
+                <div class="file-path">/workspace/scripts/deploy.sh</div>
+              </div>
+              <span class="file-tag md">MD</span>
+            </a>
+          </div>
+          <div class="card-actions" style="margin-top: 16px;">
+            <button class="btn-magazine" onclick="flipCard('card-chenlu')">← Back</button>
+            <button class="btn-restart">↻</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2026 OpenClaw System · All Bots Operational</p>
+    <div class="footer-links">
+      <a href="#">Documentation</a>
+      <a href="#">Settings</a>
+      <a href="#">Logs</a>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+function flipCard(cardId) {
+  const card = document.getElementById(cardId);
+  card.classList.toggle('flipped');
+}
+</script>
+
+</body>
+</html>

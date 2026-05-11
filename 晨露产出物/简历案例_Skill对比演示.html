@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skill 效果对比演示 - 简历案例</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #f5f5f7;
+    color: #1d1d1f;
+    line-height: 1.6;
+  }
+  .page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  /* Header */
+  .page-header {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .page-header h1 {
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .page-header p {
+    font-size: 18px;
+    color: #86868b;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .tab {
+    padding: 12px 32px;
+    border-radius: 100px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .tab.before {
+    background: #e5e5e5;
+    color: #666;
+  }
+  .tab.before:hover, .tab.before.active {
+    background: #666;
+    color: #fff;
+  }
+  .tab.after {
+    background: #e5e5e5;
+    color: #666;
+  }
+  .tab.after:hover, .tab.after.active {
+    background: #0071e3;
+    color: #fff;
+  }
+
+  /* Content */
+  .content {
+    display: none;
+  }
+  .content.active {
+    display: block;
+  }
+
+  .iframe-wrapper {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  }
+  iframe {
+    width: 100%;
+    height: 700px;
+    border: none;
+  }
+
+  /* Split view */
+  .split-view {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 900px) {
+    .split-view { grid-template-columns: 1fr; }
+  }
+
+  .split-box {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+  }
+  .split-header {
+    padding: 16px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .split-header.before {
+    background: #666;
+    color: #fff;
+  }
+  .split-header.after {
+    background: #0071e3;
+    color: #fff;
+  }
+
+  /* Toggle */
+  .view-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .toggle-btn {
+    padding: 10px 24px;
+    border-radius: 100px;
+    border: 2px solid #ddd;
+    background: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .toggle-btn.active {
+    background: #1d1d1f;
+    color: #fff;
+    border-color: #1d1d1f;
+  }
+
+  /* Info box */
+  .info-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  }
+  .info-box h3 {
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+  .info-box p {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.6;
+  }
+  .info-box code {
+    background: #f5f5f7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="page-header">
+    <h1>🎯 Skill 效果对比演示</h1>
+    <p>同一个简历内容，没装 Skill vs 装了 frontend-design-pro Skill 的输出效果</p>
+  </div>
+
+  <!-- 演示说明 -->
+  <div class="info-box">
+    <h3>📋 演示说明</h3>
+    <p>
+      <strong>场景：</strong>用户上传一份 Word 格式简历，要求 AI 转换为 HTML 网页版。<br><br>
+      <strong>左图（未装 Skill）：</strong>AI 使用默认能力输出，风格普通，典型的"程序员审美"。<br>
+      <strong>右图（装了 Skill）：</strong>AI 调用 <code>frontend-design-pro</code> Skill，输出专业级设计，排版精美、配色和谐、交互丰富。
+    </p>
+  </div>
+
+  <!-- 视图切换 -->
+  <div class="view-toggle">
+    <button class="toggle-btn active" onclick="showView('split')">👥 左右对比</button>
+    <button class="toggle-btn" onclick="showView('before')">❌ 未装 Skill</button>
+    <button class="toggle-btn" onclick="showView('after')">✅ 装了 Skill</button>
+  </div>
+
+  <!-- 左右对比 -->
+  <div id="view-split" class="content active">
+    <div class="split-view">
+      <div class="split-box">
+        <div class="split-header before">❌ 未装 Skill - 普通效果</div>
+        <iframe src="./简历案例_未装Skill_普通版.html"></iframe>
+      </div>
+      <div class="split-box">
+        <div class="split-header after">✅ 装了 Skill - 专业效果</div>
+        <iframe src="./简历案例_装了Skill_专业版.html"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- 仅未装 -->
+  <div id="view-before" class="content">
+    <div class="iframe-wrapper">
+      <iframe src="./简历案例_未装Skill_普通版.html"></iframe>
+    </div>
+  </div>
+
+  <!-- 仅装了 -->
+  <div id="view-after" class="content">
+    <div class="iframe-wrapper">
+      <iframe src="./简历案例_装了Skill_专业版.html"></iframe>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function showView(view) {
+  document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+}
+</script>
+
+</body>
+</html>

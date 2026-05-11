@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OPENCLAW — 6 Bots Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Notion Brand & Primary */
+      --colors-primary: #9D59E3;
+      --colors-primary-pressed: #7B3DB8;
+      --colors-primary-deep: #6B35A0;
+      --colors-brand-navy: #0F1729;
+      --colors-brand-navy-deep: #0A0F1A;
+      --colors-link-blue: #2E75CC;
+
+      /* Brand Spectrum */
+      --colors-brand-pink: #FF6B9D;
+      --colors-brand-orange: #FF9F43;
+      --colors-brand-teal: #00B894;
+      --colors-brand-green: #00D26A;
+      --colors-brand-yellow: #FDCB6E;
+      --colors-brand-purple-300: #D4B3F0;
+
+      /* Card Tints */
+      --colors-card-tint-peach: #FFF0E8;
+      --colors-card-tint-rose: #FFEBEF;
+      --colors-card-tint-mint: #E8FFF3;
+      --colors-card-tint-lavender: #F0E8FF;
+      --colors-card-tint-sky: #E8F4FF;
+      --colors-card-tint-yellow: #FFFBE8;
+      --colors-card-tint-cream: #FFF8F0;
+
+      /* Surface */
+      --colors-canvas: #FFFFFF;
+      --colors-surface: #F7F7F7;
+      --colors-surface-soft: #FAFAFA;
+      --colors-hairline: #E5E5E5;
+      --colors-hairline-soft: #F0F0F0;
+      --colors-hairline-strong: #D4D4D4;
+
+      /* Text */
+      --colors-ink-deep: #000000;
+      --colors-ink: #1A1A1A;
+      --colors-charcoal: #333333;
+      --colors-slate: #666666;
+      --colors-steel: #999999;
+      --colors-stone: #B3B3B3;
+      --colors-muted: #CCCCCC;
+      --colors-on-dark: #FFFFFF;
+      --colors-on-dark-muted: rgba(255,255,255,0.6);
+
+      /* Shadows */
+      --shadow-subtle: rgba(15,15,15,0.04) 0px 1px 2px 0px;
+      --shadow-card: rgba(15,15,15,0.08) 0px 4px 12px 0px;
+      --shadow-mockup: rgba(15,15,15,0.20) 0px 24px 48px -8px;
+
+      /* Spacing */
+      --spacing-xxs: 4px;
+      --spacing-xs: 8px;
+      --spacing-sm: 12px;
+      --spacing-md: 16px;
+      --spacing-lg: 24px;
+      --spacing-xl: 32px;
+      --spacing-xxl: 48px;
+
+      /* Radius */
+      --rounded-sm: 6px;
+      --rounded-md: 8px;
+      --rounded-lg: 12px;
+      --rounded-full: 9999px;
+
+      /* Bot Colors mapped to Notion palette */
+      --charles: #2E75CC;
+      --asin: #9D59E3;
+      --chenlu: #00B894;
+      --mumu: #FF9F43;
+      --melody: #FF6B9D;
+      --sean: #E74C3C;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, system-ui, 'Segoe UI', Helvetica, sans-serif;
+      color: var(--colors-ink);
+      background: var(--colors-canvas);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 var(--spacing-xl); }
+
+    /* ========== NAV ========== */
+    .top-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--colors-canvas);
+      height: 64px;
+      border-bottom: 1px solid var(--colors-hairline);
+      display: flex;
+      align-items: center;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--colors-ink);
+      text-decoration: none;
+      letter-spacing: -0.3px;
+    }
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      background: var(--colors-brand-navy);
+      border-radius: var(--rounded-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--colors-on-dark);
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .nav-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--colors-slate);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--colors-brand-green);
+      border-radius: var(--rounded-full);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* ========== HERO ========== */
+    .hero-band {
+      background: var(--colors-brand-navy);
+      color: var(--colors-on-dark);
+      padding: 80px 0 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-decoration {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .sticky-dot {
+      position: absolute;
+      border-radius: var(--rounded-full);
+      opacity: 0.6;
+    }
+    .dot-1 { width: 14px; height: 14px; background: var(--colors-brand-pink); top: 20%; left: 6%; }
+    .dot-2 { width: 10px; height: 10px; background: var(--colors-brand-orange); top: 35%; right: 10%; }
+    .dot-3 { width: 16px; height: 16px; background: var(--colors-brand-teal); bottom: 30%; left: 3%; }
+    .dot-4 { width: 12px; height: 12px; background: var(--colors-brand-green); top: 55%; right: 8%; }
+    .dot-5 { width: 18px; height: 18px; background: var(--colors-brand-purple-300); top: 15%; right: 25%; }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 720px;
+    }
+    .hero-display {
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 600;
+      line-height: 1.10;
+      letter-spacing: -1px;
+      color: var(--colors-on-dark);
+    }
+    .hero-subtitle {
+      font-size: 18px;
+      font-weight: 400;
+      line-height: 1.50;
+      color: var(--colors-on-dark-muted);
+      margin-top: var(--spacing-md);
+    }
+    .hero-badges {
+      display: flex;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-lg);
+      flex-wrap: wrap;
+    }
+    .badge-tag {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: var(--rounded-sm);
+    }
+
+    /* ========== BOT GRID ========== */
+    .section { padding: 48px 0; }
+    .section-alt { background: var(--colors-surface-soft); }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-xl);
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+    }
+    .heading-2 {
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 1.25;
+      letter-spacing: -0.3px;
+    }
+
+    .bot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-lg);
+    }
+    @media (max-width: 1024px) {
+      .bot-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .bot-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ========== BOT CARDS ========== */
+    .bot-card {
+      background: var(--colors-canvas);
+      border-radius: var(--rounded-lg);
+      border: 1px solid var(--colors-hairline);
+      overflow: hidden;
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+      box-shadow: var(--shadow-subtle);
+    }
+    .bot-card:hover {
+      box-shadow: var(--shadow-card);
+      transform: translateY(-2px);
+    }
+
+    .bot-card-header {
+      padding: var(--spacing-lg);
+      border-bottom: 1px solid var(--colors-hairline-soft);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+    .bot-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--rounded-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      background: var(--colors-surface);
+      border: 1px solid var(--colors-hairline);
+    }
+    .bot-info { flex: 1; min-width: 0; }
+    .bot-name {
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 1.40;
+      color: var(--colors-ink);
+      letter-spacing: -0.2px;
+    }
+    .bot-role {
+      font-size: 13px;
+      color: var(--colors-slate);
+      margin-top: 2px;
+    }
+    .status-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: var(--rounded-full);
+      white-space: nowrap;
+    }
+    .status-online {
+      background: var(--colors-card-tint-mint);
+      color: var(--colors-brand-green);
+    }
+    .status-offline {
+      background: var(--colors-card-tint-rose);
+      color: var(--colors-brand-pink);
+    }
+
+    .bot-card-body {
+      padding: var(--spacing-md) var(--spacing-lg);
+    }
+    .model-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--rounded-sm);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .stats-bar {
+      display: flex;
+      gap: var(--spacing-md);
+      padding: var(--spacing-md) 0;
+      border-top: 1px solid var(--colors-hairline-soft);
+      margin-top: var(--spacing-sm);
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .stat-label {
+      font-size: 11px;
+      color: var(--colors-steel);
+      font-weight: 500;
+    }
+    .stat-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--colors-charcoal);
+    }
+
+    .file-list {
+      background: var(--colors-surface-soft);
+      padding: var(--spacing-sm) var(--spacing-lg);
+      border-top: 1px solid var(--colors-hairline-soft);
+    }
+    .file-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: 8px 0;
+      font-size: 13px;
+      color: var(--colors-charcoal);
+      border-bottom: 1px solid var(--colors-hairline-soft);
+    }
+    .file-item:last-child { border-bottom: none; }
+    .file-icon { font-size: 14px; flex-shrink: 0; }
+    .file-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-time {
+      font-size: 11px;
+      color: var(--colors-steel);
+      flex-shrink: 0;
+    }
+
+    /* ========== TASK PANEL ========== */
+    .task-panel {
+      background: var(--colors-canvas);
+      border-radius: var(--rounded-lg);
+      border: 1px solid var(--colors-hairline);
+      padding: var(--spacing-xl);
+      box-shadow: var(--shadow-subtle);
+    }
+    .task-panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--spacing-lg);
+      padding-bottom: var(--spacing-md);
+      border-bottom: 1px solid var(--colors-hairline);
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+    }
+    .task-stats-row {
+      display: flex;
+      gap: var(--spacing-xl);
+    }
+    .task-stat {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+    .task-stat-value {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .task-stat-label {
+      font-size: 13px;
+      color: var(--colors-slate);
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+    }
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      padding: var(--spacing-md);
+      border-radius: var(--rounded-md);
+      border: 1px solid var(--colors-hairline-soft);
+      font-size: 14px;
+      transition: background 0.15s ease;
+    }
+    .task-item:hover { background: var(--colors-surface-soft); }
+    .task-item.active { border-left: 3px solid var(--colors-link-blue); }
+    .task-item.pending { border-left: 3px solid var(--colors-brand-yellow); }
+    .task-item.completed { border-left: 3px solid var(--colors-brand-green); opacity: 0.72; }
+
+    .task-icon { font-size: 14px; flex-shrink: 0; width: 20px; text-align: center; }
+    .task-bot {
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      min-width: 70px;
+    }
+    .task-text {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      color: var(--colors-charcoal);
+    }
+    .task-status-pill {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--rounded-sm);
+      flex-shrink: 0;
+    }
+
+    /* ========== FOOTER ========== */
+    .footer {
+      background: var(--colors-canvas);
+      padding: 48px 0;
+      border-top: 1px solid var(--colors-hairline);
+      margin-top: 48px;
+    }
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+    }
+    .footer-left {
+      font-size: 13px;
+      color: var(--colors-steel);
+    }
+    .footer-right {
+      display: flex;
+      gap: var(--spacing-lg);
+    }
+    .footer-right a {
+      font-size: 13px;
+      color: var(--colors-steel);
+      text-decoration: none;
+      transition: color 0.15s ease;
+    }
+    .footer-right a:hover { color: var(--colors-ink); }
+
+    /* ========== UTILITIES ========== */
+    .mb-sm { margin-bottom: var(--spacing-sm); }
+    .mb-md { margin-bottom: var(--spacing-md); }
+    .mb-lg { margin-bottom: var(--spacing-lg); }
+    .mb-xl { margin-bottom: var(--spacing-xl); }
+    .mt-lg { margin-top: var(--spacing-lg); }
+    .mt-xl { margin-top: var(--spacing-xl); }
+  </style>
+</head>
+<body>
+
+  <!-- Top Nav -->
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <a href="#" class="logo">
+        <div class="logo-mark">OC</div>
+        <span>OPENCLAW</span>
+      </a>
+      <div class="nav-meta">
+        <div class="status-indicator">
+          <div class="status-dot"></div>
+          <span>6 Bots 全部在线</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Band -->
+  <section class="hero-band">
+    <div class="hero-decoration">
+      <div class="sticky-dot dot-1"></div>
+      <div class="sticky-dot dot-2"></div>
+      <div class="sticky-dot dot-3"></div>
+      <div class="sticky-dot dot-4"></div>
+      <div class="sticky-dot dot-5"></div>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-display">Bot Command Center</h1>
+        <p class="hero-subtitle">6 Bots 实时运行状态监控面板 — 内存占用、任务进度、产出文件一览</p>
+        <div class="hero-badges">
+          <span class="badge-tag" style="background: var(--colors-card-tint-mint); color: var(--colors-brand-green);">● 全部在线</span>
+          <span class="badge-tag" style="background: var(--colors-card-tint-sky); color: var(--colors-link-blue);">27 个任务活跃</span>
+          <span class="badge-tag" style="background: var(--colors-card-tint-lavender); color: var(--colors-brand-purple-300);">137 个产出物</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bot Grid -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="heading-2">Bot 状态概览</h2>
+      </div>
+      <div class="bot-grid">
+
+        <!-- CHARLES -->
+        <div class="bot-card">
+          <div class="bot-card-header">
+            <div class="bot-avatar" style="background: var(--colors-card-tint-sky); border-color: var(--charles);">🤖</div>
+            <div class="bot-info">
+              <div class="bot-name">CHARLES</div>
+              <div class="bot-role">Chief of Staff · 首席行政官</div>
+            </div>
+            <span class="status-badge status-online">Online</span>
+          </div>
+          <div class="bot-card-body">
+            <span class="model-tag" style="background: var(--colors-card-tint-sky); color: var(--charles);">Gemini</span>
+            <div class="stats-bar">
+              <div class="stat-item">
+                <span class="stat-label">Memory</span>
+                <span class="stat-value">128 MB</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Outputs</span>
+                <span class="stat-value">24 个</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Tasks</span>
+                <span class="stat-value">8 个</span>
+              </div>
+            </div>
+          </div>
+          <div class="file-list">
+            <div class="file-item"><span class="file-icon">📋</span><span class="file-name">晨会纪要_20260416.md</span><span class="file-time">04-16</span></div>
+            <div class="file-item"><span class="file-icon">📧</span><span class="file-name">周报汇总_2026W16.xlsx</span><span class="file-time">04-15</span></div>
+            <div class="file-item"><span class="file-icon">📊</span><span class="file-name">6Bots进度追踪_v2.md</span><span class="file-time">04-14</span></div>
+          </div>
+        </div>
+
+        <!-- ASIN -->
+        <div class="bot-card">
+          <div class="bot-card-header">
+            <div class="bot-avatar" style="background: var(--colors-card-tint-lavender); border-color: var(--asin);">🎨</div>
+            <div class="bot-info">
+              <div class="bot-name">ASIN</div>
+              <div class="bot-role">Brand Architect · 品牌架构师</div>
+            </div>
+            <span class="status-badge status-online">Online</span>
+          </div>
+          <div class="bot-card-body">
+            <span class="model-tag" style="background: var(--colors-card-tint-lavender); color: var(--asin);">Gemini</span>
+            <div class="stats-bar">
+              <div class="stat-item">
+                <span class="stat-label">Memory</span>
+                <span class="stat-value">96 MB</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Outputs</span>
+                <span class="stat-value">18 个</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Tasks</span>
+                <span class="stat-value">5 个</span>
+              </div>
+            </div>
+          </div>
+          <div class="file-list">
+            <div class="file-item"><span class="file-icon">📰</span><span class="file-name">AI日报_20260416.md</span><span class="file-time">04-16</span></div>
+            <div class="file-item"><span class="file-icon">🎨</span><span class="file-name">品牌视觉规范_v1.2.pdf</span><span class="file-time">04-12</span></div>
+            <div class="file-item"><span class="file-icon">📑</span><span class="file-name">GEO官网更新清单.md</span><span class="file-time">04-10</span></div>
+          </div>
+        </div>
+
+        <!-- CHENLU -->
+        <div class="bot-card">
+          <div class="bot-card-header">
+            <div class="bot-avatar" style="background: var(--colors-card-tint-mint); border-color: var(--chenlu);">💻</div>
+            <div class="bot-info">
+              <div class="bot-name">CHENLU</div>
+              <div class="bot-role">Product Engineer · 产品工程师</div>
+            </div>
+            <span class="status-badge status-online">Online</span>
+          </div>
+          <div class="bot-card-body">
+            <span class="model-tag" style="background: var(--colors-card-tint-mint); color: var(--chenlu);">Kimi</span>
+            <div class="stats-bar">
+              <div class="stat-item">
+                <span class="stat-label">Memory</span>
+                <span class="stat-value">156 MB</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Outputs</span>
+                <span class="stat-value">32 个</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Tasks</span>
+                <span class="stat-value">12 个</span>
+              </div>
+            </div>
+          </div>
+          <div class="file-list">
+            <div class="file-item"><span class="file-icon">🖥️</span><span class="file-name">轻笔记小程序_v1定稿.zip</span><span class="file-time">04-16</span></div>
+            <div class="file-item"><span class="file-icon">📐</span><span class="file-name">Dashboard运维手册.md</span><span class="file-time">04-16</span></div>
+            <div class="file-item"><span class="file-icon">🎨</span><span class="file-name">UI设计规范_BlueTheme.html</span><span class="file-time">04-15</span></div>
+          </div>
+        </div>
+
+        <!-- MUMU -->
+        <div class="bot-card">
+          <div class="bot-card-header">
+            <div class="bot-avatar" style="background: var(--colors-card-tint-peach); border-color: var(--mumu);">📈</div>
+            <div class="bot-info">
+              <div class="bot-name">MUMU</div>
+              <div class="bot-role">Solutions Strategist · 解决方案战略家</div>
+            </div>
+            <span class="status-badge status-online">Online</span>
+          </div>
+          <div class="bot-card-body">
+            <span class="model-tag" style="background: var(--colors-card-tint-peach); color: var(--mumu);">Kimi</span>
+            <div class="stats-bar">
+              <div class="stat-item">
+                <span class="stat-label">Memory</span>
+                <span class="stat-value">112 MB</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Outputs</span>
+                <span class="stat-value">15 个</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Tasks</span>
+                <span class="stat-value">6 个</span>
+              </div>
+            </div>
+          </div>
+          <div class="file-list">
+            <div class="file-item"><span class="file-icon">📄</span><span class="file-name">商业合作方案_2026Q2.pptx</span><span class="file-time">04-15</span></div>
+            <div class="file-item"><span class="file-icon">📊</span><span class="file-name">市场分析报告_W13.md</span><span class="file-time">04-13</span></div>
+            <div class="file-item"><span class="file-icon">💡</span><span class="file-name">产品路线图_v2.md</span><span class="file-time">04-11</span></div>
+          </div>
+        </div>
+
+        <!-- MELODY -->
+        <div class="bot-card">
+          <div class="bot-card-header">
+            <div class="bot-avatar" style="background: var(--colors-card-tint-rose); border-color: var(--melody);">🎵</div>
+            <div class="bot-info">
+              <div class="bot-name">MELODY</div>
+              <div class="bot-role">Creative Director · 创意总监</div>
+            </div>
+            <span class="status-badge status-online">Online</span>
+          </div>
+          <div class="bot-card-body">
+            <span class="model-tag" style="background: var(--colors-card-tint-rose); color: var(--melody);">Kimi</span>
+            <div class="stats-bar">
+              <div class="stat-item">
+                <span class="stat-label">Memory</span>
+                <span class="stat-value">88 MB</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Outputs</span>
+                <span class="stat-value">28 个</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Tasks</span>
+                <span class="stat-value">9 个</span>
+              </div>
+            </div>
+          </div>
+          <div class="file-list">
+            <div class="file-item"><span class="file-icon">🎵</span><span class="file-name">品牌歌曲企划_v1.md</span><span class="file-time">04-15</span></div>
+            <div class="file-item"><span class="file-icon">🎨</span><span class="file-name">UI组件库_最新版本.fig</span><span class="file-time">04-14</span></div>
+            <div class="file-item"><span class="file-icon">📱</span><span class="file-name">App原型设计_v2.3.sketch</span><span class="file-time">04-12</span></div>
+          </div>
+        </div>
+
+        <!-- SEAN -->
+        <div class="bot-card">
+          <div class="bot-card-header">
+            <div class="bot-avatar" style="background: var(--colors-card-tint-rose); border-color: var(--sean);">💭</div>
+            <div class="bot-info">
+              <div class="bot-name">SEAN</div>
+              <div class="bot-role">Emotional Wellness · 情感健康顾问</div>
+            </div>
+            <span class="status-badge status-online">Online</span>
+          </div>
+          <div class="bot-card-body">
+            <span class="model-tag" style="background: var(--colors-card-tint-rose); color: var(--sean);">GPT</span>
+            <div class="stats-bar">
+              <div class="stat-item">
+                <span class="stat-label">Memory</span>
+                <span class="stat-value">72 MB</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Outputs</span>
+                <span class="stat-value">20 个</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Tasks</span>
+                <span class="stat-value">7 个</span>
+              </div>
+            </div>
+          </div>
+          <div class="file-list">
+            <div class="file-item"><span class="file-icon">💭</span><span class="file-name">情感支持对话记录_04.md</span><span class="file-time">04-16</span></div>
+            <div class="file-item"><span class="file-icon">📖</span><span class="file-name">心理健康指南_v1.pdf</span><span class="file-time">04-14</span></div>
+            <div class="file-item"><span class="file-icon">🎯</span><span class="file-name">用户画像分析报告.md</span><span class="file-time">04-12</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Task Panel -->
+  <section class="section">
+    <div class="container">
+      <div class="task-panel">
+        <div class="task-panel-header">
+          <h2 class="heading-2">实时任务</h2>
+          <div class="task-stats-row">
+            <div class="task-stat">
+              <span class="task-stat-value" style="color: var(--colors-link-blue);">6</span>
+              <span class="task-stat-label">进行中</span>
+            </div>
+            <div class="task-stat">
+              <span class="task-stat-value" style="color: var(--colors-brand-yellow);">3</span>
+              <span class="task-stat-label">待办</span>
+            </div>
+            <div class="task-stat">
+              <span class="task-stat-value" style="color: var(--colors-brand-green);">18</span>
+              <span class="task-stat-label">已完成</span>
+            </div>
+          </div>
+        </div>
+        <div class="task-list">
+          <div class="task-item active">
+            <span class="task-icon">▶️</span>
+            <span class="task-bot" style="color: var(--charles);">CHARLES</span>
+            <span class="task-text">Daily newsletter & admin tasks</span>
+            <span class="task-status-pill" style="background: var(--colors-card-tint-sky); color: var(--charles);">进行中</span>
+          </div>
+          <div class="task-item active">
+            <span class="task-icon">▶️</span>
+            <span class="task-bot" style="color: var(--asin);">ASIN</span>
+            <span class="task-text">Weekly AI report & brand strategy</span>
+            <span class="task-status-pill" style="background: var(--colors-card-tint-lavender); color: var(--asin);">进行中</span>
+          </div>
+          <div class="task-item active">
+            <span class="task-icon">▶️</span>
+            <span class="task-bot" style="color: var(--chenlu);">CHENLU</span>
+            <span class="task-text">Coding & product development</span>
+            <span class="task-status-pill" style="background: var(--colors-card-tint-mint); color: var(--chenlu);">进行中</span>
+          </div>
+          <div class="task-item active">
+            <span class="task-icon">▶️</span>
+            <span class="task-bot" style="color: var(--mumu);">MUMU</span>
+            <span class="task-text">Business proposals & solutions</span>
+            <span class="task-status-pill" style="background: var(--colors-card-tint-peach); color: var(--mumu);">进行中</span>
+          </div>
+          <div class="task-item active">
+            <span class="task-icon">▶️</span>
+            <span class="task-bot" style="color: var(--melody);">MELODY</span>
+            <span class="task-text">UI design & visual creation</span>
+            <span class="task-status-pill" style="background: var(--colors-card-tint-rose); color: var(--melody);">进行中</span>
+          </div>
+          <div class="task-item active">
+            <span class="task-icon">▶️</span>
+            <span class="task-bot" style="color: var(--sean);">SEAN</span>
+            <span class="task-text">Emotional support & wellness</span>
+            <span class="task-status-pill" style="background: var(--colors-card-tint-rose); color: var(--sean);">进行中</span>
+          </div>
+          <div class="task-item completed">
+            <span class="task-icon">✅</span>
+            <span class="task-bot" style="color: var(--chenlu);">CHENLU</span>
+            <span class="task-text">Delivered: 轻笔记小程序_v1定稿</span>
+            <span class="task-status-pill" style="background: var(--colors-card-tint-mint); color: var(--colors-brand-green);">已完成</span>
+          </div>
+          <div class="task-item completed">
+            <span class="task-icon">✅</span>
+            <span class="task-bot" style="color: var(--asin);">ASIN</span>
+            <span class="task-text">Delivered: AI日报_20260416</span>
+            <span class="task-status-pill" style="background: var(--colors-card-tint-mint); color: var(--colors-brand-green);">已完成</span>
+          </div>
+          <div class="task-item completed">
+            <span class="task-icon">✅</span>
+            <span class="task-bot" style="color: var(--charles);">CHARLES</span>
+            <span class="task-text">Delivered: 晨会纪要_20260416</span>
+            <span class="task-status-pill" style="background: var(--colors-card-tint-mint); color: var(--colors-brand-green);">已完成</span>
+          </div>
+          <div class="task-item pending">
+            <span class="task-icon">⏸️</span>
+            <span class="task-bot" style="color: var(--melody);">MELODY</span>
+            <span class="task-text">Next: App原型设计_v2.4</span>
+            <span class="task-status-pill" style="background: var(--colors-card-tint-yellow); color: var(--colors-brand-orange);">待办</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-left">© 2026 OpenClaw — 6 Bots Command Center</div>
+        <div class="footer-right">
+          <a href="#">系统设置</a>
+          <a href="#">日志查看</a>
+          <a href="#">帮助文档</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

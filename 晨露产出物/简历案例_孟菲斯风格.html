@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>陈晨 — 孟菲斯风格简历</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Zilla+Slab:wght@400;600;700&display=swap');
+
+  :root {
+    --font-head: 'Space Grotesk', sans-serif;
+    --font-body: 'Zilla Slab', Georgia, serif;
+    
+    /* 孟菲斯配色 */
+    --c-pink: #ff6b9d;
+    --c-yellow: #ffe156;
+    --c-blue: #4facfe;
+    --c-green: #43e97b;
+    --c-orange: #ff8c42;
+    --c-purple: #a855f7;
+    --c-cyan: #22d3ee;
+    --c-black: #1a1a2e;
+    --c-white: #ffffff;
+    --c-cream: #fff9f0;
+    
+    --border: 3px solid var(--c-black);
+    --border-thick: 4px solid var(--c-black);
+    --shadow: 6px 6px 0 var(--c-black);
+    --shadow-hover: 10px 10px 0 var(--c-black);
+    --radius: 0;
+    --transition: 0.2s ease;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--c-cream);
+    color: var(--c-black);
+    line-height: 1.5;
+    background-image: 
+      radial-gradient(circle at 20% 50%, var(--c-pink) 2px, transparent 2px),
+      radial-gradient(circle at 80% 20%, var(--c-blue) 2px, transparent 2px),
+      radial-gradient(circle at 40% 80%, var(--c-yellow) 2px, transparent 2px);
+    background-size: 60px 60px, 80px 80px, 100px 100px;
+  }
+
+  /* 页面容器 */
+  .page {
+    max-width: 900px;
+    margin: 40px auto;
+    background: var(--c-white);
+    border: var(--border-thick);
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* 装饰元素 */
+  .deco-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: var(--border);
+    z-index: 0;
+  }
+  .deco-circle.pink { width: 80px; height: 80px; background: var(--c-pink); top: -20px; right: 60px; }
+  .deco-circle.yellow { width: 50px; height: 50px; background: var(--c-yellow); bottom: 100px; left: -15px; }
+  .deco-circle.blue { width: 35px; height: 35px; background: var(--c-blue); top: 40%; right: 20px; }
+  .deco-circle.green { width: 60px; height: 60px; background: var(--c-green); top: 20%; left: -20px; }
+  
+  .deco-triangle {
+    position: absolute;
+    width: 0;
+    height: 0;
+    z-index: 0;
+  }
+  .deco-triangle.purple {
+    border-left: 30px solid transparent;
+    border-right: 30px solid transparent;
+    border-bottom: 50px solid var(--c-purple);
+    top: 60%; right: 40px;
+    transform: rotate(15deg);
+  }
+  .deco-triangle.orange {
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 35px solid var(--c-orange);
+    bottom: 20%; left: 50px;
+    transform: rotate(-20deg);
+  }
+
+  .deco-wave {
+    position: absolute;
+    width: 100px;
+    height: 20px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--c-black) 0px,
+      var(--c-black) 5px,
+      transparent 5px,
+      transparent 15px
+    );
+    z-index: 0;
+  }
+  .deco-wave.top { top: 30px; right: 150px; transform: rotate(-5deg); }
+  .deco-wave.bottom { bottom: 80px; left: 100px; transform: rotate(3deg); }
+
+  /* 头部 */
+  .hero {
+    background: var(--c-yellow);
+    border-bottom: var(--border-thick);
+    padding: 40px 30px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-tag {
+    display: inline-block;
+    background: var(--c-pink);
+    color: var(--c-black);
+    padding: 6px 16px;
+    font-family: var(--font-head);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: var(--border);
+    margin-bottom: 16px;
+    transform: rotate(-2deg);
+  }
+
+  .hero-name {
+    font-family: var(--font-head);
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 12px;
+    letter-spacing: -0.03em;
+  }
+
+  .hero-name .highlight {
+    display: inline-block;
+    background: var(--c-white);
+    padding: 0 12px;
+    border: var(--border);
+    transform: rotate(-2deg);
+  }
+
+  .hero-role {
+    font-family: var(--font-head);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  .hero-contact {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .contact-pill {
+    display: inline-block;
+    background: var(--c-white);
+    padding: 8px 16px;
+    border: var(--border);
+    font-size: 13px;
+    font-weight: 600;
+    font-family: var(--font-head);
+    transform: rotate(1deg);
+    transition: var(--transition);
+  }
+
+  .contact-pill:hover {
+    transform: rotate(-1deg) scale(1.05);
+    background: var(--c-pink);
+  }
+
+  /* 主体 */
+  .body {
+    padding: 30px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* 区块 */
+  .section {
+    margin-bottom: 30px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .section-num {
+    width: 36px;
+    height: 36px;
+    background: var(--c-black);
+    color: var(--c-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  /* 经历卡片 */
+  .exp-card {
+    background: var(--c-white);
+    border: var(--border);
+    padding: 20px;
+    margin-bottom: 16px;
+    position: relative;
+    transition: var(--transition);
+  }
+
+  .exp-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .exp-card::before {
+    content: '';
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: -8px;
+    bottom: -8px;
+    background: var(--c-blue);
+    z-index: -1;
+    opacity: 0;
+    transition: var(--transition);
+  }
+
+  .exp-card:hover::before {
+    opacity: 1;
+  }
+
+  .exp-card:nth-child(2)::before { background: var(--c-pink); }
+  .exp-card:nth-child(3)::before { background: var(--c-green); }
+
+  .exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .exp-title {
+    font-family: var(--font-head);
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  .exp-date {
+    font-family: var(--font-head);
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--c-yellow);
+    padding: 2px 8px;
+    border: var(--border);
+  }
+
+  .exp-company {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--c-pink);
+    margin-bottom: 10px;
+    font-family: var(--font-head);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .exp-desc {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .exp-desc li {
+    list-style: none;
+    position: relative;
+    padding-left: 18px;
+    margin-bottom: 4px;
+  }
+
+  .exp-desc li::before {
+    content: '★';
+    position: absolute;
+    left: 0;
+    color: var(--c-orange);
+    font-size: 10px;
+  }
+
+  /* 技能 */
+  .skill-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .skill-block {
+    padding: 8px 16px;
+    border: var(--border);
+    font-family: var(--font-head);
+    font-size: 13px;
+    font-weight: 600;
+    transition: var(--transition);
+    cursor: default;
+  }
+
+  .skill-block:hover {
+    transform: rotate(-3deg) scale(1.1);
+    box-shadow: var(--shadow);
+  }
+
+  .skill-block:nth-child(1) { background: var(--c-pink); }
+  .skill-block:nth-child(2) { background: var(--c-yellow); }
+  .skill-block:nth-child(3) { background: var(--c-blue); color: var(--c-white); }
+  .skill-block:nth-child(4) { background: var(--c-green); }
+  .skill-block:nth-child(5) { background: var(--c-orange); }
+  .skill-block:nth-child(6) { background: var(--c-purple); color: var(--c-white); }
+  .skill-block:nth-child(7) { background: var(--c-cyan); }
+  .skill-block:nth-child(8) { background: var(--c-pink); }
+  .skill-block:nth-child(9) { background: var(--c-yellow); }
+  .skill-block:nth-child(10) { background: var(--c-blue); color: var(--c-white); }
+  .skill-block:nth-child(11) { background: var(--c-green); }
+  .skill-block:nth-child(12) { background: var(--c-orange); }
+  .skill-block:nth-child(13) { background: var(--c-purple); color: var(--c-white); }
+  .skill-block:nth-child(14) { background: var(--c-cyan); }
+
+  /* 项目 */
+  .project-card {
+    border: var(--border);
+    padding: 20px;
+    margin-bottom: 16px;
+    position: relative;
+    background: var(--c-white);
+  }
+
+  .project-card:nth-child(1) { border-left: 8px solid var(--c-pink); }
+  .project-card:nth-child(2) { border-left: 8px solid var(--c-blue); }
+  .project-card:nth-child(3) { border-left: 8px solid var(--c-green); }
+
+  .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .project-name {
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .project-role {
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--c-black);
+    color: var(--c-white);
+    padding: 2px 8px;
+    font-family: var(--font-head);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .project-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+
+  .project-tech {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tech-tag {
+    padding: 4px 10px;
+    border: var(--border);
+    font-size: 11px;
+    font-weight: 600;
+    font-family: var(--font-head);
+    background: var(--c-cream);
+  }
+
+  /* 教育 */
+  .edu-block {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 2px dashed var(--c-black);
+  }
+
+  .edu-block:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .edu-badge {
+    width: 40px;
+    height: 40px;
+    background: var(--c-yellow);
+    border: var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .edu-content h4 {
+    font-family: var(--font-head);
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+
+  .edu-content p {
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .edu-year {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 2px 8px;
+    background: var(--c-pink);
+    border: var(--border);
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--font-head);
+  }
+
+  /* 两栏 */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 768px) {
+    .two-col { grid-template-columns: 1fr; }
+    .hero { padding: 24px; }
+    .body { padding: 20px; }
+  }
+
+  /* 页脚 */
+  .footer {
+    background: var(--c-black);
+    color: var(--c-white);
+    padding: 24px;
+    text-align: center;
+    font-family: var(--font-head);
+  }
+
+  .footer p {
+    font-size: 14px;
+    margin-bottom: 12px;
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .footer-links a {
+    color: var(--c-yellow);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    border-bottom: 2px solid var(--c-yellow);
+    padding-bottom: 2px;
+    transition: var(--transition);
+  }
+
+  .footer-links a:hover {
+    color: var(--c-pink);
+    border-bottom-color: var(--c-pink);
+  }
+
+  /* 彩条 */
+  .stripe {
+    height: 8px;
+    display: flex;
+  }
+  .stripe span {
+    flex: 1;
+  }
+  .stripe span:nth-child(1) { background: var(--c-pink); }
+  .stripe span:nth-child(2) { background: var(--c-yellow); }
+  .stripe span:nth-child(3) { background: var(--c-blue); }
+  .stripe span:nth-child(4) { background: var(--c-green); }
+  .stripe span:nth-child(5) { background: var(--c-orange); }
+  .stripe span:nth-child(6) { background: var(--c-purple); }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <!-- 装饰元素 -->
+  <div class="deco-circle pink"></div>
+  <div class="deco-circle yellow"></div>
+  <div class="deco-circle blue"></div>
+  <div class="deco-circle green"></div>
+  <div class="deco-triangle purple"></div>
+  <div class="deco-triangle orange"></div>
+  <div class="deco-wave top"></div>
+  <div class="deco-wave bottom"></div>
+
+  <!-- Header -->
+  <header class="hero">
+    <div class="hero-tag">✦ PORTFOLIO 2024</div>
+    <h1 class="hero-name">我是 <span class="highlight">陈晨</span></h1>
+    <p class="hero-role">高级 UI 设计师 & 前端开发者</p>
+    <div class="hero-contact">
+      <span class="contact-pill">📱 138-0000-0000</span>
+      <span class="contact-pill">✉️ chen.chen@example.com</span>
+      <span class="contact-pill">📍 上海</span>
+      <span class="contact-pill">🔗 github.com/chenchen</span>
+    </div>
+  </header>
+
+  <!-- Body -->
+  <div class="body">
+
+    <div class="two-col">
+      <!-- Left -->
+      <div>
+        <!-- Experience -->
+        <section class="section">
+          <div class="section-header">
+            <span class="section-num">1</span>
+            <h2 class="section-title">工作经历</h2>
+          </div>
+
+          <div class="exp-card">
+            <div class="exp-header">
+              <span class="exp-title">高级 UI 设计师</span>
+              <span class="exp-date">2021 — 至今</span>
+            </div>
+            <div class="exp-company">字节跳动 · 飞书文档团队</div>
+            <ul class="exp-desc">
+              <li>负责飞书文档产品的界面设计和用户体验优化，日活用户提升 25%</li>
+              <li>主导设计系统搭建，统一 30+ 产品的视觉规范，提升协作效率 35%</li>
+              <li>推动设计流程标准化，建立组件库和设计评审机制</li>
+            </ul>
+          </div>
+
+          <div class="exp-card">
+            <div class="exp-header">
+              <span class="exp-title">前端开发工程师</span>
+              <span class="exp-date">2019 — 2021</span>
+            </div>
+            <div class="exp-company">阿里巴巴 · 淘宝前端团队</div>
+            <ul class="exp-desc">
+              <li>参与淘宝首页重构，性能优化使首屏加载速度提升 40%</li>
+              <li>开发内部组件库，被 15 个业务线采用，减少重复开发</li>
+              <li>获得 2020 年度优秀员工称号</li>
+            </ul>
+          </div>
+
+          <div class="exp-card">
+            <div class="exp-header">
+              <span class="exp-title">初级设计师</span>
+              <span class="exp-date">2017 — 2019</span>
+            </div>
+            <div class="exp-company">小米科技 · MIUI 设计团队</div>
+            <ul class="exp-desc">
+              <li>参与 MIUI 系统界面的设计迭代，覆盖 3 亿用户</li>
+              <li>负责小米商城多个营销活动的视觉设计，转化率平均提升 15%</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Projects -->
+        <section class="section">
+          <div class="section-header">
+            <span class="section-num">2</span>
+            <h2 class="section-title">精选项目</h2>
+          </div>
+
+          <div class="project-card">
+            <div class="project-header">
+              <span class="project-name">云笔记应用</span>
+              <span class="project-role">独立开发</span>
+            </div>
+            <p class="project-desc">独立开发的移动端笔记应用，支持 Markdown 编辑、标签管理和云端同步。上线 3 个月获 5 万+ 下载，评分 4.8。</p>
+            <div class="project-tech">
+              <span class="tech-tag">React Native</span>
+              <span class="tech-tag">Node.js</span>
+              <span class="tech-tag">MongoDB</span>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div class="project-header">
+              <span class="project-name">电商后台管理系统</span>
+              <span class="project-role">B端产品</span>
+            </div>
+            <p class="project-desc">为中大型电商企业打造的一站式管理后台，涵盖商品管理、订单处理、数据分析等核心模块，操作效率提升 40%。</p>
+            <div class="project-tech">
+              <span class="tech-tag">Vue.js</span>
+              <span class="tech-tag">Element UI</span>
+              <span class="tech-tag">ECharts</span>
+            </div>
+          </div>
+
+          <div class="project-card">
+            <div class="project-header">
+              <span class="project-name">健康追踪小程序</span>
+              <span class="project-role">微信小程序</span>
+            </div>
+            <p class="project-desc">微信小程序整合睡眠监测、运动记录、饮食建议和心情日记。温暖柔和的视觉风格，让健康管理变得轻松愉悦。</p>
+            <div class="project-tech">
+              <span class="tech-tag">微信小程序</span>
+              <span class="tech-tag">Taro</span>
+              <span class="tech-tag">云开发</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Right -->
+      <div>
+        <!-- Skills -->
+        <section class="section">
+          <div class="section-header">
+            <span class="section-num">3</span>
+            <h2 class="section-title">技能</h2>
+          </div>
+          <div class="skill-grid">
+            <span class="skill-block">Figma</span>
+            <span class="skill-block">Sketch</span>
+            <span class="skill-block">Adobe XD</span>
+            <span class="skill-block">Photoshop</span>
+            <span class="skill-block">Illustrator</span>
+            <span class="skill-block">Principle</span>
+            <span class="skill-block">React</span>
+            <span class="skill-block">Vue.js</span>
+            <span class="skill-block">TypeScript</span>
+            <span class="skill-block">Tailwind</span>
+            <span class="skill-block">UI/UX</span>
+            <span class="skill-block">设计系统</span>
+            <span class="skill-block">动效设计</span>
+            <span class="skill-block">品牌设计</span>
+          </div>
+        </section>
+
+        <!-- Education -->
+        <section class="section">
+          <div class="section-header">
+            <span class="section-num">4</span>
+            <h2 class="section-title">教育</h2>
+          </div>
+
+          <div class="edu-block">
+            <div class="edu-badge">🏫</div>
+            <div class="edu-content">
+              <h4>同济大学</h4>
+              <p>设计创意学院 · 工业设计硕士</p>
+              <span class="edu-year">2015 — 2017</span>
+            </div>
+          </div>
+
+          <div class="edu-block">
+            <div class="edu-badge">🏛️</div>
+            <div class="edu-content">
+              <h4>江南大学</h4>
+              <p>设计学院 · 视觉传达设计学士</p>
+              <span class="edu-year">2011 — 2015</span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Stripe -->
+  <div class="stripe">
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2024 陈晨 · 用设计让世界更美好 ✦</p>
+    <div class="footer-links">
+      <a href="#">GitHub</a>
+      <a href="#">Dribbble</a>
+      <a href="#">LinkedIn</a>
+      <a href="#">邮件</a>
+    </div>
+  </footer>
+
+</div>
+
+</body>
+</html>

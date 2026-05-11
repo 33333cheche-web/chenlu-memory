@@ -1,0 +1,28 @@
+<view class="detail-header">
+  <view class="back-btn" bindtap="goBack">← 返回</view>
+  <view class="header-title">{{isEdit ? '编辑笔记' : '笔记详情'}}</view>
+  <view class="header-actions">
+    <view class="action-btn" bindtap="toggleEdit">{{isEdit ? '完成' : '编辑'}}</view>
+    <view class="action-btn delete" bindtap="deleteNote" wx:if="{{!isEdit}}">删除</view>
+  </view>
+</view>
+
+<view class="edit-section">
+  <view class="category-tag">
+    <text>📂</text>
+    <text>{{note.category || '未分类'}}</text>
+  </view>
+  
+  <textarea 
+    class="edit-input" 
+    placeholder="写点什么..."
+    value="{{note.content}}"
+    bindinput="onInput"
+    disabled="{{!isEdit}}"
+    maxlength="2000"
+  ></textarea>
+</view>
+
+<view class="time-info" wx:if="{{note.createTime}}">
+  创建于 {{createTimeText}} · 最后更新 {{updateTimeText}}
+</view>

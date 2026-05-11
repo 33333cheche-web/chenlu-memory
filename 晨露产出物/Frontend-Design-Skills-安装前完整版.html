@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>陈晨 - 个人作品集</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Arial, "Microsoft YaHei", sans-serif;
+    background: #f5f5f5;
+    color: #333;
+    line-height: 1.5;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  /* 顶部导航 */
+  .navbar {
+    background: #444;
+    color: #fff;
+    padding: 15px 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
+  .navbar h1 {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  /* 个人信息区 */
+  .profile {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 30px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    text-align: center;
+  }
+  .avatar {
+    width: 120px;
+    height: 120px;
+    background: #ccc;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-size: 14px;
+  }
+  .profile h2 {
+    font-size: 22px;
+    color: #000080;
+    margin-bottom: 8px;
+    text-decoration: underline;
+  }
+  .profile .title {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 12px;
+  }
+  .profile .contact {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 15px;
+  }
+  .profile .tags {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .profile .tag {
+    padding: 5px 12px;
+    background: #e8e8e8;
+    border-radius: 3px;
+    font-size: 13px;
+    color: #555;
+  }
+
+  /* 关于我 */
+  .section {
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 25px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
+  .section h3 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 8px;
+  }
+  .section p {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 10px;
+  }
+
+  /* 工作经历 */
+  .job {
+    border-left: 3px solid #007bff;
+    padding-left: 15px;
+    margin-bottom: 20px;
+  }
+  .job:last-child {
+    margin-bottom: 0;
+  }
+  .job h4 {
+    font-size: 17px;
+    color: #000;
+    margin-bottom: 5px;
+  }
+  .job .company {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+  }
+  .job ul {
+    padding-left: 20px;
+  }
+  .job li {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 5px;
+  }
+
+  /* 技能 */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .skill-item {
+    padding: 10px;
+    background: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 3px;
+    text-align: center;
+    font-size: 14px;
+  }
+  .skill-bar {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+  .skill-fill {
+    height: 100%;
+    background: #007bff;
+    border-radius: 4px;
+  }
+
+  /* 项目 */
+  .projects-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .project-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    background: #fff;
+    border-radius: 4px;
+    display: flex;
+    gap: 20px;
+  }
+  .project-img {
+    width: 200px;
+    height: 150px;
+    background: #ddd;
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    font-size: 14px;
+  }
+  .project-info h4 {
+    font-size: 18px;
+    color: #000080;
+    margin-bottom: 8px;
+    text-decoration: underline;
+  }
+  .project-info p {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  .project-tags {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .project-tag {
+    padding: 4px 10px;
+    background: #e8e8e8;
+    border-radius: 3px;
+    font-size: 12px;
+    color: #555;
+  }
+  .project-btn {
+    display: inline-block;
+    background: #007bff;
+    color: #fff;
+    padding: 8px 16px;
+    font-size: 13px;
+    text-decoration: none;
+    border-radius: 4px;
+  }
+
+  /* 教育 */
+  .edu-item {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+  }
+  .edu-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+  .edu-item h4 {
+    font-size: 17px;
+    margin-bottom: 4px;
+  }
+  .edu-item p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 0;
+  }
+
+  /* 页脚 */
+  footer {
+    text-align: center;
+    padding: 30px;
+    color: #999;
+    font-size: 14px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  footer a {
+    color: #007bff;
+    text-decoration: none;
+    margin: 0 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="navbar">
+    <h1>陈晨的个人作品集</h1>
+  </div>
+
+  <div class="profile">
+    <div class="avatar">头像占位</div>
+    <h2>陈晨</h2>
+    <div class="title">独立设计师 & 前端开发者</div>
+    <div class="contact">
+      📧 chen.chen@example.com · 📱 138-0000-0000 · 📍 上海
+    </div>
+    <div class="tags">
+      <span class="tag">UI/UX 设计</span>
+      <span class="tag">前端开发</span>
+      <span class="tag">品牌设计</span>
+      <span class="tag">数据可视化</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>关于我</h3>
+    <p>我是一名拥有 5 年经验的独立设计师和前端开发者，专注于创造简洁优雅的数字体验。我相信好的设计不仅是好看的，更是好用的。</p>
+    <p>从品牌视觉到交互界面，从静态页面到动态应用，我享受将复杂问题转化为直观解决方案的过程。工作之余，我喜欢摄影、旅行和探索新的设计工具。</p>
+  </div>
+
+  <div class="section">
+    <h3>工作经历</h3>
+    <div class="job">
+      <h4>高级 UI 设计师</h4>
+      <div class="company">字节跳动 · 2021.06 - 至今</div>
+      <ul>
+        <li>负责飞书文档产品的界面设计和用户体验优化</li>
+        <li>主导设计系统搭建，统一 30+ 产品的视觉规范</li>
+        <li>推动设计流程标准化，团队效率提升 35%</li>
+      </ul>
+    </div>
+    <div class="job">
+      <h4>前端开发工程师</h4>
+      <div class="company">阿里巴巴 · 2019.03 - 2021.05</div>
+      <ul>
+        <li>参与淘宝首页重构，性能优化提升加载速度 40%</li>
+        <li>开发内部组件库，被 15 个业务线采用</li>
+        <li>获得 2020 年度优秀员工称号</li>
+      </ul>
+    </div>
+    <div class="job">
+      <h4>初级设计师</h4>
+      <div class="company">小米科技 · 2017.07 - 2019.02</div>
+      <ul>
+        <li>参与 MIUI 系统界面的设计迭代</li>
+        <li>负责小米商城多个营销活动的视觉设计</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>专业技能</h3>
+    <div class="skills-grid">
+      <div class="skill-item">
+        Figma
+        <div class="skill-bar"><div class="skill-fill" style="width: 95%"></div></div>
+      </div>
+      <div class="skill-item">
+        React
+        <div class="skill-bar"><div class="skill-fill" style="width: 85%"></div></div>
+      </div>
+      <div class="skill-item">
+        Vue.js
+        <div class="skill-bar"><div class="skill-fill" style="width: 80%"></div></div>
+      </div>
+      <div class="skill-item">
+        TypeScript
+        <div class="skill-bar"><div class="skill-fill" style="width: 75%"></div></div>
+      </div>
+      <div class="skill-item">
+        CSS/动画
+        <div class="skill-bar"><div class="skill-fill" style="width: 90%"></div></div>
+      </div>
+      <div class="skill-item">
+        数据可视化
+        <div class="skill-bar"><div class="skill-fill" style="width: 70%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>项目作品</h3>
+    <div class="projects-grid">
+      <div class="project-card">
+        <div class="project-img">项目截图占位</div>
+        <div class="project-info">
+          <h4>云笔记应用</h4>
+          <p>一款专注于沉浸写作体验的移动端笔记应用。支持 Markdown 编辑、标签管理、云端同步和离线模式。采用极简设计语言，让用户随时随地记录灵感。</p>
+          <div class="project-tags">
+            <span class="project-tag">产品设计</span>
+            <span class="project-tag">React</span>
+            <span class="project-tag">移动端</span>
+          </div>
+          <a href="#" class="project-btn">查看详情</a>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-img">项目截图占位</div>
+        <div class="project-info">
+          <h4>电商后台管理系统</h4>
+          <p>为中大型电商企业打造的一站式管理后台。涵盖商品管理、订单处理、数据分析、库存监控等核心模块。通过信息架构优化和交互流程简化，将操作效率提升 40%。</p>
+          <div class="project-tags">
+            <span class="project-tag">B端设计</span>
+            <span class="project-tag">Vue</span>
+            <span class="project-tag">数据可视化</span>
+          </div>
+          <a href="#" class="project-btn">查看详情</a>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-img">项目截图占位</div>
+        <div class="project-info">
+          <h4>健康追踪小程序</h4>
+          <p>一款关注用户身心健康的微信小程序。整合睡眠监测、运动记录、饮食建议和心情日记功能。采用温暖柔和的视觉风格，让健康管理变得轻松愉悦。</p>
+          <div class="project-tags">
+            <span class="project-tag">小程序</span>
+            <span class="project-tag">微信生态</span>
+            <span class="project-tag">健康科技</span>
+          </div>
+          <a href="#" class="project-btn">查看详情</a>
+        </div>
+      </div>
+      <div class="project-card">
+        <div class="project-img">项目截图占位</div>
+        <div class="project-info">
+          <h4>企业品牌视觉系统</h4>
+          <p>为科技初创公司从零打造的全套品牌识别方案。包括 Logo 设计、色彩系统、字体规范、图标库和各类应用场景的视觉指南，帮助品牌在市场中建立专业形象。</p>
+          <div class="project-tags">
+            <span class="project-tag">品牌设计</span>
+            <span class="project-tag">VI 系统</span>
+            <span class="project-tag">初创公司</span>
+          </div>
+          <a href="#" class="project-btn">查看详情</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h3>教育背景</h3>
+    <div class="edu-item">
+      <h4>同济大学 · 设计创意学院</h4>
+      <p>工业设计硕士 · 2015.09 - 2017.06 · 研究方向：交互设计与用户体验</p>
+    </div>
+    <div class="edu-item">
+      <h4>江南大学 · 设计学院</h4>
+      <p>视觉传达设计学士 · 2011.09 - 2015.06 · 获得国家奖学金</p>
+    </div>
+  </div>
+
+  <footer>
+    <p>
+      © 2024 陈晨 · 
+      <a href="#">GitHub</a> · 
+      <a href="#">Dribbble</a> · 
+      <a href="#">LinkedIn</a> · 
+      <a href="#">邮件联系</a>
+    </p>
+  </footer>
+
+</div>
+
+</body>
+</html>
