@@ -11,7 +11,7 @@ export PATH="/home/cheche/.npm-global/bin:$PATH"
 TARGET_USER="user:ou_8817a15f54b382776f186f9ace070d86"
 
 # 检查 dashboard Python 进程是否在运行
-DASHBOARD_PID=$(pgrep -f "openclaw-dashboard.py" || true)
+DASHBOARD_PID=$(pgrep -f "api_server.py" || true)
 
 if [ -z "$DASHBOARD_PID" ]; then
     echo "[$TIMESTAMP] Dashboard 进程未运行，正在启动..." >> "$LOG_FILE"

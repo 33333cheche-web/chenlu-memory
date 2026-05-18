@@ -25,7 +25,7 @@
 **Cron任务**: `openclaw cron add --name chenlu-daily-report --cron "5 22 * * *" --system-event daily_report`
 
 **当收到 systemEvent=daily_report 时**：
-1. 读取 `~/.openclaw/workspace-chenlu/memory/daily/YYYY-MM-DD.md` 文件
+1. 读取 `~/.openclaw/workspace-chenlu/memory/YYYY-MM-DD.md` 文件
 2. 提取今日工作内容
 3. 按标准格式生成并发送日报
 
@@ -42,7 +42,7 @@
 ## Memory Healthcheck（每次 heartbeat 必做）
 
 1. **检查今日 daily log**
-   - 确认 `memory/daily/$(date +%Y-%m-%d).md` 存在
+   - 确认 `memory/$(date +%Y-%m-%d).md` 存在
    - 不存在 → 立即创建并补充当前状态
 
 2. **检查 active-tasks.md**

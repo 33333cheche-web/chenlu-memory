@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPENCLAW Dashboard V17 - 部署定稿记录</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2em;
+            color: #a0a0a0;
+            margin-top: 10px;
+        }
+        
+        .header .meta {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .meta-item .label {
+            color: #666;
+        }
+        
+        .meta-item .value {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .card h2 {
+            color: #00d4ff;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h2::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, #00d4ff, #7b2cbf);
+            border-radius: 2px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .status-success {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+        
+        .status-warning {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #00d4ff, #7b2cbf);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -34px;
+            top: 24px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00d4ff;
+            border: 2px solid #1a1a2e;
+        }
+        
+        .timeline-time {
+            font-size: 0.85em;
+            color: #888;
+            margin-bottom: 8px;
+        }
+        
+        .timeline-title {
+            font-size: 1.1em;
+            color: #fff;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .timeline-content {
+            color: #b0b0b0;
+            font-size: 0.95em;
+        }
+        
+        .timeline-content ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .timeline-content li {
+            margin: 5px 0;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .grid-item {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .grid-item h3 {
+            color: #00d4ff;
+            font-size: 1em;
+            margin-bottom: 12px;
+        }
+        
+        .grid-item p, .grid-item li {
+            color: #a0a0a0;
+            font-size: 0.9em;
+            line-height: 1.8;
+        }
+        
+        .grid-item ul {
+            padding-left: 18px;
+        }
+        
+        .code-block {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85em;
+            color: #c9d1d9;
+            overflow-x: auto;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .code-block .comment {
+            color: #8b949e;
+        }
+        
+        .code-block .keyword {
+            color: #ff7b72;
+        }
+        
+        .code-block .string {
+            color: #a5d6ff;
+        }
+        
+        .highlight-box {
+            background: rgba(0, 212, 255, 0.1);
+            border-left: 4px solid #00d4ff;
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .highlight-box.warning {
+            background: rgba(255, 193, 7, 0.1);
+            border-left-color: #ffc107;
+        }
+        
+        .highlight-box.danger {
+            background: rgba(255, 76, 76, 0.1);
+            border-left-color: #ff4c4c;
+        }
+        
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .tech-tag {
+            background: rgba(0, 212, 255, 0.15);
+            color: #00d4ff;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+        
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        th {
+            color: #00d4ff;
+            font-weight: 600;
+            background: rgba(0, 212, 255, 0.05);
+        }
+        
+        td {
+            color: #b0b0b0;
+        }
+        
+        tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            color: #666;
+            font-size: 0.9em;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 40px;
+        }
+        
+        .footer .heart {
+            color: #ff4c4c;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .header .meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>OPENCLAW Dashboard V17</h1>
+            <div class="subtitle">部署定稿记录与运维手册</div>
+            <div class="meta">
+                <div class="meta-item">
+                    <span class="label">版本:</span>
+                    <span class="value">V17 FINAL v2</span>
+                </div>
+                <div class="meta-item">
+                    <span class="label">日期:</span>
+                    <span class="value">2026-05-13</span>
+                </div>
+                <div class="meta-item">
+                    <span class="label">状态:</span>
+                    <span class="value" style="color: #00ff88;">✅ 在线运行</span>
+                </div>
+                <div class="meta-item">
+                    <span class="label">部署者:</span>
+                    <span class="value">晨露 💧</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 项目概述 -->
+        <div class="card">
+            <h2>项目概述</h2>
+            <p style="color: #b0b0b0; margin-bottom: 20px;">
+                OPENCLAW Dashboard 是 6 Bots 团队的中央控制台，展示所有 AI Agent 的实时状态、产出物、性能指标和事件流。
+                本项目经过多轮迭代，最终定稿部署至公网，所有数据均已接入真实产出物映射。
+            </p>
+            
+            <div class="grid">
+                <div class="grid-item">
+                    <h3>🌐 公网地址</h3>
+                    <p><strong style="color: #fff;">https://dashboard.cheche-dashboard.site</strong></p>
+                    <p style="margin-top: 8px;">Cloudflare Tunnel 转发至本地 8080 端口</p>
+                </div>
+                <div class="grid-item">
+                    <h3>📦 部署包</h3>
+                    <p>OPENCLAW-V17-FINAL-v2_5.13完整真实数据版_20260513.zip</p>
+                    <p style="margin-top: 8px;">大小: 6.3MB</p>
+                </div>
+                <div class="grid-item">
+                    <h3>🔧 技术架构</h3>
+                    <div class="tech-stack">
+                        <span class="tech-tag">React 18</span>
+                        <span class="tech-tag">Vite</span>
+                        <span class="tech-tag">Framer Motion</span>
+                        <span class="tech-tag">Python HTTP</span>
+                        <span class="tech-tag">Cloudflare</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 版本历史 -->
+        <div class="card">
+            <h2>版本历史 <span class="status-badge status-success">已归档</span></h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>版本</th>
+                        <th>时间</th>
+                        <th>变更内容</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>V1 基础版</strong></td>
+                        <td>16:25</td>
+                        <td>初始部署，基础功能正常</td>
+                        <td style="color: #888;">已替换</td>
+                    </tr>
+                    <tr>
+                        <td><strong>V2 修正版</strong></td>
+                        <td>16:36</td>
+                        <td>更新 JS bundle，修复头像引用</td>
+                        <td style="color: #888;">已替换</td>
+                    </tr>
+                    <tr>
+                        <td><strong>V2 部署版</strong></td>
+                        <td>17:07</td>
+                        <td>修复 Mumu 头像缓存问题（?v=2）</td>
+                        <td style="color: #888;">已替换</td>
+                    </tr>
+                    <tr>
+                        <td><strong>V2 产出物映射版</strong></td>
+                        <td>18:17</td>
+                        <td>Bot 面板接入真实产出物数据</td>
+                        <td style="color: #888;">已替换</td>
+                    </tr>
+                    <tr>
+                        <td><strong>V2 完整真实数据版</strong></td>
+                        <td>19:14</td>
+                        <td>Event Stream 接入真实事件流（?v=7）</td>
+                        <td style="color: #00ff88;">✅ 当前版本</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 部署时间线 -->
+        <div class="card">
+            <h2>部署时间线</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-time">16:25</div>
+                    <div class="timeline-title">V1 首次部署</div>
+                    <div class="timeline-content">
+                        <ul>
+                            <li>清理旧部署（openclaw-final-v3、备份目录）</li>
+                            <li>解压 OPENCLAW-V17-FINAL 到 /home/cheche/OPENCLAW-V17-FINAL/</li>
+                            <li>启动 python3 -m http.server 8080（PID 1646197）</li>
+                            <li>Cloudflare Tunnel PID 2065971 正常运行</li>
+                            <li>公网验证：所有资源返回 200 ✅</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-time">16:36</div>
+                    <div class="timeline-title">V2 部署包更新</div>
+                    <div class="timeline-content">
+                        <ul>
+                            <li>停止 V1 服务，删除 V1 目录</li>
+                            <li>解压 V2 包到 /home/cheche/OPENCLAW-V17-FINAL-V2/</li>
+                            <li>JS bundle 更新为 index-CvyKvTWc.js（hash 变化）</li>
+                            <li>公网验证通过 ✅</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-time">17:07 - 17:46</div>
+                    <div class="timeline-title">Mumu 头像缓存修复</div>
+                    <div class="timeline-content">
+                        <ul>
+                            <li>问题：公网显示旧头像（Cloudflare CDN 缓存 48KB 版本）</li>
+                            <li>修复：重命名为 avatar-mumu-v2.jpg，更新 JS 引用</li>
+                            <li>添加 ?v=2 query params 强制浏览器刷新</li>
+                            <li>结果：公网显示正确头像（1.7MB 真实照片）✅</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-time">18:08 - 18:17</div>
+                    <div class="timeline-title">产出物映射（两次迭代）</div>
+                    <div class="timeline-content">
+                        <ul>
+                            <li>第一次：错误映射（假设目录结构，导致 Charles→晨露早报等错误）</li>
+                            <li>第二次：正确映射（扫描各 Bot workspace，确认真实产出物）</li>
+                            <li>Charles → Sunny 产出物，Asin → Rainbow 产出物，Melody → 最新设计</li>
+                            <li>Bot 面板翻转显示真实产出物列表 ✅</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-time">18:33 - 19:14</div>
+                    <div class="timeline-title">Event Stream 真实数据接入</div>
+                    <div class="timeline-content">
+                        <ul>
+                            <li>第一次尝试：正则全局替换 yc 对象，导致 JS 文件截断，页面黑屏</li>
+                            <li>修复：从备份恢复，使用精确字符定位 + 手动括号计数</li>
+                            <li>成功：yc 对象替换为真实事件流，文件仅变化 226 字符</li>
+                            <li>Event Stream 显示真实 Bot 事件（早报、PPT、周报等）✅</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技术方案 -->
+        <div class="card">
+            <h2>技术方案详情</h2>
+            
+            <h3 style="color: #fff; margin: 20px 0 10px 0;">1. 静态文件服务</h3>
+            <div class="code-block">
+<span class="comment"># 使用 Python 内置 HTTP 服务器（生产环境建议用 Nginx）</span>
+python3 -m http.server <span class="string">8080</span> --bind <span class="string">0.0.0.0</span>
+
+<span class="comment"># 后台运行（nohup 或 systemd）</span>
+nohup python3 -m http.server <span class="string">8080</span> --bind <span class="string">0.0.0.0</span> > /dev/null <span class="string">2>&1</span> &
+            </div>
+            
+            <h3 style="color: #fff; margin: 20px 0 10px 0;">2. Cloudflare Tunnel 配置</h3>
+            <div class="code-block">
+<span class="comment"># 启动隧道（已配置为服务）</span>
+cloudflared tunnel run <span class="string">6804dec3-c3fb-4bd8-b216-493cfcd2d3bb</span>
+
+<span class="comment"># 隧道配置指向 localhost:8080</span>
+<span class="comment"># 公网域名: dashboard.cheche-dashboard.site</span>
+            </div>
+            
+            <h3 style="color: #fff; margin: 20px 0 10px 0;">3. 缓存清理策略（无 Cloudflare 仪表盘权限）</h3>
+            <div class="highlight-box">
+                <strong>核心原则:</strong> 重命名文件 + Query Params 强制刷新
+            </div>
+            <div class="code-block">
+<span class="comment"># 1. 重命名被缓存的文件</span>
+mv avatar-mumu.jpg avatar-mumu-v2.jpg
+
+<span class="comment"># 2. 更新所有引用</span>
+sed -i <span class="string">'s/avatar-mumu\.jpg/avatar-mumu-v2.jpg/g'</span> assets/index-*.js
+
+<span class="comment"># 3. 添加版本号强制浏览器刷新</span>
+<span class="comment"># index.html 中:</span>
+<span class="keyword"><</span>script src=<span class="string">"assets/index-CvyKvTWc.js?v=7"</span><span class="keyword">></</span>script<span class="keyword">></span>
+            </div>
+            
+            <h3 style="color: #fff; margin: 20px 0 10px 0;">4. 修改 Minified JS 的安全方法</h3>
+            <div class="highlight-box warning">
+                <strong>警告:</strong> 绝对不能用正则全局替换（如 re.sub(r'yc=\[.*\]', ...)），会导致匹配范围过大、截断文件！
+            </div>
+            <div class="code-block">
+<span class="comment"># 正确方法：精确字符定位 + 手动括号计数</span>
+start_pos = content.find(<span class="string">'yc=['</span>)
+bracket_count = <span class="string">0</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> range(start_pos, len(content)):
+    <span class="keyword">if</span> content[i] == <span class="string">'['</span>: bracket_count += <span class="string">1</span>
+    <span class="keyword">elif</span> content[i] == <span class="string">']'</span>: 
+        bracket_count -= <span class="string">1</span>
+        <span class="keyword">if</span> bracket_count == <span class="string">0</span>: 
+            end_pos = i + <span class="string">1</span>
+            <span class="keyword">break</span>
+
+new_content = content[:start_pos] + new_yc + content[end_pos:]
+            </div>
+        </div>
+
+        <!-- 产出物映射 -->
+        <div class="card">
+            <h2>产出物映射表 <span class="status-badge status-success">真实数据</span></h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Bot</th>
+                        <th>工作区路径</th>
+                        <th>主要产出物</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Charles</strong></td>
+                        <td>workspace-sunny/sunny产出物/</td>
+                        <td>Charles早报、IP形象定稿、OpenClaw教案、广电调研报告、展厅方案、AgeWell</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Asin</strong></td>
+                        <td>workspace-rainbow/Rainbow产出物/</td>
+                        <td>公众号推文、AI行业周报、封面图模板、素材库</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mumu</strong></td>
+                        <td>workspace-mumu/沐木产出物/</td>
+                        <td>AI赋能分享会、BI-AI培训方案、客服Agent方案、沃橙业务体系、培训课程勾选表</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Melody</strong></td>
+                        <td>workspace-melody/melody产出物/ + outputs/</td>
+                        <td>沃橙PPT、劳动节海报、猫咪漫画、手账设计、校友聚力</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Sean</strong></td>
+                        <td>workspace-baby/Sean产出物/</td>
+                        <td>运维手册、系统配置文档、BabyMemory、百炼语音克隆指引</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Chenlu</strong></td>
+                        <td>workspace-chenlu/晨露产出物/</td>
+                        <td>Dashboard设计、轻笔记项目、FlowSpace、部署脚本</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 关键修复记录 -->
+        <div class="card">
+            <h2>关键修复记录</h2>
+            
+            <div class="grid">
+                <div class="grid-item">
+                    <h3>🔴 502 Bad Gateway</h3>
+                    <p><strong>原因:</strong> http.server 进程崩溃</p>
+                    <p><strong>解决:</strong> 重启 http.server + Cloudflare Tunnel</p>
+                    <p style="margin-top: 10px;"><strong>状态:</strong> <span style="color: #00ff88;">✅ 已修复</span></p>
+                </div>
+                <div class="grid-item">
+                    <h3>🟡 Mumu 头像错误</h3>
+                    <p><strong>原因:</strong> Cloudflare CDN 缓存旧版本</p>
+                    <p><strong>解决:</strong> 重命名文件 + ?v=2 刷新</p>
+                    <p style="margin-top: 10px;"><strong>状态:</strong> <span style="color: #00ff88;">✅ 已修复</span></p>
+                </div>
+                <div class="grid-item">
+                    <h3>🔴 JS 文件截断</h3>
+                    <p><strong>原因:</strong> 正则全局替换匹配范围过大</p>
+                    <p><strong>解决:</strong> 精确字符定位 + 括号计数</p>
+                    <p style="margin-top: 10px;"><strong>状态:</strong> <span style="color: #00ff88;">✅ 已修复</span></p>
+                </div>
+                <div class="grid-item">
+                    <h3>🟡 产出物错误映射</h3>
+                    <p><strong>原因:</strong> 假设目录结构，未查看实际工作区</p>
+                    <p><strong>解决:</strong> 扫描各 Bot workspace 确认真实产出物</p>
+                    <p style="margin-top: 10px;"><strong>状态:</strong> <span style="color: #00ff88;">✅ 已修复</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 运维信息 -->
+        <div class="card">
+            <h2>运维信息</h2>
+            
+            <div class="grid">
+                <div class="grid-item">
+                    <h3>📁 部署目录</h3>
+                    <p>/home/cheche/OPENCLAW-V17-FINAL-V2/</p>
+                    <p style="margin-top: 8px;">大小: 4.8MB</p>
+                </div>
+                <div class="grid-item">
+                    <h3>🖥️ 服务进程</h3>
+                    <p>http.server PID: 动态</p>
+                    <p style="margin-top: 8px;">端口: 8080</p>
+                </div>
+                <div class="grid-item">
+                    <h3>🌐 隧道进程</h3>
+                    <p>cloudflared tunnel</p>
+                    <p style="margin-top: 8px;">UUID: 6804dec3-c3fb-4bd8-b216-493cfcd2d3bb</p>
+                </div>
+                <div class="grid-item">
+                    <h3>💾 备份位置</h3>
+                    <p>晨露产出物/Dashboard设计/</p>
+                    <p style="margin-top: 8px;">共 5 个版本归档</p>
+                </div>
+            </div>
+            
+            <div class="highlight-box" style="margin-top: 20px;">
+                <strong>重启命令（备用）:</strong><br>
+                <code style="color: #00d4ff;">cd /home/cheche/OPENCLAW-V17-FINAL-V2/ && nohup python3 -m http.server 8080 --bind 0.0.0.0 > /dev/null 2>&1 &</code>
+            </div>
+        </div>
+
+        <!-- 经验教训 -->
+        <div class="card">
+            <h2>关键经验教训</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-title">修改 minified JS 绝对不能用正则全局替换</div>
+                    <div class="timeline-content">
+                        正则 <code>re.sub(r'yc=\[.*\]', ...)</code> 会匹配到最远匹配的 <code>]</code>，导致截断整个 JS bundle。
+                        必须使用精确字符定位 + 手动括号计数。
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-title">产出物映射前必须查看实际工作区</div>
+                    <div class="timeline-content">
+                        不能假设目录结构（如 Charles ≠ 晨露早报）。必须先 find/ls 各 Bot workspace 确认真实产出物，再进行映射。
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-title">Cloudflare CDN 缓存处理</div>
+                    <div class="timeline-content">
+                        无仪表盘权限时，重命名文件是最可靠的缓存清除方法。配合 <code>?v=N</code> query params 强制浏览器刷新。
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-title">每次修改前必须备份</div>
+                    <div class="timeline-content">
+                        <code>cp index.js index.js.bak.safe</code> — 出问题可以秒级回滚，避免服务长时间不可用。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 当前状态 -->
+        <div class="card">
+            <h2>当前状态确认 <span class="status-badge status-success">全部正常</span></h2>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>检查项</th>
+                        <th>本地 (localhost:8080)</th>
+                        <th>公网 (dashboard.cheche-dashboard.site)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>首页</td>
+                        <td style="color: #00ff88;">✅ 200</td>
+                        <td style="color: #00ff88;">✅ 200</td>
+                    </tr>
+                    <tr>
+                        <td>JS Bundle</td>
+                        <td style="color: #00ff88;">✅ 200 (400KB)</td>
+                        <td style="color: #00ff88;">✅ 200 (400KB)</td>
+                    </tr>
+                    <tr>
+                        <td>CSS</td>
+                        <td style="color: #00ff88;">✅ 200 (84KB)</td>
+                        <td style="color: #00ff88;">✅ 200 (84KB)</td>
+                    </tr>
+                    <tr>
+                        <td>头像图片 (7张)</td>
+                        <td style="color: #00ff88;">✅ 全部 200</td>
+                        <td style="color: #00ff88;">✅ 全部 200</td>
+                    </tr>
+                    <tr>
+                        <td>Mumu 头像</td>
+                        <td style="color: #00ff88;">✅ 正确 (1.7MB)</td>
+                        <td style="color: #00ff88;">✅ 正确 (1.7MB)</td>
+                    </tr>
+                    <tr>
+                        <td>Bot 面板翻转</td>
+                        <td style="color: #00ff88;">✅ 正常</td>
+                        <td style="color: #00ff88;">✅ 正常</td>
+                    </tr>
+                    <tr>
+                        <td>产出物显示</td>
+                        <td style="color: #00ff88;">✅ 真实数据</td>
+                        <td style="color: #00ff88;">✅ 真实数据</td>
+                    </tr>
+                    <tr>
+                        <td>Event Stream</td>
+                        <td style="color: #00ff88;">✅ 真实事件</td>
+                        <td style="color: #00ff88;">✅ 真实事件</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>OPENCLAW Dashboard V17 FINAL v2 - 部署定稿记录</p>
+            <p style="margin-top: 10px;">部署日期: 2026-05-13 | 部署者: 晨露 💧</p>
+            <p style="margin-top: 10px; font-size: 0.85em;">用代码构建世界，用可爱温暖人心 <span class="heart">❤️</span></p>
+        </div>
+    </div>
+</body>
+</html>

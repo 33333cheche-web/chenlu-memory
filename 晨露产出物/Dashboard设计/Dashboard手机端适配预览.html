@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard手机端适配预览</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        h1 {
+            text-align: center;
+            font-size: 1.8em;
+            background: linear-gradient(135deg, #00d4ff, #e94584);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+        }
+        
+        /* 对比区域 */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .comparison { grid-template-columns: 1fr; }
+        }
+        
+        .phone-frame {
+            background: #000;
+            border-radius: 40px;
+            padding: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 2px solid #333;
+        }
+        
+        .phone-screen {
+            background: #050505;
+            border-radius: 30px;
+            overflow: hidden;
+            height: 600px;
+            position: relative;
+        }
+        
+        .phone-label {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+        
+        /* 模拟Dashboard内容 - 适配前 */
+        .demo-before {
+            padding: 20px;
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        .demo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .demo-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px;
+            color: #e94584;
+            font-weight: 700;
+        }
+        
+        .demo-status {
+            font-size: 10px;
+            color: #00d68f;
+            border: 1px solid rgba(0,214,143,0.3);
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+        
+        /* Bot Cards - 适配前（问题展示） */
+        .bot-grid-before {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .bot-card {
+            background: rgba(255,255,255,0.018);
+            border: 1px solid rgba(233,69,132,0.28);
+            border-radius: 6px;
+            padding: 12px;
+            transition: all 0.4s ease;
+        }
+        
+        .bot-card:hover {
+            border-color: rgba(233,69,132,0.55);
+            background: rgba(255,255,255,0.03);
+        }
+        
+        .bot-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .bot-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e94584, #7b2cbf);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .bot-name {
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .bot-role {
+            font-size: 9px;
+            color: #6E6E7A;
+        }
+        
+        .bot-stats {
+            display: flex;
+            gap: 10px;
+            font-size: 9px;
+            color: #3E3E48;
+        }
+        
+        /* 适配后的样式 */
+        .bot-grid-after {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .bot-card-after {
+            background: rgba(255,255,255,0.018);
+            border: 1px solid rgba(233,69,132,0.28);
+            border-radius: 6px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .bot-card-after:active {
+            transform: scale(0.98);
+            background: rgba(255,255,255,0.03);
+        }
+        
+        .bot-avatar-after {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e94584, #7b2cbf);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        
+        .bot-info-after {
+            flex: 1;
+        }
+        
+        .bot-name-after {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        
+        .bot-role-after {
+            font-size: 11px;
+            color: #6E6E7A;
+        }
+        
+        .bot-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00d68f;
+            flex-shrink: 0;
+        }
+        
+        /* Event Stream */
+        .event-section {
+            margin-top: 20px;
+        }
+        
+        .section-title {
+            font-size: 10px;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #e94584;
+            margin-bottom: 12px;
+            text-shadow: 0 0 12px rgba(233,69,132,0.3);
+        }
+        
+        .event-item {
+            display: flex;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 11px;
+        }
+        
+        .event-time {
+            color: #3E3E48;
+            min-width: 50px;
+        }
+        
+        .event-text {
+            color: #b0b0b0;
+        }
+        
+        /* 适配后的Event Stream */
+        .event-item-after {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .event-header-after {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+        
+        .event-bot-after {
+            font-size: 12px;
+            font-weight: 600;
+            color: #e94584;
+        }
+        
+        .event-time-after {
+            font-size: 10px;
+            color: #3E3E48;
+        }
+        
+        .event-text-after {
+            font-size: 13px;
+            color: #e0e0e0;
+            line-height: 1.5;
+        }
+        
+        /* 问题标记 */
+        .problem-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,76,76,0.9);
+            color: #fff;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+        
+        .solution-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,214,143,0.9);
+            color: #fff;
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+        
+        /* 修改说明 */
+        .changes-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .changes-section h2 {
+            color: #00d4ff;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+        }
+        
+        .change-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .change-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .change-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .change-icon.improve {
+            background: rgba(0,214,143,0.15);
+        }
+        
+        .change-icon.fix {
+            background: rgba(233,69,132,0.15);
+        }
+        
+        .change-icon.add {
+            background: rgba(0,212,255,0.15);
+        }
+        
+        .change-content h3 {
+            color: #fff;
+            font-size: 1em;
+            margin-bottom: 5px;
+        }
+        
+        .change-content p {
+            color: #888;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+        
+        .code-preview {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.8em;
+            color: #c9d1d9;
+            overflow-x: auto;
+        }
+        
+        .code-preview .comment { color: #8b949e; }
+        .code-preview .property { color: #7ee787; }
+        .code-preview .value { color: #a5d6ff; }
+        .code-preview .selector { color: #d2a8ff; }
+        
+        /* 底部按钮 */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #e94584, #7b2cbf);
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(233,69,132,0.3);
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.15);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            color: #666;
+            font-size: 0.85em;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Dashboard 手机端适配预览</h1>
+        <p class="subtitle">左右对比：当前效果 vs 适配后效果</p>
+        
+        <!-- 对比区域 -->
+        <div class="comparison">
+            <!-- 适配前 -->
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="problem-badge">❌ 当前问题</div>
+                    <div class="demo-before">
+                        <div class="demo-header">
+                            <div class="demo-logo">OPENCLAW</div>
+                            <div class="demo-status">● LIVE</div>
+                        </div>
+                        
+                        <!-- Bot Cards - 问题展示 -->
+                        <div class="bot-grid-before">
+                            <div class="bot-card">
+                                <div class="bot-header">
+                                    <div class="bot-avatar">C</div>
+                                    <div>
+                                        <div class="bot-name">Charles</div>
+                                        <div class="bot-role">内容策划</div>
+                                    </div>
+                                </div>
+                                <div class="bot-stats">产出: 156</div>
+                            </div>
+                            <div class="bot-card">
+                                <div class="bot-header">
+                                    <div class="bot-avatar" style="background: linear-gradient(135deg, #00d68f, #00a86b);">A</div>
+                                    <div>
+                                        <div class="bot-name">Asin</div>
+                                        <div class="bot-role">运营推广</div>
+                                    </div>
+                                </div>
+                                <div class="bot-stats">产出: 89</div>
+                            </div>
+                            <div class="bot-card">
+                                <div class="bot-header">
+                                    <div class="bot-avatar" style="background: linear-gradient(135deg, #d4a849, #b8941f);">M</div>
+                                    <div>
+                                        <div class="bot-name">Mumu</div>
+                                        <div class="bot-role">培训咨询</div>
+                                    </div>
+                                </div>
+                                <div class="bot-stats">产出: 45</div>
+                            </div>
+                            <div class="bot-card">
+                                <div class="bot-header">
+                                    <div class="bot-avatar" style="background: linear-gradient(135deg, #00d4ff, #0099cc);">M</div>
+                                    <div>
+                                        <div class="bot-name">Melody</div>
+                                        <div class="bot-role">设计创意</div>
+                                    </div>
+                                </div>
+                                <div class="bot-stats">产出: 234</div>
+                            </div>
+                            <div class="bot-card">
+                                <div class="bot-header">
+                                    <div class="bot-avatar" style="background: linear-gradient(135deg, #ff6b6b, #ee5a5a);">S</div>
+                                    <div>
+                                        <div class="bot-name">Sean</div>
+                                        <div class="bot-role">系统运维</div>
+                                    </div>
+                                </div>
+                                <div class="bot-stats">产出: 67</div>
+                            </div>
+                            <div class="bot-card">
+                                <div class="bot-header">
+                                    <div class="bot-avatar" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">C</div>
+                                    <div>
+                                        <div class="bot-name">Chenlu</div>
+                                        <div class="bot-role">技术开发</div>
+                                    </div>
+                                </div>
+                                <div class="bot-stats">产出: 123</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Event Stream -->
+                        <div class="event-section">
+                            <div class="section-title">EVENT STREAM</div>
+                            <div class="event-item">
+                                <div class="event-time">10:08</div>
+                                <div class="event-text">Charles 早报更新</div>
+                            </div>
+                            <div class="event-item">
+                                <div class="event-time">09:17</div>
+                                <div class="event-text">Melody IP形象定稿</div>
+                            </div>
+                            <div class="event-item">
+                                <div class="event-time">08:55</div>
+                                <div class="event-text">Mumu 培训课程更新</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="phone-label">📱 iPhone 14 Pro - 当前效果</div>
+            </div>
+            
+            <!-- 适配后 -->
+            <div class="phone-frame">
+                <div class="phone-screen">
+                    <div class="solution-badge">✅ 适配后</div>
+                    <div class="demo-before">
+                        <div class="demo-header">
+                            <div class="demo-logo">OPENCLAW</div>
+                            <div class="demo-status">● LIVE</div>
+                        </div>
+                        
+                        <!-- Bot Cards - 适配后 -->
+                        <div class="bot-grid-after">
+                            <div class="bot-card-after">
+                                <div class="bot-avatar-after">C</div>
+                                <div class="bot-info-after">
+                                    <div class="bot-name-after">Charles</div>
+                                    <div class="bot-role-after">内容策划 · 产出 156</div>
+                                </div>
+                                <div class="bot-status-dot"></div>
+                            </div>
+                            
+                            <div class="bot-card-after">
+                                <div class="bot-avatar-after" style="background: linear-gradient(135deg, #00d68f, #00a86b);">A</div>
+                                <div class="bot-info-after">
+                                    <div class="bot-name-after">Asin</div>
+                                    <div class="bot-role-after">运营推广 · 产出 89</div>
+                                </div>
+                                <div class="bot-status-dot"></div>
+                            </div>
+                            
+                            <div class="bot-card-after">
+                                <div class="bot-avatar-after" style="background: linear-gradient(135deg, #d4a849, #b8941f);">M</div>
+                                <div class="bot-info-after">
+                                    <div class="bot-name-after">Mumu</div>
+                                    <div class="bot-role-after">培训咨询 · 产出 45</div>
+                                </div>
+                                <div class="bot-status-dot"></div>
+                            </div>
+                            
+                            <div class="bot-card-after">
+                                <div class="bot-avatar-after" style="background: linear-gradient(135deg, #00d4ff, #0099cc);">M</div>
+                                <div class="bot-info-after">
+                                    <div class="bot-name-after">Melody</div>
+                                    <div class="bot-role-after">设计创意 · 产出 234</div>
+                                </div>
+                                <div class="bot-status-dot"></div>
+                            </div>
+                            
+                            <div class="bot-card-after">
+                                <div class="bot-avatar-after" style="background: linear-gradient(135deg, #ff6b6b, #ee5a5a);">S</div>
+                                <div class="bot-info-after">
+                                    <div class="bot-name-after">Sean</div>
+                                    <div class="bot-role-after">系统运维 · 产出 67</div>
+                                </div>
+                                <div class="bot-status-dot"></div>
+                            </div>
+                            
+                            <div class="bot-card-after">
+                                <div class="bot-avatar-after" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">C</div>
+                                <div class="bot-info-after">
+                                    <div class="bot-name-after">Chenlu</div>
+                                    <div class="bot-role-after">技术开发 · 产出 123</div>
+                                </div>
+                                <div class="bot-status-dot"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Event Stream - 适配后 -->
+                        <div class="event-section">
+                            <div class="section-title">EVENT STREAM</div>
+                            
+                            <div class="event-item-after">
+                                <div class="event-header-after">
+                                    <div class="event-bot-after">Charles</div>
+                                    <div class="event-time-after">今天 10:08</div>
+                                </div>
+                                <div class="event-text-after">早报更新完成，已推送至公
+众号</div>
+                            </div>
+                            
+                            <div class="event-item-after">
+                                <div class="event-header-after">
+                                    <div class="event-bot-after">Melody</div>
+                                    <div class="event-time-after">今天 09:17</div>
+                                </div>
+                                <div class="event-text-after">IP形象定稿，包含3个变体
+设计</div>
+                            </div>
+                            
+                            <div class="event-item-after">
+                                <div class="event-header-after">
+                                    <div class="event-bot-after">Mumu</div>
+                                    <div class="event-time-after">今天 08:55</div>
+                                </div>
+                                <div class="event-text-after">培训课程勾选表更新，新增
+AI赋能模块</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="phone-label">📱 iPhone 14 Pro - 适配后效果</div>
+            </div>
+        </div>
+        
+        <!-- 修改说明 -->
+        <div class="changes-section">
+            <h2>🛠️ 具体修改内容</h2>
+            
+            <div class="change-item">
+                <div class="change-icon improve">📐</div>
+                <div class="change-content">
+                    <h3>布局优化：双列 → 单列</h3>
+                    <p>手机屏幕宽度有限，6个Bot卡片从双列布局改为单列纵向排列，避免信息拥挤，每个卡片都有足够的展示空间。</p>
+                    <div class="code-preview">
+<span class="comment">/* 移动端单列布局 */</span>
+<span class="selector">@media (max-width: 640px)</span> {
+  <span class="selector">.bot-grid</span> {
+    <span class="property">grid-template-columns</span>: <span class="value">1fr</span>;
+    <span class="property">gap</span>: <span class="value">12px</span>;
+  }
+}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="change-item">
+                <div class="change-icon improve">👆</div>
+                <div class="change-content">
+                    <h3>触摸优化：增大点击区域</h3>
+                    <p>将Bot卡片改为横向布局，头像增大到48px，整个卡片可点击，符合 iOS 人机界面指南的 44px 最小点击区域要求。</p>
+                    <div class="code-preview">
+<span class="comment">/* 触摸反馈 */</span>
+<span class="selector">.bot-card</span> {
+  <span class="property">min-height</span>: <span class="value">44px</span>;
+}
+
+<span class="selector">.bot-card:active</span> {
+  <span class="property">transform</span>: <span class="value">scale(0.98)</span>;
+  <span class="property">opacity</span>: <span class="value">0.9</span>;
+}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="change-item">
+                <div class="change-icon add">📱</div>
+                <div class="change-content">
+                    <h3>Event Stream 重新设计</h3>
+                    <p>时间轴从横向改为纵向卡片式布局，每个事件独立成卡片，显示Bot名称、时间、完整描述，信息层次更清晰。</p>
+                    <div class="code-preview">
+<span class="comment">/* 移动端Event Stream */</span>
+<span class="selector">.event-item</span> {
+  <span class="property">padding</span>: <span class="value">12px 0</span>;
+  <span class="property">border-bottom</span>: <span class="value">1px solid rgba(255,255,255,0.05)</span>;
+}
+
+<span class="selector">.event-bot</span> {
+  <span class="property">font-size</span>: <span class="value">12px</span>;
+  <span class="property">color</span>: <span class="value">#e94584</span>;
+}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="change-item">
+                <div class="change-icon fix">🔤</div>
+                <div class="change-content">
+                    <h3>字体大小优化</h3>
+                    <p>增大基础字体到16px（防止iOS自动缩放），调整标题、正文、辅助文字的层级关系，确保小屏幕可读性。</p>
+                    <div class="code-preview">
+<span class="comment">/* 防止iOS缩放 */</span>
+<span class="selector">@media (max-width: 640px)</span> {
+  <span class="selector">body</span> {
+    <span class="property">font-size</span>: <span class="value">16px</span>;
+  }
+  
+  <span class="selector">.section-title</span> {
+    <span class="property">font-size</span>: <span class="value">11px</span>;
+  }
+  
+  <span class="selector">.bot-name</span> {
+    <span class="property">font-size</span>: <span class="value">14px</span>;
+  }
+}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部按钮 -->
+        <div class="action-buttons">
+            <button class="btn btn-primary" onclick="confirmAdapt()">✅ 确认适配方案</button>
+            <button class="btn btn-secondary" onclick="showFeedback()">💬 需要调整</button>
+        </div>
+        
+        <div class="footer">
+            <p>OPENCLAW Dashboard - 手机端适配预览</p>
+            <p style="margin-top: 10px;">在手机上打开此页面可查看真实效果</p>
+        </div>
+    </div>
+    
+    <script>
+        function confirmAdapt() {
+            alert('✅ 已确认！\n\n晨露将立即实施手机端适配，预计10分钟完成。');
+        }
+        
+        function showFeedback() {
+            var feedback = prompt('💬 请告诉我需要调整的地方：\n\n例如：\n- 字体太小\n- 颜色不喜欢\n- 布局需要修改\n\n您的反馈：');
+            if (feedback) {
+                alert('📝 收到反馈：' + feedback + '\n\n晨露会根据您的意见调整方案！');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片素材库</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #5c6bc0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .logo:hover { color: #3f51b5; }
+
+        /* 面包屑 */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            color: #666;
+        }
+
+        .breadcrumb span {
+            cursor: pointer;
+            color: #5c6bc0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .breadcrumb span:hover {
+            background: #e8eaf6;
+        }
+
+        .breadcrumb .separator {
+            color: #ccc;
+            cursor: default;
+        }
+
+        .breadcrumb .current {
+            color: #333;
+            font-weight: bold;
+            cursor: default;
+        }
+
+        .breadcrumb .current:hover {
+            background: transparent;
+        }
+
+        /* 搜索栏 */
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-input {
+            padding: 8px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            width: 250px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: #5c6bc0;
+        }
+
+        .search-btn {
+            background: #5c6bc0;
+            color: #fff;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .search-btn:hover { background: #3f51b5; }
+
+        /* 搜索结果提示 */
+        .search-result-info {
+            background: #fff3cd;
+            color: #856404;
+            padding: 8px 20px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #ffc107;
+            display: none;
+        }
+
+        .search-result-info.show { display: block; }
+        .search-result-info .clear-search {
+            margin-left: 10px;
+            color: #5c6bc0;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* 主体 */
+        .main {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 25px 30px;
+        }
+
+        /* 分类网格 */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .folder-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 25px 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            user-select: none;
+        }
+
+        .folder-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+            background: #e8eaf6;
+        }
+
+        .folder-icon {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+        }
+
+        .folder-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #444;
+        }
+
+        .folder-count {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        /* 图片网格 */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .image-card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .image-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+        }
+
+        .image-card.selected {
+            outline: 3px solid #5c6bc0;
+            outline-offset: -3px;
+        }
+
+        .image-card .checkbox {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: #5c6bc0;
+            transform: scale(1.3);
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            cursor: pointer;
+            display: block;
+        }
+
+        .image-info {
+            padding: 10px 12px;
+        }
+
+        .image-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+
+        .image-date {
+            font-size: 0.7rem;
+            color: #999;
+        }
+
+        .image-actions {
+            display: flex;
+            gap: 6px;
+            padding: 0 12px 10px;
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-download-sm {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .btn-download-sm:hover { background: #c8e6c9; }
+
+        .btn-delete-sm {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .btn-delete-sm:hover { background: #ffcdd2; }
+
+        /* 工具栏 */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #5c6bc0;
+            color: #fff;
+        }
+
+        .btn-primary:hover { background: #3f51b5; }
+
+        .btn-outline {
+            background: #fff;
+            color: #5c6bc0;
+            border: 2px solid #5c6bc0;
+        }
+
+        .btn-outline:hover { background: #e8eaf6; }
+
+        .btn-danger {
+            background: #fff;
+            color: #c62828;
+            border: 2px solid #c62828;
+        }
+
+        .btn-danger:hover { background: #ffebee; }
+
+        .btn-success {
+            background: #2e7d32;
+            color: #fff;
+        }
+
+        .btn-success:hover { background: #1b5e20; }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .select-all-label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .select-all-label input {
+            accent-color: #5c6bc0;
+            transform: scale(1.1);
+        }
+
+        /* 上传弹窗 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            display: none;
+        }
+
+        .modal-overlay.show { display: flex; }
+
+        .modal {
+            background: #fff;
+            border-radius: 16px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal h3 {
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .form-group select, .form-group input[type="text"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group select:focus, .form-group input[type="text"]:focus {
+            border-color: #5c6bc0;
+        }
+
+        .upload-drop-zone {
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #fafafa;
+        }
+
+        .upload-drop-zone:hover, .upload-drop-zone.drag-over {
+            border-color: #5c6bc0;
+            background: #e8eaf6;
+        }
+
+        .upload-drop-zone .icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .file-list {
+            margin-top: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 10px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+        }
+
+        .file-item .remove-file {
+            color: #c62828;
+            cursor: pointer;
+            font-weight: bold;
+            padding: 2px 8px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        /* 图片预览弹窗 */
+        .preview-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            display: none;
+            cursor: pointer;
+        }
+
+        .preview-overlay.show { display: flex; }
+
+        .preview-overlay img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .preview-close {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #fff;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 301;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            z-index: 400;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 12px;
+                padding: 12px 15px;
+            }
+            .header-left { flex-wrap: wrap; justify-content: center; }
+            .search-input { width: 180px; }
+            .grid { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; }
+            .image-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+            .folder-card { padding: 18px 10px; }
+            .folder-icon { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部 -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo" onclick="navigateTo('home')">📦 图片素材库</div>
+            <div class="breadcrumb" id="breadcrumb"></div>
+        </div>
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" placeholder="搜索图片名称...">
+            <button class="search-btn" onclick="searchImages()">🔍 搜索</button>
+        </div>
+    </div>
+
+    <!-- 搜索结果提示 -->
+    <div class="search-result-info" id="searchInfo">
+        <span id="searchInfoText"></span>
+        <span class="clear-search" onclick="clearSearch()">✕ 清除搜索</span>
+    </div>
+
+    <!-- 主体 -->
+    <div class="main" id="mainContent"></div>
+
+    <!-- 上传弹窗 -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal">
+            <h3>📤 上传图片</h3>
+            <div id="uploadTargetInfo" style="margin-bottom:15px;color:#5c6bc0;font-weight:600;"></div>
+            <div class="form-group">
+                <label>选择月份</label>
+                <select id="uploadMonth">
+                    <option value="1月">1月</option><option value="2月">2月</option><option value="3月">3月</option>
+                    <option value="4月">4月</option><option value="5月">5月</option><option value="6月">6月</option>
+                    <option value="7月">7月</option><option value="8月">8月</option><option value="9月">9月</option>
+                    <option value="10月">10月</option><option value="11月">11月</option><option value="12月">12月</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>选择大分类</label>
+                <select id="uploadBigCat" onchange="updateUploadSmallCat()">
+                    <option value="Top款">Top款</option>
+                    <option value="痛点款">痛点款</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>选择小分类</label>
+                <select id="uploadSmallCat"></select>
+            </div>
+            <div class="upload-drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                <div class="icon">🖼️</div>
+                <div>点击选择图片 或 拖拽图片到这里</div>
+                <div style="color:#999;font-size:0.8rem;margin-top:5px;">支持批量上传</div>
+            </div>
+            <input type="file" id="fileInput" multiple accept="image/*" style="display:none" onchange="handleFiles(this.files)">
+            <div class="file-list" id="fileList"></div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeUploadModal()">取消</button>
+                <button class="btn btn-primary" id="uploadBtn" onclick="uploadImages()" disabled>上传图片</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图片预览弹窗 -->
+    <div class="preview-overlay" id="previewOverlay" onclick="closePreview()">
+        <span class="preview-close">✕</span>
+        <img id="previewImg" src="" alt="预览">
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ==================== 数据管理 ====================
+
+        // 数据结构
+        // {
+        //   "1月": {
+        //     "Top款": {
+        //       "强烈推荐": [ { name, dataUrl, date }, ... ],
+        //       "一般推荐": [ ... ],
+        //       "基础参考": [ ... ]
+        //     },
+        //     "痛点款": {
+        //       "版型": [ ... ],
+        //       "配色": [ ... ],
+        //       "面料": [ ... ],
+        //       "图案": [ ... ]
+        //     }
+        //   },
+        //   ... 2月到12月
+        // }
+
+        const MONTHS = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+        const BIG_CATS = ['Top款', '痛点款'];
+        const TOP_SUB = ['强烈推荐', '一般推荐', '基础参考'];
+        const PAIN_SUB = ['版型', '配色', '面料', '图案'];
+
+        function getDefaultData() {
+            const data = {};
+            MONTHS.forEach(month => {
+                data[month] = {};
+                data[month]['Top款'] = {};
+                TOP_SUB.forEach(sub => { data[month]['Top款'][sub] = []; });
+                data[month]['痛点款'] = {};
+                PAIN_SUB.forEach(sub => { data[month]['痛点款'][sub] = []; });
+            });
+            return data;
+        }
+
+        // 从 localStorage 加载数据
+        function loadData() {
+            const raw = localStorage.getItem('imageLibData');
+            if (raw) {
+                try {
+                    return JSON.parse(raw);
+                } catch(e) {
+                    return getDefaultData();
+                }
+            }
+            return getDefaultData();
+        }
+
+        // 保存数据到 localStorage
+        function saveData(data) {
+            localStorage.setItem('imageLibData', JSON.stringify(data));
+        }
+
+        let imageData = loadData();
+
+        // 当前浏览状态
+        let currentView = 'home'; // 'home' | 'month' | 'bigcat' | 'smallcat'
+        let currentMonth = null;
+        let currentBigCat = null;
+        let currentSmallCat = null;
+
+        // 搜索状态
+        let searchMode = false;
+        let searchResults = [];
+
+        // 上传相关
+        let pendingFiles = [];
+
+        // 选择相关
+        let selectedImages = new Set();
+
+        // ==================== 工具函数 ====================
+
+        function toast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            clearTimeout(t._timeout);
+            t._timeout = setTimeout(() => t.classList.remove('show'), 2000);
+        }
+
+        function updateBreadcrumb() {
+            const bc = document.getElementById('breadcrumb');
+            let html = '<span onclick="navigateTo(\'home\')">首页</span>';
+            if (currentView === 'month' || currentView === 'bigcat' || currentView === 'smallcat') {
+                html += '<span class="separator">›</span>';
+                if (currentView === 'month') {
+                    html += '<span class="current">' + currentMonth + '</span>';
+                } else {
+                    html += '<span onclick="navigateTo(\'month\', \'' + currentMonth + '\')">' + currentMonth + '</span>';
+                    html += '<span class="separator">›</span>';
+                    if (currentView === 'bigcat') {
+                        html += '<span class="current">' + currentBigCat + '</span>';
+                    } else {
+                        html += '<span onclick="navigateTo(\'bigcat\', \'' + currentMonth + '\', \'' + currentBigCat + '\')">' + currentBigCat + '</span>';
+                        html += '<span class="separator">›</span>';
+                        html += '<span class="current">' + currentSmallCat + '</span>';
+                    }
+                }
+            }
+            document.getElementById('breadcrumb').innerHTML = html;
+        }
+
+        function navigateTo(view, month, bigCat, smallCat) {
+            currentView = view;
+            currentMonth = month || null;
+            currentBigCat = bigCat || null;
+            currentSmallCat = smallCat || null;
+            selectedImages.clear();
+            updateBreadcrumb();
+            renderView();
+            // 清除搜索
+            if (searchMode) clearSearch();
+        }
+
+        // 获取指定小分类的图片数组
+        function getImages(month, bigCat, smallCat) {
+            if (imageData[month] && imageData[month][bigCat] && imageData[month][bigCat][smallCat]) {
+                return imageData[month][bigCat][smallCat];
+            }
+            return [];
+        }
+
+        // 计数图片
+        function countImages(month, bigCat, smallCat) {
+            return getImages(month, bigCat, smallCat).length;
+        }
+
+        function countBigCatTotal(month, bigCat) {
+            let total = 0;
+            const subs = bigCat === 'Top款' ? TOP_SUB : PAIN_SUB;
+            subs.forEach(sub => { total += countImages(month, bigCat, sub); });
+            return total;
+        }
+
+        function countMonthTotal(month) {
+            let total = 0;
+            BIG_CATS.forEach(cat => { total += countBigCatTotal(month, cat); });
+            return total;
+        }
+
+        // ==================== 渲染 ====================
+
+        function renderView() {
+            const main = document.getElementById('mainContent');
+            if (searchMode) {
+                renderSearchResults();
+                return;
+            }
+            if (currentView === 'home') renderHome(main);
+            else if (currentView === 'month') renderMonth(main);
+            else if (currentView === 'bigcat') renderBigCat(main);
+            else if (currentView === 'smallcat') renderSmallCat(main);
+            updateToolbar();
+        }
+
+        function renderHome(main) {
+            let html = '<div class="toolbar"><div class="toolbar-left"><span class="toolbar-title">📅 选择月份</span></div>';
+            html += '<button class="btn btn-primary" onclick="openUploadModal()">📤 上传图片</button></div>';
+            html += '<div class="grid">';
+            MONTHS.forEach(month => {
+                const total = countMonthTotal(month);
+                html += '<div class="folder-card" onclick="navigateTo(\'month\', \'' + month + '\')">';
+                html += '<div class="folder-icon">📁</div>';
+                html += '<div class="folder-name">' + month + '</div>';
+                html += '<div class="folder-count">' + total + ' 张图片</div>';
+                html += '</div>';
+            });
+            html += '</div>';
+            main.innerHTML = html;
+        }
+
+        function renderMonth(main) {
+            let html = '<div class="toolbar"><div class="toolbar-left"><span class="toolbar-title">' + currentMonth + '</span></div>';
+            html += '<button class="btn btn-primary" onclick="openUploadModal(\'' + currentMonth + '\')">📤 上传图片</button></div>';
+            html += '<div class="grid">';
+            BIG_CATS.forEach(cat => {
+                const total = countBigCatTotal(currentMonth, cat);
+                const icon = cat === 'Top款' ? '⭐' : '💡';
+                html += '<div class="folder-card" onclick="navigateTo(\'bigcat\', \'' + currentMonth + '\', \'' + cat + '\')">';
+                html += '<div class="folder-icon">' + icon + '</div>';
+                html += '<div class="folder-name">' + cat + '</div>';
+                html += '<div class="folder-count">' + total + ' 张图片</div>';
+                html += '</div>';
+            });
+            html += '</div>';
+            main.innerHTML = html;
+        }
+
+        function renderBigCat(main) {
+            const subs = currentBigCat === 'Top款' ? TOP_SUB : PAIN_SUB;
+            const icons = currentBigCat === 'Top款' ? ['🔥','👍','📋'] : ['👔','🎨','🧵','🎯'];
+            let html = '<div class="toolbar"><div class="toolbar-left"><span class="toolbar-title">' + currentMonth + ' · ' + currentBigCat + '</span></div>';
+            html += '<button class="btn btn-primary" onclick="openUploadModal(\'' + currentMonth + '\', \'' + currentBigCat + '\')">📤 上传图片</button></div>';
+            html += '<div class="grid">';
+            subs.forEach((sub, i) => {
+                const count = countImages(currentMonth, currentBigCat, sub);
+                html += '<div class="folder-card" onclick="navigateTo(\'smallcat\', \'' + currentMonth + '\', \'' + currentBigCat + '\', \'' + sub + '\')">';
+                html += '<div class="folder-icon">' + (icons[i] || '📁') + '</div>';
+                html += '<div class="folder-name">' + sub + '</div>';
+                html += '<div class="folder-count">' + count + ' 张图片</div>';
+                html += '</div>';
+            });
+            html += '</div>';
+            main.innerHTML = html;
+        }
+
+        function renderSmallCat(main) {
+            const images = getImages(currentMonth, currentBigCat, currentSmallCat);
+            let html = '<div class="toolbar">';
+            html += '<div class="toolbar-left">';
+            html += '<span class="toolbar-title">' + currentMonth + ' · ' + currentBigCat + ' · ' + currentSmallCat + '</span>';
+            html += '<span style="color:#999;font-size:0.85rem;">（共 ' + images.length + ' 张）</span>';
+            html += '</div>';
+            html += '<div style="display:flex;gap:10px;flex-wrap:wrap;">';
+            html += '<button class="btn btn-primary" onclick="openUploadModal(\'' + currentMonth + '\', \'' + currentBigCat + '\', \'' + currentSmallCat + '\')">📤 上传到此</button>';
+            html += '<button class="btn btn-success" id="batchDownloadBtn" onclick="batchDownload()" disabled>📥 下载选中</button>';
+            html += '<button class="btn btn-outline" onclick="toggleSelectAll()">☑️ 全选/取消</button>';
+            html += '<button class="btn btn-danger" id="batchDeleteBtn" onclick="batchDelete()" disabled>🗑️ 删除选中</button>';
+            html += '</div>';
+            html += '</div>';
+
+            if (images.length === 0) {
+                html += '<div class="empty-state"><div class="icon">📭</div><p>暂无图片，点击上方按钮上传</p></div>';
+            } else {
+                html += '<div class="image-grid">';
+                images.forEach((img, index) => {
+                    const selClass = selectedImages.has(index) ? ' selected' : '';
+                    html += '<div class="image-card' + selClass + '" id="card-' + index + '">';
+                    html += '<input type="checkbox" class="checkbox" ' + (selectedImages.has(index) ? 'checked' : '') + ' onchange="toggleSelect(' + index + ', this.checked)" onclick="event.stopPropagation()">';
+                    html += '<img class="image-preview" src="' + img.dataUrl + '" alt="' + img.name + '" onclick="previewImage(\'' + img.dataUrl + '\')" loading="lazy">';
+                    html += '<div class="image-info">';
+                    html += '<div class="image-name" title="' + img.name + '">' + img.name + '</div>';
+                    html += '<div class="image-date">' + (img.date || '未知日期') + '</div>';
+                    html += '</div>';
+                    html += '<div class="image-actions">';
+                    html += '<button class="btn-sm btn-download-sm" onclick="downloadSingle(\'' + img.dataUrl + '\', \'' + img.name + '\')">⬇ 下载</button>';
+                    html += '<button class="btn-sm btn-delete-sm" onclick="deleteSingle(' + index + ')">✕ 删除</button>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '</div>';
+            }
+            main.innerHTML = html;
+            updateBatchButtons();
+        }
+
+        function renderSearchResults() {
+            const main = document.getElementById('mainContent');
+            let html = '<div class="toolbar"><div class="toolbar-left"><span class="toolbar-title">🔍 搜索结果</span>';
+            html += '<span style="color:#999;font-size:0.85rem;">（共 ' + searchResults.length + ' 张）</span>';
+            html += '</div></div>';
+
+            if (searchResults.length === 0) {
+                html += '<div class="empty-state"><div class="icon">🔍</div><p>未找到匹配的图片</p></div>';
+            } else {
+                html += '<div class="image-grid">';
+                searchResults.forEach((item, index) => {
+                    html += '<div class="image-card">';
+                    html += '<img class="image-preview" src="' + item.img.dataUrl + '" alt="' + item.img.name + '" onclick="previewImage(\'' + item.img.dataUrl + '\')" loading="lazy">';
+                    html += '<div class="image-info">';
+                    html += '<div class="image-name" title="' + item.img.name + '">' + item.img.name + '</div>';
+                    html += '<div class="image-date" style="color:#5c6bc0;">' + item.month + ' · ' + item.bigCat + ' · ' + item.smallCat + '</div>';
+                    html += '</div>';
+                    html += '<div class="image-actions">';
+                    html += '<button class="btn-sm btn-download-sm" onclick="downloadSingle(\'' + item.img.dataUrl + '\', \'' + item.img.name + '\')">⬇ 下载</button>';
+                    html += '<button class="btn-sm" style="background:#e8eaf6;color:#5c6bc0;" onclick="navigateTo(\'smallcat\', \'' + item.month + '\', \'' + item.bigCat + '\', \'' + item.smallCat + '\')">📂 定位</button>';
+                    html += '</div>';
+                    html += '</div>';
+                });
+                html += '</div>';
+            }
+            main.innerHTML = html;
+        }
+
+        function updateToolbar() {
+            // 在非 smallcat 视图隐藏批处理按钮
+        }
+
+        function updateBatchButtons() {
+            const batchDownloadBtn = document.getElementById('batchDownloadBtn');
+            const batchDeleteBtn = document.getElementById('batchDeleteBtn');
+            if (batchDownloadBtn) {
+                batchDownloadBtn.disabled = selectedImages.size === 0;
+            }
+            if (batchDeleteBtn) {
+                batchDeleteBtn.disabled = selectedImages.size === 0;
+            }
+        }
+
+        // ==================== 选择与操作 ====================
+
+        function toggleSelect(index, checked) {
+            if (checked) {
+                selectedImages.add(index);
+            } else {
+                selectedImages.delete(index);
+            }
+            const card = document.getElementById('card-' + index);
+            if (card) {
+                if (checked) card.classList.add('selected');
+                else card.classList.remove('selected');
+            }
+            updateBatchButtons();
+        }
+
+        function toggleSelectAll() {
+            const images = getImages(currentMonth, currentBigCat, currentSmallCat);
+            if (selectedImages.size === images.length) {
+                // 全部取消
+                selectedImages.clear();
+                images.forEach((_, i) => {
+                    const card = document.getElementById('card-' + i);
+                    if (card) card.classList.remove('selected');
+                    const cb = card ? card.querySelector('.checkbox') : null;
+                    if (cb) cb.checked = false;
+                });
+            } else {
+                // 全部选中
+                images.forEach((_, i) => {
+                    selectedImages.add(i);
+                    const card = document.getElementById('card-' + i);
+                    if (card) card.classList.add('selected');
+                    const cb = card ? card.querySelector('.checkbox') : null;
+                    if (cb) cb.checked = true;
+                });
+            }
+            updateBatchButtons();
+        }
+
+        function downloadSingle(dataUrl, name) {
+            const a = document.createElement('a');
+            a.href = dataUrl;
+            a.download = name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            toast('✅ 下载成功');
+        }
+
+        function batchDownload() {
+            const images = getImages(currentMonth, currentBigCat, currentSmallCat);
+            const indices = Array.from(selectedImages).sort((a,b) => a-b);
+            if (indices.length === 0) return;
+            // 逐个下载
+            indices.forEach((idx, i) => {
+                setTimeout(() => {
+                    downloadSingle(images[idx].dataUrl, images[idx].name);
+                }, i * 300);
+            });
+            toast('📥 正在下载 ' + indices.length + ' 张图片...');
+        }
+
+        function deleteSingle(index) {
+            if (!confirm('确定删除这张图片吗？此操作不可恢复！')) return;
+            const images = getImages(currentMonth, currentBigCat, currentSmallCat);
+            images.splice(index, 1);
+            saveData(imageData);
+            selectedImages.delete(index);
+            // 更新其他选中索引
+            const newSelected = new Set();
+            selectedImages.forEach(i => {
+                if (i > index) newSelected.add(i - 1);
+                else newSelected.add(i);
+            });
+            selectedImages = newSelected;
+            renderView();
+            toast('🗑️ 已删除');
+        }
+
+        function batchDelete() {
+            const images = getImages(currentMonth, currentBigCat, currentSmallCat);
+            const indices = Array.from(selectedImages).sort((a,b) => b-a); // 从大到小
+            if (indices.length === 0) return;
+            if (!confirm('确定删除选中的 ' + indices.length + ' 张图片吗？此操作不可恢复！')) return;
+            indices.forEach(i => images.splice(i, 1));
+            saveData(imageData);
+            selectedImages.clear();
+            renderView();
+            toast('🗑️ 已删除 ' + indices.length + ' 张图片');
+        }
+
+        // ==================== 搜索 ====================
+
+        function searchImages() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            if (!query) {
+                toast('请输入搜索关键词');
+                return;
+            }
+            searchMode = true;
+            searchResults = [];
+            MONTHS.forEach(month => {
+                BIG_CATS.forEach(bigCat => {
+                    const subs = bigCat === 'Top款' ? TOP_SUB : PAIN_SUB;
+                    subs.forEach(smallCat => {
+                        const images = getImages(month, bigCat, smallCat);
+                        images.forEach(img => {
+                            if (img.name.toLowerCase().includes(query)) {
+                                searchResults.push({ month, bigCat, smallCat, img });
+                            }
+                        });
+                    });
+                });
+            });
+            currentView = 'home';
+            document.getElementById('searchInfo').classList.add('show');
+            document.getElementById('searchInfoText').textContent = '🔍 搜索 "' + query + '" 找到 ' + searchResults.length + ' 张图片';
+            renderView();
+        }
+
+        function clearSearch() {
+            searchMode = false;
+            searchResults = [];
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchInfo').classList.remove('show');
+            renderView();
+        }
+
+        // 搜索框回车
+        document.getElementById('searchInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') searchImages();
+        });
+
+        // ==================== 图片预览 ====================
+
+        function previewImage(dataUrl) {
+            document.getElementById('previewImg').src = dataUrl;
+            document.getElementById('previewOverlay').classList.add('show');
+        }
+
+        function closePreview() {
+            document.getElementById('previewOverlay').classList.remove('show');
+        }
+
+        // ESC 关闭预览
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePreview();
+                closeUploadModal();
+            }
+        });
+
+        // ==================== 上传弹窗 ====================
+
+        function updateUploadSmallCat() {
+            const bigCat = document.getElementById('uploadBigCat').value;
+            const select = document.getElementById('uploadSmallCat');
+            select.innerHTML = '';
+            const subs = bigCat === 'Top款' ? TOP_SUB : PAIN_SUB;
+            subs.forEach(sub => {
+                const opt = document.createElement('option');
+                opt.value = sub;
+                opt.textContent = sub;
+                select.appendChild(opt);
+            });
+        }
+        updateUploadSmallCat();
+
+        function openUploadModal(prefillMonth, prefillBigCat, prefillSmallCat) {
+            if (prefillMonth) document.getElementById('uploadMonth').value = prefillMonth;
+            if (prefillBigCat) {
+                document.getElementById('uploadBigCat').value = prefillBigCat;
+                updateUploadSmallCat();
+            }
+            if (prefillSmallCat) document.getElementById('uploadSmallCat').value = prefillSmallCat;
+
+            const targetInfo = document.getElementById('uploadTargetInfo');
+            const m = document.getElementById('uploadMonth').value;
+            const b = document.getElementById('uploadBigCat').value;
+            const s = document.getElementById('uploadSmallCat').value;
+            targetInfo.textContent = '📍 上传到：' + m + ' › ' + b + ' › ' + s;
+
+            document.getElementById('uploadModal').classList.add('show');
+            pendingFiles = [];
+            updateFileList();
+            updateUploadBtn();
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.remove('show');
+            pendingFiles = [];
+            updateFileList();
+            document.getElementById('fileInput').value = '';
+        }
+
+        function handleFiles(files) {
+            for (let f of files) {
+                if (f.type.startsWith('image/')) {
+                    pendingFiles.push(f);
+                }
+            }
+            updateFileList();
+            updateUploadBtn();
+            document.getElementById('fileInput').value = '';
+        }
+
+        function removePendingFile(index) {
+            pendingFiles.splice(index, 1);
+            updateFileList();
+            updateUploadBtn();
+        }
+
+        function updateFileList() {
+            const list = document.getElementById('fileList');
+            if (pendingFiles.length === 0) {
+                list.innerHTML = '<div style="color:#999;font-size:0.85rem;">暂未选择文件</div>';
+            } else {
+                let html = '';
+                pendingFiles.forEach((f, i) => {
+                    html += '<div class="file-item"><span>📄 ' + f.name + ' (' + formatSize(f.size) + ')</span><span class="remove-file" onclick="removePendingFile(' + i + ')">✕</span></div>';
+                });
+                list.innerHTML = html;
+            }
+        }
+
+        function updateUploadBtn() {
+            document.getElementById('uploadBtn').disabled = pendingFiles.length === 0;
+        }
+
+        function formatSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        function uploadImages() {
+            if (pendingFiles.length === 0) return;
+            const month = document.getElementById('uploadMonth').value;
+            const bigCat = document.getElementById('uploadBigCat').value;
+            const smallCat = document.getElementById('uploadSmallCat').value;
+
+            let loaded = 0;
+            const total = pendingFiles.length;
+
+            pendingFiles.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = {
+                        name: file.name,
+                        dataUrl: e.target.result,
+                        date: new Date().toLocaleDateString('zh-CN')
+                    };
+                    imageData[month][bigCat][smallCat].push(img);
+                    loaded++;
+                    if (loaded === total) {
+                        saveData(imageData);
+                        closeUploadModal();
+                        renderView();
+                        toast('✅ 成功上传 ' + total + ' 张图片');
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // 拖拽上传
+        const dropZone = document.getElementById('dropZone');
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        });
+        dropZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+        });
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        // 点击弹窗外部关闭
+        document.getElementById('uploadModal').addEventListener('click', function(e) {
+            if (e.target === this) closeUploadModal();
+        });
+
+        // ==================== 初始化 ====================
+        updateBreadcrumb();
+        renderView();
+
+        console.log('✅ 图片素材库已就绪');
+        console.log('📦 总月份数：' + MONTHS.length);
+        console.log('💾 数据存储：localStorage');
+    </script>
+</body>
+</html>
