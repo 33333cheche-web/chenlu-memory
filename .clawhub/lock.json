@@ -12,6 +12,10 @@
     "elevenlabs": {
       "version": "1.3.4",
       "installedAt": 1774708193227
+    },
+    "frontend-design-pro": {
+      "version": "1.0.0",
+      "installedAt": 1778138080916
     }
   }
 }

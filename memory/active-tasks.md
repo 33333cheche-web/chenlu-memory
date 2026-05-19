@@ -27,8 +27,8 @@
 - [P1] **记忆系统 v3.0 日常运维**（升级完成，进入习惯养成阶段）
   - 描述：Baby 已完成记忆系统升级，晨露负责日常使用与维护
   - 子任务：
-    - [ ] 每次会话优先调用 `chenlu_mem0_local.py search` 查询记忆
-    - [ ] 遇到偏好/决定/踩坑，立即 `chenlu_mem0_local.py add` 存储
+    - [ ] 每次会话优先调用 mem9 search 查询记忆
+    - [ ] 遇到偏好/决定/踩坑，立即 mem9 add 存储
     - [ ] 每天 22:05 前检查 `memory/daily/YYYY-MM-DD.md` 是否已更新
     - [ ] 每周日配合 `baby_memory_guardian.py` 检查记忆健康度
   - 状态：🔄 进行中
@@ -41,7 +41,7 @@
 ## 已完成（本周归档）
 
 - [P1] **记忆系统整改跟进**（2026-04-13 完成升级配合）
-  - 结果：Baby 完成记忆系统 v3.0 升级，本地 mem0 Server 和 Baby Memory 已就绪
+  - 结果：Baby 完成记忆系统 v3.0 升级，本地 mem9 Server 和 Baby Memory 已就绪
   - 归档到：learnings.md
 
 - [P1] **Dashboard v2.3 定稿部署**（2026-04-16 完成）
