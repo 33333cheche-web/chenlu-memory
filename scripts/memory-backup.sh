@@ -28,8 +28,24 @@ git commit -m "💧 晨露记忆备份 - $DATE" 2>/dev/null || {
     exit 0
 }
 
-# 推送（直接在工作目录 push，不要用临时目录 clone）
-git push origin master >> "$LOG_FILE" 2>&1
+# 推送（带重试机制）
+MAX_RETRIES=3
+RETRY_COUNT=0
+PUSH_SUCCESS=false
 
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] ✅ 备份成功" >> "$LOG_FILE"
-echo "" >> "$LOG_FILE"
+while [ $RETRY_COUNT -lt $MAX_RETRIES ] && [ "$PUSH_SUCCESS" = "false" ]; do
+    RETRY_COUNT=$((RETRY_COUNT + 1))
+    echo "[$DATE] 🚀 Push 尝试 $RETRY_COUNT/$MAX_RETRIES..." >> "$LOG_FILE"
+    
+    if git push origin master >> "$LOG_FILE" 2>&1; then
+        PUSH_SUCCESS=true
+        echo "[$DATE] ✅ Push 成功！" >> "$LOG_FILE"
+    else
+        echo "[$DATE] ❌ Push 失败，等待 30 秒后重试..." >> "$LOG_FILE"
+        sleep 30
+    fi
+done
+
+if [ "$PUSH_SUCCESS" = "false" ]; then
+    echo "[$DATE] ❌ 最终 Push 失败（已重试 $MAX_RETRIES 次）" >> "$LOG_FILE"
+fi

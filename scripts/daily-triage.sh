@@ -5,6 +5,11 @@
 # cron: 每天 23:59 或每小时检查一次
 # ============================================================
 
+# 日志函数
+log() {
+    echo "[$(date '+%Y-%m-%d %H:%M')] $*"
+}
+
 # 获取日期（默认昨天）
 TARGET_DATE="${1:-$(date -d 'yesterday' '+%Y-%m-%d')}"
 TODAY_DATE="$(date '+%Y-%m-%d')"
@@ -18,7 +23,17 @@ P0_DIR="$MEMORY_DIR/P0"
 P1_DIR="$MEMORY_DIR/P1"
 P2_DIR="$MEMORY_DIR/P2"
 
+# 确保目录存在
+mkdir -p "$P0_DIR" "$P1_DIR" "$P2_DIR"
+
 log "开始分拣: $TARGET_DATE"
+
+# 检查今天是否已经分拣过（避免重复）
+P0_FILE="$P0_DIR/${YEAR_MONTH}.md"
+if [[ -f "$P0_FILE" ]] && grep -q "📅 ${TARGET_DATE}" "$P0_FILE" 2>/dev/null; then
+    log "⚠️  ${TARGET_DATE} 已分拣过，跳过"
+    exit 0
+fi
 
 # 检查目标文件（优先根目录，兼容旧路径）
 if [[ -f "$DAILY_FILE" ]]; then

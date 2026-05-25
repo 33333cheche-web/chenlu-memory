@@ -3,7 +3,7 @@
 
 BOT_NAME="chenlu"
 WORKSPACE="$HOME/.openclaw/workspace-${BOT_NAME}"
-DAILY_DIR="${WORKSPACE}/memory/daily"
+DAILY_DIR="${WORKSPACE}/memory"
 TODAY=$(date +%Y-%m-%d)
 REPORT_FILE="${DAILY_DIR}/${TODAY}_日报.md"
 
