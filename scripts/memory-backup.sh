@@ -28,16 +28,24 @@ git commit -m "💧 晨露记忆备份 - $DATE" 2>/dev/null || {
     exit 0
 }
 
-# 推送（带重试机制）
+# 推送（带重试机制）—— 使用环境变量中的token避免泄露
 MAX_RETRIES=3
 RETRY_COUNT=0
 PUSH_SUCCESS=false
+
+# 从环境变量或文件读取token（不要在脚本中硬编码）
+TOKEN="${GITHUB_TOKEN:-$(cat ~/.github_token 2>/dev/null || echo '')}"
+
+if [ -z "$TOKEN" ]; then
+    echo "[$DATE] ❌ 未找到GitHub Token，请设置 GITHUB_TOKEN 环境变量或 ~/.github_token 文件" >> "$LOG_FILE"
+    exit 1
+fi
 
 while [ $RETRY_COUNT -lt $MAX_RETRIES ] && [ "$PUSH_SUCCESS" = "false" ]; do
     RETRY_COUNT=$((RETRY_COUNT + 1))
     echo "[$DATE] 🚀 Push 尝试 $RETRY_COUNT/$MAX_RETRIES..." >> "$LOG_FILE"
     
-    if git push origin master >> "$LOG_FILE" 2>&1; then
+    if git push "https://${TOKEN}@github.com/33333cheche-web/chenlu-memory.git" master >> "$LOG_FILE" 2>&1; then
         PUSH_SUCCESS=true
         echo "[$DATE] ✅ Push 成功！" >> "$LOG_FILE"
     else
