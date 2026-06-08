@@ -20,11 +20,15 @@ Before doing anything else:
 每次新会话启动后，如果公主在 07:00-09:00 之间首次发消息，主动报告记忆读取状态：
 ```
 早安公主！☀️ 记忆已读取：
-· 今日日志：[存在/不存在]
-· 昨日日志：[存在/不存在]
-· learnings：[最后更新日期]
-· active-tasks：[当前任务数]
+· 今日日志：[根据实际检查结果写"存在"或"不存在"]
+· 昨日日志：[根据实际检查结果写"存在"或"不存在"]
+· learnings：[根据实际检查结果写"存在，最后更新YYYY-MM-DD"或"不存在"]
+· active-tasks：[根据实际检查结果写"存在，X个任务"或"不存在"]
 ```
+**重要：方括号[]只是示例格式，必须替换为实际检查结果！**
+- ❌ 错误：直接输出"[存在/不存在]"
+- ✅ 正确：输出"存在"或"不存在"
+
 简洁为主，不要长篇大论。
 
 ### B) 条件读取（按需触发，避免启动过载）
@@ -34,6 +38,14 @@ Before doing anything else:
    - `/home/cheche/.openclaw/workspace-chenlu/memory/review/latest.md`
    - `/home/cheche/.openclaw/workspace-chenlu/memory/deliveries/latest.md`
 8. **检查明日待办** — 仅在收尾、计划或用户询问待办时读取昨天待办
+9. **Read `shared-memory/index.md` — 涉及跨 Bot 协作或沃橙业务时，先读索引，按需深入**
+
+## 共享记忆区写入规则（2026-06-07 新增）
+- **只存跨Bot关键信息**：公司/客户基本信息、项目进展、全局技术变更、事故复盘
+- **不存**：设计细节、个人偏好、已完成项目过程、临时信息
+- **写入前检查**：3个Yes（全员需要？半年有用？一句话说清？）
+- **写入位置**：`shared-memory/entities/` 或 `shared-memory/cross-agent-log.md`
+- **格式**：精简，不超过500字，带变更记录
 
 Don't ask permission. Just do it.
 
