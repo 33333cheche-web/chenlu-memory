@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPENCLAW Dashboard V17 - 视觉优化版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0d0d1a 0%, #0a0a2e 50%, #050518 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 2px solid rgba(255,255,255,0.15);
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #00d4ff, #e84393);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            font-size: 1.2em;
+            color: #a0a0a0;
+            margin-top: 10px;
+        }
+        
+        .header .meta {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .meta-item .label {
+            color: #666;
+        }
+        
+        .meta-item .value {
+            color: #00d4ff;
+            font-weight: 600;
+        }
+        
+        /* ===== 视觉优化：卡片样式 ===== */
+        .card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(20px);
+            
+            /* 发光效果 */
+            box-shadow: 
+                0 0 20px rgba(232, 67, 147, 0.15),
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+            
+            /* 粉色边框高光 */
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 粉色立体感装饰 */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(232, 67, 147, 0.6) 20%, 
+                rgba(255, 105, 180, 0.8) 50%, 
+                rgba(232, 67, 147, 0.6) 80%, 
+                transparent 100%);
+            opacity: 0.8;
+        }
+        
+        /* 卡片悬停效果 */
+        .card:hover {
+            border-color: rgba(232, 67, 147, 0.4);
+            box-shadow: 
+                0 0 30px rgba(232, 67, 147, 0.25),
+                0 12px 40px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+        
+        .card h2 {
+            color: #00d4ff;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card h2::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, #00d4ff, #e84393);
+            border-radius: 2px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .status-success {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+        
+        .status-warning {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #00d4ff, #e84393);
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -34px;
+            top: 24px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00d4ff;
+            border: 2px solid #1a1a2e;
+            box-shadow: 0 0 8px rgba(0, 212, 255, 0.6);
+        }
+        
+        .timeline-time {
+            font-size: 0.85em;
+            color: #888;
+            margin-bottom: 8px;
+        }
+        
+        .timeline-title {
+            font-size: 1.1em;
+            color: #fff;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .timeline-content {
+            color: #b0b0b0;
+            font-size: 0.95em;
+        }
+        
+        .timeline-content ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        
+        .timeline-content li {
+            margin: 5px 0;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        /* 小卡片也加立体效果 */
+        .grid-item {
+            background: linear-gradient(145deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+            border-radius: 16px;
+            padding: 20px;
+            border: 2px solid rgba(255,255,255,0.15);
+            box-shadow: 
+                0 4px 16px rgba(0, 0, 0, 0.3),
+                0 0 12px rgba(232, 67, 147, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .grid-item:hover {
+            border-color: rgba(232, 67, 147, 0.3);
+            box-shadow: 
+                0 8px 24px rgba(0, 0, 0, 0.4),
+                0 0 20px rgba(232, 67, 147, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .grid-item h3 {
+            color: #00d4ff;
+            font-size: 1em;
+            margin-bottom: 12px;
+        }
+        
+        .grid-item p, .grid-item li {
+            color: #a0a0a0;
+            font-size: 0.9em;
+            line-height: 1.8;
+        }
+        
+        .grid-item ul {
+            padding-left: 18px;
+        }
+        
+        .code-block {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 15px 0;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85em;
+            color: #c9d1d9;
+            overflow-x: auto;
+            border: 2px solid rgba(255,255,255,0.15);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+        }
+        
+        .code-block .comment {
+            color: #8b949e;
+        }
+        
+        .code-block .keyword {
+            color: #ff7b72;
+        }
+        
+        .code-block .string {
+            color: #a5d6ff;
+        }
+        
+        .highlight-box {
+            background: linear-gradient(145deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 212, 255, 0.05) 100%);
+            border-left: 4px solid #00d4ff;
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 4px 16px rgba(0, 212, 255, 0.1);
+        }
+        
+        .highlight-box.warning {
+            background: linear-gradient(145deg, rgba(255, 193, 7, 0.15) 0%, rgba(255, 193, 7, 0.05) 100%);
+            border-left-color: #ffc107;
+            box-shadow: 0 4px 16px rgba(255, 193, 7, 0.1);
+        }
+        
+        .highlight-box.info {
+            background: linear-gradient(145deg, rgba(232, 67, 147, 0.15) 0%, rgba(232, 67, 147, 0.05) 100%);
+            border-left-color: #e84393;
+            box-shadow: 0 4px 16px rgba(232, 67, 147, 0.1);
+        }
+        
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .checklist li {
+            padding: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .checklist li:last-child {
+            border-bottom: none;
+        }
+        
+        .checklist .check {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75em;
+            flex-shrink: 0;
+        }
+        
+        .check.done {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            border: 2px solid #00ff88;
+        }
+        
+        .check.pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: #ffc107;
+            border: 2px solid #ffc107;
+        }
+        
+        .check.skip {
+            background: rgba(136, 136, 136, 0.2);
+            color: #888;
+            border: 2px solid #888;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 2px solid rgba(255,255,255,0.15);
+            margin-top: 40px;
+            color: #666;
+        }
+        
+        .footer .team {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 20px;
+        }
+        
+        .footer .team-member {
+            text-align: center;
+        }
+        
+        .footer .team-member .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff, #e84393);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            margin: 0 auto 10px;
+            box-shadow: 0 0 15px rgba(232, 67, 147, 0.4);
+        }
+        
+        .footer .team-member .name {
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .footer .team-member .role {
+            font-size: 0.75em;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 添加发光文字效果 */
+        .glow-text {
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+        
+        .glow-text-pink {
+            text-shadow: 0 0 10px rgba(232, 67, 147, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>OPENCLAW Dashboard</h1>
+            <div class="subtitle">V17 部署定稿记录 - 视觉优化版</div>
+            <div class="meta">
+                <div class="meta-item">
+                    <span class="label">版本</span>
+                    <span class="value">V17.2</span>
+                </div>
+                <div class="meta-item">
+                    <span class="label">日期</span>
+                    <span class="value">2026-06-11</span>
+                </div>
+                <div class="meta-item">
+                    <span class="label">状态</span>
+                    <span class="value glow-text">已优化</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 部署概览 -->
+        <div class="card">
+            <h2>部署概览 <span class="status-badge status-success">成功</span></h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-time">2026-05-13 14:00</div>
+                    <div class="timeline-title">部署启动</div>
+                    <div class="timeline-content">
+                        开始 Dashboard V17 版本部署流程
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">2026-05-13 15:30</div>
+                    <div class="timeline-title">视觉优化</div>
+                    <div class="timeline-content">
+                        增加粉色发光边框，提升暗色屏幕显示效果
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">2026-05-13 16:00</div>
+                    <div class="timeline-title">部署完成</div>
+                    <div class="timeline-content">
+                        所有服务正常运行，视觉优化生效
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 视觉优化说明 -->
+        <div class="card">
+            <h2>视觉优化详情</h2>
+            <div class="grid">
+                <div class="grid-item">
+                    <h3>🎨 边框加粗</h3>
+                    <p>边框从 1px 增加到 2px，更清晰可见</p>
+                </div>
+                <div class="grid-item">
+                    <h3>✨ 发光效果</h3>
+                    <p>添加粉色发光阴影，增强视觉层次</p>
+                </div>
+                <div class="grid-item">
+                    <h3>💗 粉色点缀</h3>
+                    <p>顶部粉色渐变线条，增加立体感</p>
+                </div>
+                <div class="grid-item">
+                    <h3>🌟 悬停反馈</h3>
+                    <p>鼠标悬停时增强发光和上浮效果</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技术细节 -->
+        <div class="card">
+            <h2>CSS 调整说明</h2>
+            <div class="code-block">
+<span class="comment">/* 卡片边框加粗 + 发光 */</span>
+<span class="keyword">.card</span> {
+    <span class="keyword">border</span>: <span class="string">2px solid rgba(255,255,255,0.2)</span>;
+    <span class="keyword">box-shadow</span>: 
+        <span class="string">0 0 20px rgba(232, 67, 147, 0.15)</span>,
+        <span class="string">0 8px 32px rgba(0, 0, 0, 0.4)</span>;
+}
+
+<span class="comment">/* 粉色立体感装饰 */</span>
+<span class="keyword">.card::before</span> {
+    <span class="keyword">background</span>: <span class="string">linear-gradient(90deg, transparent, rgba(232,67,147,0.6), rgba(255,105,180,0.8), transparent)</span>;
+}
+            </div>
+        </div>
+
+        <!-- 检查清单 -->
+        <div class="card">
+            <h2>检查清单</h2>
+            <ul class="checklist">
+                <li>
+                    <span class="check done">✓</span>
+                    <span>边框加粗到 2px</span>
+                </li>
+                <li>
+                    <span class="check done">✓</span>
+                    <span>粉色发光阴影效果</span>
+                </li>
+                <li>
+                    <span class="check done">✓</span>
+                    <span>顶部粉色渐变线条</span>
+                </li>
+                <li>
+                    <span class="check done">✓</span>
+                    <span>悬停增强效果</span>
+                </li>
+                <li>
+                    <span class="check done">✓</span>
+                    <span>暗色屏幕对比度优化</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            <div class="team">
+                <div class="team-member">
+                    <div class="avatar">🎨</div>
+                    <div class="name">视觉优化</div>
+                    <div class="role">晨露</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
