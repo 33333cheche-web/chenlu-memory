@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>摸鱼绿 · 公众号排版编辑器</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: #f5f5f5;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  /* 顶部工具栏 */
+  .toolbar {
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    z-index: 100;
+  }
+  .toolbar-group {
+    display: flex;
+    gap: 4px;
+    padding-right: 12px;
+    border-right: 1px solid #e5e7eb;
+    margin-right: 4px;
+  }
+  .toolbar-group:last-child { border-right: none; }
+  .btn {
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    background: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    color: #374151;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .btn:hover { background: #f3f4f6; border-color: #9ca3af; }
+  .btn-primary {
+    background: #059669;
+    color: #fff;
+    border-color: #059669;
+  }
+  .btn-primary:hover { background: #047857; }
+  .btn-small { padding: 4px 8px; font-size: 12px; }
+  /* 主编辑区 */
+  .main {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
+  .editor-pane {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #e5e7eb;
+    background: #fff;
+  }
+  .pane-header {
+    padding: 10px 16px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .editor {
+    flex: 1;
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.8;
+    border: none;
+    outline: none;
+    resize: none;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    color: #374151;
+  }
+  /* 预览区 */
+  .preview-pane {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    background: #f3f4f6;
+  }
+  .preview-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+  }
+  .preview-phone {
+    max-width: 677px;
+    margin: 0 auto;
+    background: #fff;
+    min-height: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    border-radius: 8px;
+  }
+  /* 导出浮层 */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .modal-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .modal-title { font-size: 16px; font-weight: 700; color: #111827; }
+  .modal-close {
+    background: none; border: none; font-size: 20px; cursor: pointer;
+    color: #9ca3af; padding: 4px;
+  }
+  .modal-body {
+    flex: 1;
+    padding: 16px 20px;
+    overflow: auto;
+  }
+  .code-output {
+    width: 100%;
+    min-height: 300px;
+    padding: 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 12px;
+    line-height: 1.6;
+    color: #374151;
+    resize: vertical;
+  }
+  .modal-footer {
+    padding: 12px 20px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .help-text {
+    font-size: 12px;
+    color: #6b7280;
+    padding: 8px 16px;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+  }
+  /* 快捷键提示 */
+  kbd {
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 11px;
+    font-family: monospace;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- 工具栏 -->
+  <div class="toolbar">
+    <div class="toolbar-group">
+      <button class="btn btn-primary" onclick="insertCover()">📰 封面</button>
+      <button class="btn" onclick="insertTOC()">📑 目录</button>
+      <button class="btn" onclick="insertChapter()">📖 章节</button>
+    </div>
+    <div class="toolbar-group">
+      <button class="btn" onclick="insertParagraph()">📝 正文</button>
+      <button class="btn" onclick="insertQuote()">💬 引用</button>
+      <button class="btn" onclick="insertHighlight()">✨ 金句</button>
+      <button class="btn" onclick="insertTip()">💡 提示</button>
+    </div>
+    <div class="toolbar-group">
+      <button class="btn" onclick="insertStep()">👣 步骤</button>
+      <button class="btn" onclick="insertCode()">💻 代码</button>
+      <button class="btn" onclick="insertList()">📋 列表</button>
+      <button class="btn" onclick="insertImage()">🖼️ 图片</button>
+    </div>
+    <div class="toolbar-group">
+      <button class="btn btn-primary" onclick="showExport()">📤 导出HTML</button>
+    </div>
+  </div>
+
+  <!-- 主区域 -->
+  <div class="main">
+    <!-- 编辑区 -->
+    <div class="editor-pane">
+      <div class="pane-header">
+        <span>📝 编辑区（支持 Markdown 语法）</span>
+        <span style="font-size:12px;font-weight:400;">实时保存</span>
+      </div>
+      <textarea class="editor" id="editor" placeholder="在这里输入文章内容...
+
+支持以下快捷语法：
+# 标题
+## 章节标题
+### 小节标题
+**加粗**
+==高亮==
+~~删除线~~
+> 引用段落
+- 列表项
+1. 编号列表
+``` 代码块 ```
+
+点击上方工具栏快速插入组件～">## 01 这是一个示例章节标题
+
+这是正文段落。你可以直接在这里修改文字，右侧会实时预览公众号效果。
+
+**绿色加粗**用于核心概念，==黄色高亮==用于重点短语，~~删除线~~用于旧概念。
+
+> 这是一个引用段落，适合放补充说明或旁注。
+
+💡 这是一个提示框，适合放踩坑提醒或小技巧。
+
+```javascript
+// 代码块示例
+console.log('Hello 公众号');
+```
+
+### 小节标题
+
+- 列表项一
+- 列表项二
+- 列表项三
+
+👣 **STEP 01** 步骤标题
+
+步骤内容描述，可以写得很详细。
+
+✨ 这是一句金句，会被渲染成高亮卡片。
+
+---
+
+## 02 第二个章节
+
+继续你的创作...
+</textarea>
+    </div>
+
+    <!-- 预览区 -->
+    <div class="preview-pane">
+      <div class="pane-header">
+        <span>👁️ 实时预览（摸鱼绿主题）</span>
+        <span style="font-size:12px;font-weight:400;">宽度: 677px</span>
+      </div>
+      <div class="preview-container">
+        <div class="preview-phone" id="preview"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部帮助 -->
+  <div class="help-text">
+    <strong>快捷操作：</strong>点击工具栏插入组件 | 支持 Markdown 语法 | <kbd>Ctrl</kbd>+<kbd>S</kbd> 导出 HTML | 右侧预览实时同步
+  </div>
+</div>
+
+<!-- 导出弹窗 -->
+<div class="modal-overlay" id="exportModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">📤 导出公众号 HTML</span>
+      <button class="modal-close" onclick="closeExport()">&times;</button>
+    </div>
+    <div class="modal-body">
+      <p style="margin-bottom:12px;font-size:13px;color:#6b7280;">复制以下代码，直接粘贴到微信公众号编辑器即可：</p>
+      <textarea class="code-output" id="exportCode" readonly></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" onclick="closeExport()">关闭</button>
+      <button class="btn btn-primary" onclick="copyExport()">📋 复制到剪贴板</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// 编辑器核心逻辑
+const editor = document.getElementById('editor');
+const preview = document.getElementById('preview');
+const exportModal = document.getElementById('exportModal');
+const exportCode = document.getElementById('exportCode');
+
+// 摸鱼绿设计变量
+const THEME = {
+  primary: '#059669',
+  primaryLight: '#10B981',
+  accent: '#FDE68A',
+  title: '#111827',
+  text: '#374151',
+  secondary: '#4B5563',
+  muted: '#9CA3AF',
+  border: '#D1D5DB',
+  lightBg: '#F9FAFB',
+  greenBg: '#ECFDF5',
+  greenBorder: '#BBF7D0',
+  underline: '#A7F3D0',
+  yellowBg: '#FFFBEB',
+  redUnderline: '#FECACA',
+  fontFamily: "-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif"
+};
+
+// 解析 Markdown 为摸鱼绿 HTML
+function parseMarkdown(text) {
+  let html = text;
+  
+  // 转义 HTML
+  html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  
+  // 代码块 (``` ... ```)
+  html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+    const lines = code.trim().split('\n');
+    const lineItems = lines.map(line => 
+      `<p style="margin:0;font-size:13px;color:#E5E7EB;line-height:1.8;"><span leaf="">${line.replace(/ /g, '&nbsp;')}</span></p>`
+    ).join('');
+    return `<section style="background:#111827;border-radius:8px;padding:16px;margin-bottom:24px;overflow-x:auto;">${lineItems}</section>`;
+  });
+  
+  // 章节标题 (## 标题)
+  let chapterCount = 0;
+  html = html.replace(/^##\s*(.+)$/gm, (match, title) => {
+    chapterCount++;
+    const num = chapterCount < 10 ? '0' + chapterCount : chapterCount;
+    const isLast = chapterCount > 2; // 简化判断
+    const partNum = isLast ? '///' : num;
+    const partLabel = isLast ? 'LAST' : 'PART';
+    const enTitle = getEnglishLabel(title);
+    
+    return `</section><section style="margin-top:48px;margin-bottom:32px;padding:0 20px;">
+  <section style="display:flex;align-items:center;gap:16px;margin-bottom:24px;">
+    <section style="text-align:center;flex-shrink:0;">
+      <p style="margin:0;font-size:28px;font-weight:900;color:${THEME.primary};line-height:1;letter-spacing:-2px;"><span leaf="">${partNum}</span></p>
+      <p style="margin:0;font-size:8px;font-weight:700;color:${THEME.border};letter-spacing:2px;"><span leaf="">${partLabel}</span></p>
+    </section>
+    <span style="width:1px;height:36px;background:${THEME.border};flex-shrink:0;"><span leaf=""><br></span></span>
+    <section>
+      <p style="margin:0 0 1px;font-size:17px;font-weight:900;color:${THEME.title};letter-spacing:0.3px;"><span leaf="">${title}</span></p>
+      <p style="margin:0;font-size:11px;font-weight:600;color:${THEME.muted};letter-spacing:1.5px;"><span leaf="">${enTitle}</span></p>
+    </section>
+  </section>`;
+  });
+  
+  // 小节标题 (### 标题)
+  html = html.replace(/^###\s*(.+)$/gm, (match, title) => {
+    return `<p style="font-size:15px;font-weight:900;color:${THEME.title};margin-bottom:16px;margin-top:32px;"><span style="background:linear-gradient(180deg,transparent 65%,${THEME.accent} 65%);padding:0 4px;"><span leaf="">${title}</span></span></p>`;
+  });
+  
+  // 封面标题 (# 标题)
+  html = html.replace(/^#\s*(.+)$/gm, (match, title) => {
+    return generateCover(title);
+  });
+  
+  // 引用段落 (> 内容)
+  html = html.replace(/^>\s*(.+)$/gm, (match, content) => {
+    return `<section style="background:${THEME.lightBg};border:1px dashed ${THEME.border};border-radius:8px;padding:12px 16px;margin-bottom:24px;text-align:justify;"><p style="font-size:13px;color:${THEME.text};margin:0;line-height:1.6;"><span leaf="">${parseInline(content)}</span></p></section>`;
+  });
+  
+  // 步骤 (👣 或 STEP)
+  html = html.replace(/^👣\s*\*\*(.+?)\*\*\s*(.+)?$/gm, (match, stepTitle, content) => {
+    const stepNum = stepTitle.match(/(\d+)/)?.[1] || '01';
+    return `<section style="margin-bottom:24px;"><section style="display:flex;align-items:center;gap:8px;margin-bottom:10px;"><span style="display:inline-block;background:${THEME.title};color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:12px;"><span leaf="">STEP ${stepNum}</span></span><h4 style="font-size:15px;font-weight:800;color:${THEME.title};margin:0;"><span leaf="">${stepTitle.replace(/STEP\s*\d+/i, '').trim()}</span></h4></section>${content ? `<p style="font-size:14px;margin:0 0 16px;color:${THEME.secondary};line-height:1.9;text-align:justify;"><span leaf="">${parseInline(content)}</span></p>` : ''}</section>`;
+  });
+  
+  // 金句 (✨ 或 > 金句)
+  html = html.replace(/^✨\s*(.+)$/gm, (match, content) => {
+    return `<section style="background:#FFF;border:1px dashed ${THEME.greenBorder};border-radius:8px;padding:14px 16px;margin-bottom:24px;text-align:center;"><p style="margin:0;line-height:1.6;"><span style="font-size:15px;color:${THEME.primary};font-weight:bold;border-bottom:3px solid ${THEME.accent};padding-bottom:2px;"><span leaf="">${content}</span></span></p></section>`;
+  });
+  
+  // 提示框 (💡 或 ！)
+  html = html.replace(/^💡\s*(.+)$/gm, (match, content) => {
+    return `<section style="padding:6px 0 4px;margin-bottom:16px;"><p style="margin-bottom:6px;font-size:12px;font-weight:700;color:${THEME.muted};letter-spacing:1px;"><span style="color:${THEME.primary};"><span leaf="">✦ 提示</span></span></p><p style="font-size:13px;color:${THEME.text};margin:0;line-height:1.7;"><span leaf="">${parseInline(content)}</span></p></section>`;
+  });
+  
+  // 警告 (⚠️ 或 ！踩坑)
+  html = html.replace(/^⚠️\s*(.+)$/gm, (match, content) => {
+    return `<section style="padding:6px 0 4px;margin-bottom:16px;"><p style="margin-bottom:6px;font-size:12px;font-weight:700;color:${THEME.muted};letter-spacing:1px;"><span style="color:rgb(255,76,0);"><span leaf="">！踩坑提示 🕳</span></span></p><p style="font-size:13px;color:${THEME.text};margin:0;line-height:1.7;"><span style="color:rgb(136,136,136);font-weight:bold;"><span leaf="">${content}</span></span></p></section>`;
+  });
+  
+  // 黄色警告框
+  html = html.replace(/^!\!\!\s*(.+)$/gm, (match, content) => {
+    return `<section style="background:${THEME.yellowBg};border:1px solid ${THEME.accent};border-radius:12px;padding:12px 16px;margin-bottom:20px;"><p style="font-size:13px;color:#92400E;margin:0;font-weight:700;"><span leaf="">${content}</span></p></section>`;
+  });
+  
+  // 列表项 (- 或 *) 
+  html = html.replace(/^-\s*(.+)$/gm, (match, content) => {
+    return `<section style="margin-bottom:14px;"><p style="margin:0 0 6px;"><span style="display:inline-block;font-size:13px;font-weight:700;color:${THEME.primary};background:rgba(5,150,105,0.08);padding:3px 10px;border-radius:999px;"><span style="display:inline-block;width:6px;height:6px;background:${THEME.primary};border-radius:50%;margin-right:5px;vertical-align:middle;"><span leaf=""><br></span></span><span leaf="">${content}</span></span></p></section>`;
+  });
+  
+  // 编号列表 (1. 2. 3.)
+  html = html.replace(/^(\d+)\.\s*(.+)$/gm, (match, num, content) => {
+    return `<section style="display:flex;align-items:flex-start;gap:10px;margin-bottom:12px;"><span style="display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;background:${THEME.primary};color:#fff;font-size:11px;font-weight:700;border-radius:50%;flex-shrink:0;margin-top:2px;"><span leaf="">${num}</span></span><p style="font-size:14px;color:${THEME.text};margin:0;line-height:1.9;flex:1;"><span leaf="">${parseInline(content)}</span></p></section>`;
+  });
+  
+  // 图片 (![alt](url))
+  html = html.replace(/!\[([^\]]*)\]\(([^\)]+)\)/g, (match, alt, url) => {
+    return `<section style="text-align:center;margin-bottom:24px;border-radius:12px;overflow:hidden;"><img src="${url}" alt="${alt}" style="max-width:100%;height:auto;display:block;margin:0 auto;" /></section>`;
+  });
+  
+  // 普通段落（处理剩余行）
+  const lines = html.split('\n');
+  let result = [];
+  let currentPara = '';
+  
+  for (let line of lines) {
+    line = line.trim();
+    if (!line) {
+      if (currentPara) {
+        result.push(`<p style="margin-bottom:16px;font-size:14px;line-height:1.9;text-align:justify;"><span leaf="">${parseInline(currentPara)}</span></p>`);
+        currentPara = '';
+      }
+      continue;
+    }
+    
+    // 如果已经是 HTML 标签，直接保留
+    if (line.startsWith('<section') || line.startsWith('</section') || line.startsWith('<p') && line.includes('style=')) {
+      if (currentPara) {
+        result.push(`<p style="margin-bottom:16px;font-size:14px;line-height:1.9;text-align:justify;"><span leaf="">${parseInline(currentPara)}</span></p>`);
+        currentPara = '';
+      }
+      result.push(line);
+      continue;
+    }
+    
+    currentPara += (currentPara ? ' ' : '') + line;
+  }
+  
+  if (currentPara) {
+    result.push(`<p style="margin-bottom:16px;font-size:14px;line-height:1.9;text-align:justify;"><span leaf="">${parseInline(currentPara)}</span></p>`);
+  }
+  
+  html = result.join('\n');
+  
+  // 清理空标签
+  html = html.replace(/<section\s+style="[^"]*">\s*<\/section>/g, '');
+  
+  return html;
+}
+
+// 行内样式解析
+function parseInline(text) {
+  // **加粗** → 绿色加粗
+  text = text.replace(/\*\*(.+?)\*\*/g, `<strong style="color:${THEME.primary};"><span leaf="">$1</span></strong>`);
+  // ==高亮== → 黄色渐变
+  text = text.replace(/==(.+?)==/g, `<span style="background:linear-gradient(120deg,${THEME.accent} 0%,rgba(255,255,255,0) 100%);padding:0 4px;border-radius:2px;font-weight:600;color:${THEME.title};"><span leaf="">$1</span></span>`);
+  // ~~删除线~~
+  text = text.replace(/~~(.+?)~~/g, `<span style="background:${THEME.lightBg};color:${THEME.secondary};padding:2px 6px;border-radius:4px;font-size:13px;text-decoration:line-through;font-weight:600;"><span leaf="">$1</span></span>`);
+  // ++下划线++
+  text = text.replace(/\+\+(.+?)\+\+/g, `<span style="border-bottom:2px solid ${THEME.underline};font-weight:600;"><span leaf="">$1</span></span>`);
+  // 行内代码
+  text = text.replace(/`([^`]+)`/g, `<span style="background:#F3F4F6;color:#1F2937;padding:2px 6px;border-radius:4px;font-size:13px;font-weight:600;"><span leaf="">$1</span></span>`);
+  return text;
+}
+
+// 生成英文标签
+function getEnglishLabel(title) {
+  const map = {
+    '教程': 'TUTORIAL', '指南': 'GUIDE', '步骤': 'STEPS', '方法': 'METHOD',
+    '总结': 'SUMMARY', '思考': 'THOUGHTS', '分析': 'ANALYSIS', '案例': 'CASE',
+    '工具': 'TOOLS', '技巧': 'TIPS', '实战': 'PRACTICE', '入门': 'BASICS',
+    '进阶': 'ADVANCED', '原理': 'PRINCIPLE', '对比': 'COMPARE', '测评': 'REVIEW'
+  };
+  for (let [cn, en] of Object.entries(map)) {
+    if (title.includes(cn)) return en;
+  }
+  return 'INSIGHTS';
+}
+
+// 生成封面
+function generateCover(title) {
+  const date = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit' }).replace('/', '.');
+  return `<section style="margin:0 0 32px;background:#fff;border:1.5px solid rgba(5,150,105,0.15);border-radius:20px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.06);width:100%;">
+  <section style="padding:32px 28px 28px;">
+    <section style="display:flex;align-items:center;gap:8px;margin-bottom:28px;">
+      <span style="width:6px;height:6px;background:${THEME.primary};border-radius:50%;"><span leaf=""><br></span></span>
+      <span style="font-size:11px;font-weight:700;letter-spacing:3px;color:${THEME.primary};"><span leaf="">TUTORIAL · 实战指南</span></span>
+      <section style="flex:1;height:1px;overflow:hidden;background:linear-gradient(to right,rgba(5,150,105,0.12),transparent);"><span leaf=""><br></span></section>
+      <span style="font-size:10px;color:${THEME.border};font-weight:600;"><span leaf="">${date}</span></span>
+    </section>
+    <section>
+      <p style="font-size:24px;font-weight:900;color:${THEME.title};margin:0;line-height:1.05;letter-spacing:-2px;"><span leaf="">${title}</span></p>
+      <section style="width:48px;height:3px;background:linear-gradient(to right,${THEME.primary},#34D399);border-radius:2px;margin:16px 0 12px;"><span leaf=""><br></span></section>
+      <p style="font-size:13px;color:${THEME.muted};margin:0;line-height:1.7;letter-spacing:0.5px;"><span leaf="">公众号排版实战 · 摸鱼绿主题</span></p>
+    </section>
+  </section>
+  <section style="background:linear-gradient(135deg,${THEME.primary},${THEME.primaryLight});padding:12px 28px;display:flex;align-items:center;justify-content:space-between;">
+    <p style="font-size:12px;color:rgba(255,255,255,0.9);margin:0;font-weight:600;letter-spacing:0.5px;"><span leaf="">公众号排版编辑器</span></p>
+    <section style="display:flex;gap:4px;">
+      <span style="background:rgba(255,255,255,0.2);padding:1px 6px;border-radius:3px;font-size:8px;color:#fff;font-weight:600;"><span leaf="">排版</span></span>
+      <span style="background:rgba(255,255,255,0.2);padding:1px 6px;border-radius:3px;font-size:8px;color:#fff;font-weight:600;"><span leaf="">摸鱼绿</span></span>
+    </section>
+  </section>
+</section>`;
+}
+
+// 生成目录
+function generateTOC(chapters) {
+  if (chapters.length < 2) return '';
+  let items = chapters.map((ch, i) => {
+    const isFirst = i === 0;
+    const bg = isFirst ? `background:linear-gradient(135deg,${THEME.primary},${THEME.primaryLight});` : 'background:#fff;border:1px solid #E5E7EB;';
+    const textColor = isFirst ? '#fff' : '#111827';
+    const subColor = isFirst ? 'rgba(255,255,255,0.7)' : '#9CA3AF';
+    const partNum = i + 1 < 10 ? '0' + (i + 1) : i + 1;
+    return `<section style="display:inline-block;white-space:normal;vertical-align:top;width:110px;${bg}border-radius:12px;padding:12px;margin-right:8px;box-shadow:0 2px 6px rgba(0,0,0,0.04);"><p style="font-size:9px;font-weight:700;color:${subColor};letter-spacing:1px;margin:0 0 5px;"><span leaf="">PART ${partNum}</span></p><p style="font-size:13px;font-weight:800;color:${textColor};margin:0 0 3px;"><span leaf="">${ch}</span></p></section>`;
+  }).join('');
+  
+  return `<section style="margin:0 20px 32px;"><section style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;"><p style="font-size:10px;color:${THEME.muted};margin:0;text-transform:uppercase;letter-spacing:2px;font-weight:600;"><span leaf="">📦 ${chapters.length} Parts + Conclusion</span></p><p style="font-size:10px;color:${THEME.muted};margin:0;"><span leaf="">👉 滑动</span></p></section><section style="overflow-x:scroll;-webkit-overflow-scrolling:touch;white-space:nowrap;padding-bottom:8px;">${items}<section style="display:inline-block;white-space:normal;vertical-align:top;width:110px;background:#fff;border:1px solid #E5E7EB;border-radius:12px;padding:12px;box-shadow:0 2px 6px rgba(0,0,0,0.04);"><p style="font-size:9px;font-weight:700;color:${THEME.muted};letter-spacing:1px;margin:0 0 5px;"><span leaf="">PART ///</span></p><p style="font-size:13px;font-weight:800;color:${THEME.title};margin:0 0 3px;"><span leaf="">写在最后</span></p></section></section></section>`;
+}
+
+// 渲染预览
+function render() {
+  const text = editor.value;
+  let html = parseMarkdown(text);
+  
+  // 提取章节用于生成目录
+  const chapters = [];
+  const chapterMatches = text.match(/^##\s*(.+)$/gm);
+  if (chapterMatches) {
+    chapterMatches.forEach(m => chapters.push(m.replace(/^##\s*/, '')));
+  }
+  
+  // 如果有章节，在前面插入目录
+  if (chapters.length >= 2) {
+    const toc = generateTOC(chapters);
+    // 在第一个章节前插入目录
+    html = html.replace(/(<section style="margin-top:48px)/, toc + '\n$1');
+  }
+  
+  // 包装全局容器
+  const fullHTML = `<section style="max-width:677px;margin:0 auto;background:#ffffff;font-family:${THEME.fontFamily};color:${THEME.text};line-height:1.75;letter-spacing:0.5px;overflow-x:hidden;padding:20px 0;">${html}</section>`;
+  
+  preview.innerHTML = fullHTML;
+}
+
+// 导出 HTML
+function showExport() {
+  const text = editor.value;
+  let html = parseMarkdown(text);
+  
+  const chapters = [];
+  const chapterMatches = text.match(/^##\s*(.+)$/gm);
+  if (chapterMatches) {
+    chapterMatches.forEach(m => chapters.push(m.replace(/^##\s*/, '')));
+  }
+  
+  if (chapters.length >= 2) {
+    const toc = generateTOC(chapters);
+    html = html.replace(/(<section style="margin-top:48px)/, toc + '\n$1');
+  }
+  
+  const fullHTML = `<section style="max-width:677px;margin:0 auto;background:#ffffff;font-family:${THEME.fontFamily};color:${THEME.text};line-height:1.75;letter-spacing:0.5px;overflow-x:hidden;">${html}</section>`;
+  
+  exportCode.value = fullHTML;
+  exportModal.classList.add('active');
+}
+
+function closeExport() {
+  exportModal.classList.remove('active');
+}
+
+function copyExport() {
+  exportCode.select();
+  document.execCommand('copy');
+  alert('✅ 已复制到剪贴板！去公众号编辑器粘贴吧～');
+}
+
+// 插入组件函数
+function insertCover() {
+  const title = prompt('封面主标题：', '公众号排版实战指南');
+  if (title) {
+    insertAtCursor(`# ${title}\n\n`);
+  }
+}
+
+function insertTOC() {
+  insertAtCursor('<!-- 目录会自动生成，继续添加章节即可 -->\n');
+}
+
+function insertChapter() {
+  const title = prompt('章节标题：', '新的章节');
+  if (title) {
+    insertAtCursor(`\n## ${title}\n\n`);
+  }
+}
+
+function insertParagraph() {
+  insertAtCursor('这是新的正文段落，你可以直接修改这段文字。\n\n');
+}
+
+function insertQuote() {
+  insertAtCursor('> 这是引用段落，适合放补充说明或旁注。\n\n');
+}
+
+function insertHighlight() {
+  insertAtCursor('✨ 这是一句金句，会被渲染成高亮卡片。\n\n');
+}
+
+function insertTip() {
+  insertAtCursor('💡 这是一个提示框，适合放踩坑提醒或小技巧。\n\n');
+}
+
+function insertStep() {
+  const num = prompt('步骤编号：', '01');
+  const title = prompt('步骤标题：', '步骤标题');
+  if (title) {
+    insertAtCursor(`👣 **STEP ${num} ${title}**\n\n步骤内容描述...\n\n`);
+  }
+}
+
+function insertCode() {
+  insertAtCursor('```javascript\n// 代码示例\nconsole.log("Hello");\n```\n\n');
+}
+
+function insertList() {
+  insertAtCursor('- 列表项一\n- 列表项二\n- 列表项三\n\n');
+}
+
+function insertImage() {
+  const url = prompt('图片URL：', 'https://example.com/image.jpg');
+  if (url) {
+    insertAtCursor(`![图片描述](${url})\n\n`);
+  }
+}
+
+function insertAtCursor(text) {
+  const start = editor.selectionStart;
+  const end = editor.selectionEnd;
+  const value = editor.value;
+  editor.value = value.substring(0, start) + text + value.substring(end);
+  editor.selectionStart = editor.selectionEnd = start + text.length;
+  editor.focus();
+  render();
+}
+
+// 快捷键
+editor.addEventListener('keydown', (e) => {
+  if (e.ctrlKey && e.key === 's') {
+    e.preventDefault();
+    showExport();
+  }
+});
+
+// 实时渲染
+editor.addEventListener('input', render);
+
+// 初始化
+render();
+</script>
+</body>
+</html>
